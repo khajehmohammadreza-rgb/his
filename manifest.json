@@ -1,0 +1,19 @@
+{
+  "name": "Bastiyan HIS",
+  "product": "Bastiyan HIS",
+  "version": "5.0.4",
+  "package_version": "5.0.4",
+  "build": 504,
+  "buildNumber": 504,
+  "minimum_version": "5.0.0",
+  "fromVersion": "5.0.3",
+  "target_version": "5.0.4",
+  "update_type": "full-root-release",
+  "requires_backup": true,
+  "files_count": 18,
+  "database_changes": false,
+  "rollback_available": true,
+  "checksum_algorithm": "SHA256",
+  "created_at": "2026-09-14",
+  "author": "Bastiyan Development Team"
+}

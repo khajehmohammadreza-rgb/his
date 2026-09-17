@@ -1,0 +1,82 @@
+# Bastiyan HIS Professional - NetAfraz Compatible Apache/LiteSpeed Configuration
+DirectoryIndex index.html index.php
+
+<IfModule mod_autoindex.c>
+  Options -Indexes
+</IfModule>
+
+AddDefaultCharset UTF-8
+
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType font/woff  .woff
+  AddType font/woff2 .woff2
+  AddType font/ttf   .ttf
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Preserve authentication before the root-to-api internal rewrite. On some
+  # LiteSpeed/DirectAdmin hosts Authorization is otherwise lost only on POST.
+  RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+  # Block sensitive development files
+  RewriteRule ^(?:\.git|backup|node_modules|src|deploy)(?:/|$) - [F,L,NC]
+  RewriteRule ^(?:package(?:-lock)?\.json|server\.(?:js|cjs|ts)|\.env(?:\..*)?|DATABASE_.*|.*\.map)$ - [F,L,NC]
+  RewriteRule ^(?:api/config\.local\.php|api/data(?:/|$)|api/.*\.sql(?:\.gz)?|uploads(?:/|$))$ - [F,L,NC]
+
+  # Serve existing files directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Route API requests
+  RewriteRule ^api/?$ api/router.php [QSA,L]
+  RewriteRule ^api/(.*)$ api/router.php?route=$1 [QSA,L]
+
+  # SPA Routing
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+<IfModule mod_setenvif.c>
+  SetEnvIfNoCase Authorization "(.+)" HTTP_AUTHORIZATION=$1
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json image/svg+xml font/ttf
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/x-icon "access plus 30 days"
+  ExpiresByType font/woff "access plus 365 days"
+  ExpiresByType font/woff2 "access plus 365 days"
+  ExpiresByType font/ttf "access plus 365 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(?:html|js|json|webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(?:woff|woff2|ttf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "^(?:bastiyan-cache-reset\.html|service-worker\.js|index\.html)$">
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
+  </FilesMatch>
+</IfModule>

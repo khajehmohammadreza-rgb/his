@@ -1,0 +1,10 @@
+{
+  "version": "5.0.4",
+  "buildNumber": 504,
+  "fromVersion": "5.0.3",
+  "targetVersion": "5.0.4",
+  "description": "رفع خطای 408 در تست Webhook کاوه‌نگار و پاسخ سریع به درخواست تست",
+  "releaseDate": "2026-09-14",
+  "requiresBackup": true,
+  "rollbackAvailable": true
+}

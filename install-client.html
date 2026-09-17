@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#020617">
+  <link rel="manifest" href="./manifest.json?v=3.3.4">
+  <link rel="icon" href="./logo.png">
+  <title>نصب برنامه باستیان HIS</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#020617;color:#e2e8f0;font-family:Tahoma,Arial;min-height:100vh;display:grid;place-items:center;padding:20px}.card{width:min(680px,100%);background:#0f172a;border:1px solid #1e3a4c;border-radius:24px;padding:28px;box-shadow:0 30px 80px #0008}.brand{display:flex;gap:14px;align-items:center}.brand img{width:72px;height:72px;border-radius:18px}.brand h1{margin:0;font-size:22px}.brand p,.muted{color:#94a3b8;font-size:13px;line-height:2}.status{background:#020617;border:1px solid #334155;border-radius:14px;padding:14px;margin:22px 0;font-size:13px}.ok{color:#6ee7b7}.bad{color:#fda4af}.buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:0;border-radius:14px;padding:14px;font-weight:bold;cursor:pointer;text-decoration:none;text-align:center;background:#0d9488;color:white}.btn.secondary{background:#1e293b;color:#cbd5e1}@media(max-width:560px){.buttons{grid-template-columns:1fr}.card{padding:20px}}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="brand"><img src="./logo.png" alt="لوگوی باستیان"><div><h1>نصب کلاینت باستیان HIS</h1><p>نسخه ۴.۵.۵ • اتصال امن به سرور مادر مرکز</p></div></div>
+    <div id="status" class="status">در حال بررسی اتصال به سرور...</div>
+    <p class="muted">در Android با Chrome این صفحه را باز کنید و «نصب برنامه» را بزنید. در iPhone/iPad از منوی Share گزینه Add to Home Screen را انتخاب کنید. برنامه نصب‌شده برای ورود و دریافت اطلاعات به اینترنت یا شبکه مرکز نیاز دارد.</p>
+    <div class="buttons"><button id="install" class="btn" disabled>نصب برنامه روی این دستگاه</button><a class="btn secondary" href="./">ورود بدون نصب</a></div>
+  </main>
+  <script>
+    let promptEvent=null;const install=document.getElementById('install'),status=document.getElementById('status');
+    addEventListener('beforeinstallprompt',e=>{e.preventDefault();promptEvent=e;install.disabled=false;install.textContent='نصب برنامه باستیان';});
+    addEventListener('appinstalled',()=>{install.disabled=true;install.textContent='برنامه نصب شد';});
+    install.onclick=async()=>{if(!promptEvent){status.innerHTML='<span class="bad">در Chrome از منوی مرورگر گزینه Install app یا افزودن به صفحه اصلی را انتخاب کنید.</span>';return}promptEvent.prompt();await promptEvent.userChoice;promptEvent=null};
+    fetch('./api/client/bootstrap',{cache:'no-store'}).then(r=>r.json()).then(d=>{if(!d.success)throw 0;status.innerHTML=`<span class="ok">✓ اتصال برقرار است</span><br>سرور مادر: ${location.host}<br>نسخه: ${d.version}`}).catch(()=>{status.innerHTML='<span class="bad">✕ سرور مادر پاسخ نمی‌دهد. اتصال شبکه و HTTPS را بررسی کنید.</span>'});
+    if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+  </script>
+</body>
+</html>

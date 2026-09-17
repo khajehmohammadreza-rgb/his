@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">لوگوی پیش‌فرض مرکز درمانی</title>
+  <rect width="256" height="256" rx="48" fill="#f8fafc"/>
+  <rect x="42" y="70" width="172" height="144" rx="18" fill="#0f766e"/>
+  <path d="M112 42h32v42h42v32h-42v42h-32v-42H70V84h42z" fill="#fff"/>
+  <path d="M78 214v-54h100v54M102 214v-30h52v30" fill="none" stroke="#ccfbf1" stroke-width="12" stroke-linejoin="round"/>
+</svg>

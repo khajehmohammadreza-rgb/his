@@ -1,0 +1,5 @@
+{
+  "version": "5.0.4",
+  "description": "رفع خطای 408 تست Webhook کاوه‌نگار و پاسخ سریع به درخواست تست",
+  "release": "20260914-504-kavenegar-webhook-408-fix"
+}
