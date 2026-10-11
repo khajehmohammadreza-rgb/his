@@ -22,6 +22,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
+      - name: Fix ambiguous Android CookieManager import
+        run: |
+          sed -i 's/CookieManager.getInstance()/android.webkit.CookieManager.getInstance()/g' catalog/android-app/app/src/main/java/ir/bastiyan/catalog/MainActivity.java
       - name: Android build
         working-directory: catalog/android-app
         run: gradle :app:assembleDebug --stacktrace --no-daemon
@@ -48,6 +51,13 @@ jobs:
       - name: Install app builder
         shell: pwsh
         run: python -m pip install --disable-pip-version-check pyinstaller cryptography
+      - name: Fix frozen executable paths
+        shell: pwsh
+        run: |
+          $file = 'catalog/app/windows/supervisor.py'
+          $text = Get-Content -Raw -Encoding UTF8 $file
+          $text = $text.Replace('HERE=Path(__file__).resolve().parent.parent', "HERE=Path(sys._MEIPASS) if getattr(sys,'frozen',False) else Path(__file__).resolve().parent.parent")
+          [System.IO.File]::WriteAllText((Resolve-Path $file), $text, [System.Text.UTF8Encoding]::new($false))
       - name: Build server
         shell: pwsh
         run: >-
@@ -57,6 +67,11 @@ jobs:
           --add-data "catalog/app/web;web"
           --hidden-import generate_tls --collect-all cryptography
           catalog/app/windows/supervisor.py
+      - name: Smoke test genuine server EXE
+        shell: pwsh
+        run: |
+          & dist/Bastiyan-Catalog-Server.exe --bastiyan-self-check
+          if ($LASTEXITCODE -ne 0) { throw "Windows server self-check failed" }
       - name: Build client
         shell: pwsh
         run: >-
