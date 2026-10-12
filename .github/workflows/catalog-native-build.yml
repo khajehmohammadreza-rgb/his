@@ -141,6 +141,46 @@ jobs:
                       try:p.wait(timeout=4)
                       except subprocess.TimeoutExpired:p.kill();p.wait(timeout=5)
           '@ | python -
+      - name: Real click-on-server launcher + duplicate client smoke
+        shell: pwsh
+        run: |
+          @'
+          import os,subprocess,urllib.request,json,ssl,time,pathlib,tempfile
+          data=pathlib.Path(tempfile.mkdtemp(prefix='bastiyan-launcher-'))
+          env=dict(os.environ,LOCALAPPDATA=str(data),PYTHONIOENCODING='utf-8')
+          serverexe=str(pathlib.Path('dist/Bastiyan-Catalog-Server.exe').resolve())
+          clientexe=str(pathlib.Path('dist/Bastiyan-Catalog-Client.exe').resolve())
+          p=subprocess.Popen([serverexe,'--no-browser'],env=env,stdout=(data/'launcher.log').open('wb'),stderr=subprocess.STDOUT)
+          ctx=ssl._create_unverified_context()
+          try:
+              ok=False
+              for i in range(75):
+                  if p.poll() is not None:break
+                  try:
+                      with urllib.request.urlopen('https://127.0.0.1:8765/api/status',timeout=1,context=ctx) as rsp:
+                          healthy=json.load(rsp).get('database')=='ready'
+                      with urllib.request.urlopen('http://127.0.0.1:8775/__agent/status',timeout=1) as rsp:
+                          bridge=json.load(rsp)
+                      if healthy and bridge.get('connected'):ok=True;break
+                  except Exception: time.sleep(.5)
+              if not ok:
+                  print('Launcher exit:',p.poll(),'Launcher log:',(data/'launcher.log').read_text(encoding='utf-8',errors='replace')[-4000:],flush=True)
+                  raise AssertionError('Real server desktop launcher did not start HTTPS and its embedded client')
+              print('Real server launcher ready: HTTPS + database + loopback client',flush=True)
+              q=subprocess.Popen([clientexe,'--no-browser'],env=env)
+              try:q.wait(timeout=18)
+              except subprocess.TimeoutExpired:
+                  q.kill();q.wait()
+                  raise AssertionError('Second client did not reuse existing loopback bridge')
+              if q.returncode!=0:raise AssertionError('Second client exited with '+str(q.returncode))
+              with urllib.request.urlopen('http://127.0.0.1:8775/api/status',timeout=4) as rsp:
+                  assert json.load(rsp)['ok']
+              print('Duplicate-click client gracefully reused existing session',flush=True)
+          finally:
+              subprocess.run(['taskkill','/F','/T','/PID',str(p.pid)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+              try:p.wait(timeout=6)
+              except subprocess.TimeoutExpired:p.kill()
+          '@ | python -
       - name: Compile actual Windows installers
 
         shell: pwsh
