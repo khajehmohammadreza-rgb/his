@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<base href="/">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>سامانه جامع پزشکی باستیان</title>
+<link rel="icon" type="image/png" href="./logo.png?v=514-1405-r24">
+<link rel="stylesheet" href="./portal.css?v=514-1405-r24">
+<link rel="stylesheet" href="./assets/index.css?v=514-1405-r24">
+<link rel="stylesheet" href="./assets/bastiyan-professional-501.css?v=514-1405-r24">
+<script>
+(async function(){
+  const CURRENT_VER='5.1.4', BUILD='514-1405-r24';
+  const CLEAN_KEY='bastiyan_r24_clean_v1', CLEAN_QUERY='bastiyan_r5_clean';
+  let controlled=false;
+  try {
+    if ('serviceWorker' in navigator) {
+      controlled=!!navigator.serviceWorker.controller;
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister().catch(()=>false)));
+    }
+  } catch(e) { console.warn('[Bastiyan R5] SW cleanup failed',e); }
+  try {
+    if ('caches' in window) {
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k).catch(()=>false)));
+    }
+  } catch(e) { console.warn('[Bastiyan R5] Cache cleanup failed',e); }
+  if (controlled && sessionStorage.getItem(CLEAN_KEY)!=='1') {
+    sessionStorage.setItem(CLEAN_KEY,'1');
+    const u=new URL(location.href); u.searchParams.set(CLEAN_QUERY,'1');
+    location.replace(u.href); return;
+  }
+  try {
+    if (location.searchParams) {}
+  } catch(_) {}
+  const lastBuild=localStorage.getItem('bastiyan_client_build');
+  if (localStorage.getItem('bastiyan_client_version')!==CURRENT_VER || lastBuild!==BUILD) {
+    localStorage.setItem('bastiyan_client_version',CURRENT_VER);
+    localStorage.setItem('bastiyan_client_build',BUILD);
+    sessionStorage.removeItem('bastiyan_superadmin_token');
+    sessionStorage.removeItem('bastiyan_center_token');
+    sessionStorage.removeItem('bastiyan_center_session');
+    sessionStorage.removeItem('bastiyan_center_user');
+    sessionStorage.removeItem('bastiyan_superadmin_override');
+  }
+  if (new URL(location.href).searchParams.has(CLEAN_QUERY)) {
+    const u=new URL(location.href); u.searchParams.delete(CLEAN_QUERY);
+    history.replaceState(null,'',u.href);
+  }
+  const s=document.createElement('script'); s.src='./portal.js?v=514-1405-r24'; s.defer=true;
+  document.head.appendChild(s);
+})();
+</script>
+</head>
+<body></body>
+</html>

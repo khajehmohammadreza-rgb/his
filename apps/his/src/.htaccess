@@ -1,0 +1,66 @@
+# Bastiyan HIS R5 — static module safety
+DirectoryIndex index.html index.php
+Options -Indexes -MultiViews
+AddDefaultCharset UTF-8
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType application/json .json
+  AddType text/css .css
+  AddType font/woff .woff
+  AddType font/woff2 .woff2
+  AddType font/ttf .ttf
+</IfModule>
+
+# Bastiyan R19 — reliable module transport behind Chabokan reverse proxy
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^runtime/((?:app|client-vendor)/[A-Za-z0-9_./-]+\.js)$ api/runtime_asset.php?file=$1 [QSA,L,NC]
+</IfModule>
+
+# Never gzip/transform critical application responses in Apache.
+# Chabokan's edge proxy may still transport-compress, but "no-transform"
+# plus the streamed PHP runtime avoids stale Content-Length problems.
+<IfModule mod_env.c>
+  SetEnv no-gzip 1
+  SetEnv dont-vary 1
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+  # Existing files are served. Missing static assets must never become index.html.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_URI} \.(?:js|mjs|json|css|map|woff|woff2|ttf|svg|png|jpg|jpeg|webp|ico|wasm)$ [NC]
+  RewriteRule ^ - [R=404,L]
+  RewriteRule ^(?:\.git|backup|node_modules|src|deploy)(?:/|$) - [F,L,NC]
+  RewriteRule ^(?:package(?:-lock)?\.json|server\.(?:js|cjs|ts)|\.env(?:\..*)?|DATABASE_.*|.*\.map)$ - [F,L,NC]
+  RewriteRule ^(?:api/config\.local\.php|api/data(?:/|$)|api/.*\.sql(?:\.gz)?|uploads(?:/|$))$ - [F,L,NC]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  RewriteRule ^api/?$ api/router.php [QSA,L]
+  RewriteRule ^api/(.*)$ api/router.php?route=$1 [QSA,L]
+  RewriteRule ^ index.html [L]
+</IfModule>
+<IfModule mod_setenvif.c>
+  SetEnvIfNoCase Authorization "(.+)" HTTP_AUTHORIZATION=$1
+</IfModule>
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  <FilesMatch "\.(?:html|js|mjs|json|webmanifest)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+  <FilesMatch "\.(?:woff|woff2|ttf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(?:html|js|mjs|json|css)$">
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0, no-transform"
+  </FilesMatch>
+</IfModule>

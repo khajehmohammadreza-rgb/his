@@ -1,0 +1,73 @@
+{
+  "product": "Bastiyan HIS",
+  "version": "5.1.3",
+  "build": "513-1405-r23",
+  "date": "2026-10-07",
+  "purpose": "browser-validated stability baseline",
+  "databaseChanges": false,
+  "rootCause": [
+    "Dashboard.js contained syntax accepted by Node check but rejected by the real Chromium parser with missing ) after argument list.",
+    "The Lucide bridge was missing named exports used by active UI modules.",
+    "Runtime version/build identifiers were inconsistent across frontend, API config, health and self-test layers."
+  ],
+  "validation": {
+    "javascriptNodeSyntax": {
+      "files": 158,
+      "failures": 0
+    },
+    "javascriptChromiumParse": {
+      "files": 158,
+      "failures": 0,
+      "directOk": 39,
+      "resolutionOnly": 119
+    },
+    "phpLint": {
+      "files": 19,
+      "failures": 0
+    },
+    "jsonParse": {
+      "files": 9,
+      "failures": 0
+    },
+    "relativeImports": {
+      "checked": 483,
+      "missing": 0
+    },
+    "browserModuleGraph": {
+      "reachableModules": 111,
+      "importErrors": 0,
+      "dashboardRendered": true,
+      "buttonsRendered": 57
+    },
+    "mainNavigationRender": {
+      "routesTested": 25,
+      "renderFailures": 0,
+      "pageErrors": 0,
+      "note": "Archived/collapsed-group locator was not counted as an active route because the smoke harness did not expand its group."
+    },
+    "healthEndpoint": {
+      "version": "5.1.3",
+      "build": "513-1405-r23",
+      "ok": true
+    }
+  },
+  "fixedNamedExports": [
+    "CalendarCheck",
+    "Cloud",
+    "LogIn",
+    "PackageSearch",
+    "WalletCards"
+  ],
+  "acceptancePolicy": [
+    "Node syntax",
+    "Chromium parse",
+    "PHP lint",
+    "JSON parse",
+    "relative import integrity",
+    "browser ES-module graph import",
+    "main navigation render smoke",
+    "runtime transport/hash",
+    "health/version consistency",
+    "manifest/checksum and ZIP integrity"
+  ]
+}

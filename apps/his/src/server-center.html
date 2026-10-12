@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#020617">
+<title>سرور مادر مرکز | Bastiyan HIS</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#020617;color:#e2e8f0;font-family:Tahoma,Arial;min-height:100vh;padding:24px}.wrap{width:min(920px,100%);margin:auto}.head,.card{background:#0f172a;border:1px solid #1e293b;border-radius:22px;padding:22px;box-shadow:0 24px 70px #0005}.head{display:flex;align-items:center;gap:14px}.logo{width:58px;height:58px;border-radius:16px;object-fit:cover}.muted{color:#94a3b8;font-size:13px;line-height:2}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}.item{background:#020617;border:1px solid #334155;border-radius:14px;padding:14px}.item b{display:block;color:#5eead4;margin-bottom:7px}.value{direction:ltr;text-align:left;word-break:break-all;font:13px Consolas,monospace}.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}.btn{display:block;text-decoration:none;text-align:center;border:0;border-radius:14px;padding:14px;font-weight:bold;cursor:pointer;background:#0d9488;color:#fff}.btn.secondary{background:#1e293b;color:#e2e8f0}.status{margin-top:16px}.ok{color:#6ee7b7}.bad{color:#fda4af}@media(max-width:700px){.grid,.actions{grid-template-columns:1fr}.head{align-items:flex-start}}
+</style>
+</head><body><main class="wrap">
+<section class="head"><img class="logo" src="./logo.png" alt="Bastiyan"><div><h1 style="margin:0;font-size:22px">سرور مادر مرکز</h1><div class="muted">وضعیت واقعی سرور، اتصال کلاینت‌ها و بسته ویندوز مخصوص همین سرور</div></div></section>
+<section class="card status" id="status">در حال شناسایی سرور...</section>
+<section class="grid" id="grid" hidden>
+<div class="item"><b>وضعیت</b><span id="health"></span></div>
+<div class="item"><b>نسخه سرور</b><span id="version"></span></div>
+<div class="item"><b>آدرس شناسایی‌شده</b><div class="value" id="url"></div></div>
+<div class="item"><b>شناسه سرور</b><div class="value" id="serverId"></div></div>
+</section>
+<section class="actions">
+<a class="btn" href="./api/client/download/windows">دانلود کلاینت ویندوز مخصوص همین سرور</a>
+<a class="btn secondary" href="./install-client.html">نصب Android / PWA</a>
+<a class="btn secondary" href="./">بازگشت به Bastiyan HIS</a>
+</section>
+<p class="muted">در نصب ویندوز نسخه جدید، آدرس این سرور داخل فایل دانلودی قرار می‌گیرد؛ کاربر لازم نیست URL را بداند یا وارد کند. اگر دامنه سرور تغییر کند، کافی است بسته ویندوز را دوباره از همین صفحه دانلود کنید.</p>
+</main><script>
+const status=document.getElementById('status'),grid=document.getElementById('grid');
+fetch('./api/client/bootstrap',{cache:'no-store'}).then(async r=>{const d=await r.json();if(!r.ok||!d.success)throw Error(d.error||'پاسخ نامعتبر');return d}).then(d=>{
+ status.innerHTML='<span class="ok">✓ سرور مادر فعال و قابل دسترس است.</span>';grid.hidden=false;
+ health.textContent=d.https?'HTTPS امن و فعال':'اتصال HTTPS فعال نیست';version.textContent=(d.version||'-')+' / Build '+(d.buildNumber||'-');url.textContent=d.serverUrl||location.origin;serverId.textContent=d.serverId||'-';
+}).catch(e=>{status.innerHTML='<span class="bad">✕ سرور مادر پاسخ معتبر نداد.</span><div class="muted">'+String(e.message||e)+'</div>'});
+</script></body></html>

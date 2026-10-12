@@ -1,0 +1,22 @@
+{
+  "version": "5.1.2",
+  "build": "512-1405-r22",
+  "date": "2026-10-07",
+  "javascript_files_checked": 158,
+  "php_files_checked": 19,
+  "json_files_checked": 8,
+  "relative_imports_checked": 483,
+  "missing_relative_imports": [],
+  "stale_runtime_build_tags": [],
+  "runtime_transport_byte_exact": true,
+  "index_inline_script_syntax": "PASS",
+  "javascript_syntax": "PASS",
+  "php_syntax": "PASS",
+  "json_parse": "PASS",
+  "database_migration_added": false,
+  "notes": [
+    "R22 adds automatic streamed-runtime -> static-runtime fallback.",
+    "index.html version mismatch from R21 corrected.",
+    "All active module cache tags unified to R22."
+  ]
+}

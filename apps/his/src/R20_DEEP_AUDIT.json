@@ -1,0 +1,37 @@
+{
+  "build": "510-1405-r20",
+  "checks": {
+    "js": {
+      "files": 157,
+      "errors": []
+    },
+    "php": {
+      "files": 19,
+      "errors": []
+    },
+    "jsonErrors": [],
+    "moduleGraph": {
+      "pass": true,
+      "output": "{\"ok\":true,\"modules\":110}"
+    },
+    "missingImports": [],
+    "features": {
+      "allRoleSyncEvent": true,
+      "rolePatchFilter": true,
+      "serverLogoUpload": true,
+      "oneClickUpdater": true,
+      "updaterProtectsData": true,
+      "smsSingleCenter": true,
+      "smsRealDataProps": true,
+      "insuranceGroupRules": true,
+      "insuranceItemExceptions": true,
+      "insuranceProducts": true,
+      "activeInsurersPatient": true,
+      "appointmentUsesRegisteredDoctorsServices": true,
+      "posPort1197": true,
+      "posNoFakeRrn": true
+    },
+    "updaterUnsupportedFiles": []
+  },
+  "pass": true
+}

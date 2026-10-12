@@ -1,0 +1,4 @@
+/* Licensed B Nazanin / B Titr font binaries intentionally excluded from Git.
+   System-installed local faces work when available; otherwise standard fallbacks apply. */
+@font-face { font-family: 'B Nazanin'; src: local('B Nazanin'), local('BNazanin'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'B Titr'; src: local('B Titr'), local('BTitr'); font-weight: 700; font-display: swap; }

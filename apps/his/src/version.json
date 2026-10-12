@@ -1,0 +1,8 @@
+{
+  "version": "5.1.4",
+  "description": "R24: unified cross-browser barcode scanning, offline CODE128/EAN, retail/purchase workflows and attendance fixes",
+  "release": "20261010-514-r24-scanner-workflow",
+  "build": "514-1405-r24",
+  "buildNumber": 514,
+  "mandatory": false
+}

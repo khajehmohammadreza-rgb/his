@@ -1,0 +1,27 @@
+import { jsx as _jsx, jsxs as _jsxs } from "../../client-vendor/react-jsx-runtime.js?b=r24-514-1405";
+import React, { useState } from '../../client-vendor/react.js?b=r24-514-1405';
+import { ShieldCheck, Search, CheckCircle2, XCircle, RefreshCw, User, X } from '../../client-vendor/lucide-react.js?b=r24-514-1405';
+import { checkSalamatEligibility } from '../utils/salamatApi.js?b=r24-514-1405';
+export const SalamatInsuranceModal = ({ patient, isOpen, onClose, onSavePatientInsurance }) => {
+    const [nationalIdInput, setNationalIdInput] = useState(patient?.nationalId || '');
+    const [loading, setLoading] = useState(false);
+    const [result, setResult] = useState(patient?.salamatInsuranceInfo || null);
+    if (!isOpen)
+        return null;
+    const handleInquiry = async () => { const code = nationalIdInput.trim(); if (!/^\d{10}$/.test(code)) {
+        alert('کد ملی ۱۰ رقمی معتبر وارد کنید.');
+        return;
+    } setLoading(true); try {
+        const rec = await checkSalamatEligibility(code, { environment: 'production' });
+        setResult(rec);
+    }
+    catch (e) {
+        alert('استعلام انجام نشد: ' + e.message);
+    }
+    finally {
+        setLoading(false);
+    } };
+    const save = () => { if (!result || !patient || !result.deserved)
+        return; onSavePatientInsurance(patient.id, result); alert('پاسخ معتبر استعلام در پرونده بیمار ثبت شد.'); onClose(); };
+    return _jsx("div", { className: "fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4 dir-rtl", children: _jsxs("div", { className: "bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 space-y-5 shadow-2xl text-slate-100", children: [_jsxs("div", { className: "flex items-center justify-between border-b border-slate-800 pb-4", children: [_jsxs("div", { className: "flex items-center gap-3", children: [_jsx(ShieldCheck, { className: "w-7 h-7 text-teal-400" }), _jsxs("div", { children: [_jsx("h3", { className: "font-bold", children: "\u0627\u0633\u062A\u0639\u0644\u0627\u0645 \u0628\u06CC\u0645\u0647 \u0633\u0644\u0627\u0645\u062A \u0627\u06CC\u0631\u0627\u0646" }), _jsx("p", { className: "text-xs text-slate-400 mt-1", children: "\u0641\u0642\u0637 \u067E\u0627\u0633\u062E \u0648\u0627\u0642\u0639\u06CC \u0648\u0628\u200C\u0633\u0631\u0648\u06CC\u0633 \u0645\u0639\u062A\u0628\u0631 \u062A\u0644\u0642\u06CC \u0645\u06CC\u200C\u0634\u0648\u062F\u061B \u0642\u0637\u0639 \u0627\u0631\u062A\u0628\u0627\u0637 \u0646\u062A\u06CC\u062C\u0647 \u0645\u062B\u0628\u062A \u0627\u06CC\u062C\u0627\u062F \u0646\u0645\u06CC\u200C\u06A9\u0646\u062F." })] })] }), _jsx("button", { onClick: onClose, className: "p-2 rounded-xl bg-slate-800", children: _jsx(X, { className: "w-4 h-4" }) })] }), _jsxs("div", { className: "bg-slate-800/60 p-4 rounded-2xl border border-slate-700/60 space-y-3", children: [_jsx("label", { className: "block text-xs font-bold text-slate-300", children: "\u06A9\u062F \u0645\u0644\u06CC \u0628\u06CC\u0645\u0627\u0631" }), _jsxs("div", { className: "flex gap-2", children: [_jsx("input", { maxLength: 10, value: nationalIdInput, onChange: e => setNationalIdInput(e.target.value.replace(/\D/g, '')), className: "flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 font-mono" }), _jsxs("button", { onClick: handleInquiry, disabled: loading, className: "bg-teal-500 text-slate-950 font-bold px-5 rounded-xl flex items-center gap-2", children: [loading ? _jsx(RefreshCw, { className: "w-4 h-4 animate-spin" }) : _jsx(Search, { className: "w-4 h-4" }), "\u0627\u0633\u062A\u0639\u0644\u0627\u0645 \u0628\u0631\u062E\u0637"] })] }), patient && _jsxs("p", { className: "text-xs text-slate-400 flex items-center gap-2", children: [_jsx(User, { className: "w-4 h-4" }), patient.fullName] })] }), result && _jsxs("div", { className: `p-5 rounded-2xl border ${result.deserved ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-red-950/20 border-red-500/30'}`, children: [_jsxs("div", { className: "flex items-center gap-3", children: [result.deserved ? _jsx(CheckCircle2, { className: "text-emerald-400" }) : _jsx(XCircle, { className: "text-red-400" }), _jsxs("div", { children: [_jsx("b", { className: result.deserved ? 'text-emerald-300' : 'text-red-300', children: result.deserved ? 'استحقاق درمان فعال' : 'استحقاق فعال تأیید نشد' }), _jsx("p", { className: "text-xs text-slate-400 mt-1", children: result.statusMessage })] })] }), result.deserved && _jsxs("div", { className: "grid grid-cols-2 gap-3 mt-4 text-xs", children: [_jsxs("div", { children: ["\u0646\u0627\u0645: ", _jsx("b", { children: result.fullName || '-' })] }), _jsxs("div", { children: ["\u0635\u0646\u062F\u0648\u0642: ", _jsx("b", { children: result.insuranceBoxName || '-' })] }), _jsxs("div", { children: ["\u067E\u0648\u0634\u0634: ", _jsxs("b", { children: [result.coveragePercent ?? 0, "%"] })] }), _jsxs("div", { children: ["\u0627\u0639\u062A\u0628\u0627\u0631: ", _jsx("b", { children: result.validUntilJalali || '-' })] })] })] }), _jsxs("div", { className: "flex justify-end gap-2", children: [_jsx("button", { onClick: onClose, className: "px-4 py-2 rounded-xl bg-slate-800", children: "\u0628\u0633\u062A\u0646" }), patient && result?.deserved && _jsx("button", { onClick: save, className: "px-4 py-2 rounded-xl bg-emerald-600 font-bold", children: "\u062B\u0628\u062A \u067E\u0627\u0633\u062E \u062F\u0631 \u067E\u0631\u0648\u0646\u062F\u0647" })] })] }) });
+};

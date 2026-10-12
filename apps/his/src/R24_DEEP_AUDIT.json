@@ -1,0 +1,87 @@
+{
+  "product": "Bastiyan HIS",
+  "version": "5.1.4",
+  "build": "514-1405-r24",
+  "date": "2026-10-10",
+  "sourceUploadedZipSHA256": "d91aeb82ad72cb2f7c2811b5262ded346c601d7cd85cca71ddefbd2891ff84c7",
+  "dbMigrationsAdded": 0,
+  "productionOrMobileCameraTested": false,
+  "stagingBackendTested": false,
+  "realPrinterTested": false,
+  "preflight": {
+    "date": "2026-10-10",
+    "version": "5.1.4",
+    "javaScript": 161,
+    "php": 19,
+    "json": 11,
+    "importsChecked": 501,
+    "independentParser": "TypeScript JS grammar",
+    "errors": [],
+    "warnings": []
+  },
+  "regressions": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Barcode Code128 B: 25 internal codes and 3 scales",
+        "pass": true
+      },
+      {
+        "name": "Barcode normalization: Persian/Arabic digits and spaces",
+        "pass": true
+      },
+      {
+        "name": "Barcode code128 bad input rejected",
+        "pass": true
+      },
+      {
+        "name": "EAN-13/checksum from pure signal",
+        "pass": true
+      },
+      {
+        "name": "Clinic barcode unique and never impersonates GS1 EAN",
+        "pass": true
+      },
+      {
+        "name": "Excel procurement: missing barcode creates valid unique BHS Code128 labels",
+        "pass": true
+      },
+      {
+        "name": "Patient journey: create -> doctor -> nurse -> payment -> discharge",
+        "pass": true
+      },
+      {
+        "name": "Patient flow prevents invalid updates to closed record",
+        "pass": true
+      },
+      {
+        "name": "Staff journey: shift 8:00-16:00 (late 15min, early exit 10min)",
+        "pass": true
+      },
+      {
+        "name": "Staff overnight shift: 22:00-06:00 without negative or zero duration",
+        "pass": true
+      }
+    ]
+  },
+  "testedActions": [
+    "EAN13 and Code128 synthetic scan with checksums",
+    "internal label ID generation",
+    "patient synthetic encounter transitions with product and full payment",
+    "no duplicate consumption on re-save",
+    "staff daytime metrics",
+    "staff overnight metrics"
+  ],
+  "notVerified": [
+    "iOS Safari camera permissions/capabilities",
+    "actual scanner focus at varying angles and damaged labels",
+    "thermal printer physical output",
+    "full production workflow with server insurance, SMS and real database"
+  ],
+  "moduleImportNode": "App457-final/PurchaseEntry/BarcodeCameraScanner434 imported with mock storage",
+  "browserInteractiveValidation": "unavailable: local browser navigation blocked in execution environment",
+  "realDeviceTests": false,
+  "releaseDate": "2026-10-10"
+}

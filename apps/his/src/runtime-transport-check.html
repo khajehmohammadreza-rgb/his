@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bastiyan R19 Runtime Transport Check</title>
+<style>
+body{margin:0;background:#020617;color:#e2e8f0;font-family:Tahoma,sans-serif}
+main{max-width:900px;margin:6vh auto;padding:22px;background:#0f172a;border:1px solid #334155;border-radius:20px}
+.ok{color:#6ee7b7} .bad{color:#fda4af} pre{direction:ltr;text-align:left;white-space:pre-wrap;background:#020617;padding:12px;border-radius:12px}
+</style>
+</head><body><main>
+<h1>بررسی انتقال Runtime — R19</h1>
+<p>Build: <b>514-1405-r24</b></p>
+<div id="status">در حال آزمایش...</div><pre id="detail"></pre>
+<script>
+(async()=>{
+ const out=document.getElementById('detail'),st=document.getElementById('status');
+ const targets=['runtime/app/vendor-runtime.js','runtime/app/main457-final.js','runtime/client-vendor/react.js'];
+ const result=[];
+ for(const u of targets){
+   try{
+     const r=await fetch(u+'?diag='+Date.now(),{cache:'no-store'});
+     const expected=Number(r.headers.get('x-bastiyan-asset-bytes')||0);
+     const b=await r.arrayBuffer();
+     result.push({url:u,status:r.status,expected,actual:b.byteLength,stream:r.headers.get('x-bastiyan-runtime-stream'),ok:r.ok&&(!expected||expected===b.byteLength)});
+   }catch(e){ result.push({url:u,ok:false,error:String(e?.message||e)}); }
+ }
+ const ok=result.every(x=>x.ok);
+ st.className=ok?'ok':'bad'; st.textContent=ok?'✅ انتقال Runtime سالم است':'❌ انتقال Runtime ناقص است';
+ out.textContent=JSON.stringify(result,null,2);
+})();
+</script></main></body></html>

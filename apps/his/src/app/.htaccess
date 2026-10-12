@@ -1,0 +1,18 @@
+Options -Indexes -MultiViews
+<IfModule mod_mime.c>
+  AddType application/javascript .js .mjs
+  AddType application/json .json
+  AddType text/css .css
+</IfModule>
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_URI} \.(?:js|mjs|json|css|map|woff|woff2|ttf|svg|wasm)$ [NC]
+  RewriteRule ^ - [R=404,L]
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.(?:html|js|mjs|json)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+  </FilesMatch>
+</IfModule>

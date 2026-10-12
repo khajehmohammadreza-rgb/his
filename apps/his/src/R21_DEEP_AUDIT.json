@@ -1,0 +1,39 @@
+{
+  "version": "5.1.1",
+  "build": "512-1405-r22",
+  "generatedAt": "2026-10-07T19:19:00+03:30",
+  "basePackage": "Bastiyan-HIS-5.1.0-R20-DATA-UPDATER-INSURANCE-SMS-POS(1).zip",
+  "implemented": [
+    "Admin-configurable automatic backup schedule (interval or explicit daily times) and retention count",
+    "Reception insurance catalog propagation fix",
+    "Central Integration/API vault for Kavenegar, identity, Chabokan AI/platform and insurance credentials/modes",
+    "Dashboard R21 redesign with operational KPIs, quick actions and secretary attendance registration",
+    "Quick-create service/product in shared clinical catalog picker with central state persistence",
+    "Lilian Chabokan-compatible AI planning path, superadmin Development mode UI and patient contact query tool",
+    "Fiscal-year normalization and application to core financial document collections",
+    "Duplicate SMS/API configuration reduction and centralization"
+  ],
+  "safety": [
+    "Integration secrets are masked on read and stored using server-side encrypted integration configuration",
+    "Insurance portal credentials are not treated as an official software API credential",
+    "Arbitrary untested direct production code/database mutation by AI is intentionally not enabled",
+    "Existing updater pipeline remains the deployment safety boundary with backup/health-check/rollback behavior"
+  ],
+  "knownBoundary": [
+    "Portal RPA for insurers is configured as a mode but a live browser automation adapter is not shipped because insurer-specific DOM/MFA/consent must be validated in the deployment environment",
+    "Chabokan platform token/service settings are stored, but automatic arbitrary deploy-hook execution is not enabled in this package",
+    "Quick-create is implemented in the shared clinical catalog path used by core clinical workflows; legacy direct-select screens may require migration to the shared picker in a future cleanup"
+  ],
+  "research": {
+    "tamin": "Public guidance distinguishes direct portal usage from independent software integrations using middleware/API; OTP may be required for clinician login.",
+    "chabokan": "Current Chabokan CLI supports API-token login and `chabok deploy`; Chabokan documents CI/CD and cron capabilities."
+  },
+  "validation": {
+    "javascriptSyntaxFiles": 158,
+    "phpSyntaxFiles": 19,
+    "jsonFilesParsed": 8,
+    "relativeImportsChecked": 483,
+    "manifestHashesVerified": 216,
+    "failures": 0
+  }
+}

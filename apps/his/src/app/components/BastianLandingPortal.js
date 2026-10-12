@@ -1,0 +1,7 @@
+import { jsx as _jsx, jsxs as _jsxs } from "../../client-vendor/react-jsx-runtime.js?b=r24-514-1405";
+import React from '../../client-vendor/react.js?b=r24-514-1405';
+/**
+ * Legacy in-app landing component retained only for source compatibility.
+ * Production authentication is handled by portal.js + the PHP/SQLite backend.
+ */
+export const BastianLandingPortal = () => (_jsx("div", { className: "min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-6", dir: "rtl", children: _jsxs("div", { className: "max-w-lg w-full rounded-2xl border border-slate-700 bg-slate-900 p-6 text-center", children: [_jsx("h1", { className: "text-xl font-bold mb-3", children: "\u062F\u0631\u06AF\u0627\u0647 \u0648\u0631\u0648\u062F \u0627\u0645\u0646 \u0628\u0627\u0633\u062A\u06CC\u0627\u0646" }), _jsx("p", { className: "text-slate-300 text-sm", children: "\u0648\u0631\u0648\u062F \u0645\u062F\u06CC\u0631\u06CC\u062A \u06A9\u0644 \u0648 \u06A9\u0627\u0631\u0628\u0631\u0627\u0646 \u0645\u0631\u0627\u06A9\u0632 \u0641\u0642\u0637 \u0627\u0632 \u062F\u0631\u06AF\u0627\u0647 \u0645\u0631\u06A9\u0632\u06CC \u0627\u0645\u0646 \u0627\u0646\u062C\u0627\u0645 \u0645\u06CC\u200C\u0634\u0648\u062F." }), _jsx("button", { className: "mt-5 w-full rounded-xl bg-cyan-600 py-3 font-bold", onClick: () => window.location.reload(), children: "\u0628\u0627\u0632\u06AF\u0634\u062A \u0628\u0647 \u062F\u0631\u06AF\u0627\u0647" })] }) }));

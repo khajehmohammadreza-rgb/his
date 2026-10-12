@@ -1,0 +1,5 @@
+{
+  "complete": true,
+  "resolverVersion": "2026-08-08-r8",
+  "note": "Production UI uses app/main457-final.js with local vendor bridges; no runtime CDN dependency."
+}
