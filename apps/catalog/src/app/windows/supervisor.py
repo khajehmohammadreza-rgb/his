@@ -1,7 +1,7 @@
 """Watchdog and entrypoint for both source and self-contained PyInstaller Windows builds."""
 import os,sys,subprocess,time,threading,sqlite3,shutil,socket,webbrowser,json,ssl,urllib.request,ctypes,traceback
 from pathlib import Path
-from connection_agent import start
+from connection_agent import start, LOCAL_PORT, CLIENT_VERSION
 HERE=Path(sys._MEIPASS) if getattr(sys,'frozen',False) else Path(__file__).resolve().parent.parent
 sys.path.insert(0,str(HERE))
 import server as server_app
@@ -42,8 +42,8 @@ def explain_failure(reason):
 
 def local_proxy_already_running():
     try:
-        with urllib.request.urlopen('http://127.0.0.1:8775/__agent/status',timeout=1.5) as response:
-            return isinstance(json.load(response),dict)
+        with urllib.request.urlopen(f'http://127.0.0.1:{LOCAL_PORT}/__agent/status',timeout=1.5) as response:
+            return (lambda info:isinstance(info,dict) and info.get('service')=='bastiyan-catalog-client' and info.get('bridge_version')==CLIENT_VERSION)(json.load(response))
     except (OSError,ValueError):
         return False
 
@@ -145,7 +145,7 @@ def main():
                 raise SystemExit(1)
         print('Bastiyan Catalog SERVER READY: https://127.0.0.1:8765  |  data: '+str(DATA),flush=True)
         if local_proxy_already_running():
-            webbrowser.open('http://127.0.0.1:8775/')
+            webbrowser.open(f'http://127.0.0.1:{LOCAL_PORT}/')
             while True:
                 time.sleep(10)
         # The local client will discover this already-verified server directly without UDP.
