@@ -1,7 +1,7 @@
-name: Bastiyan Catalog v2.4 Connection Recovery CI
+name: Bastiyan Catalog v2.5 Stale-Bridge Isolation CI
 on:
   push:
-    branches: [main, 'fix/catalog-stale-trust-automatic-v24']
+    branches: [main, 'fix/catalog-bridge-port-v25']
     paths:
       - 'apps/catalog/**'
       - '.github/workflows/catalog-native-build.yml'
@@ -127,18 +127,18 @@ jobs:
               for i in range(35):
                   if client.poll() is not None:break
                   try:
-                      with urllib.request.urlopen('http://127.0.0.1:8775/__agent/status',timeout=1) as rsp:
+                      with urllib.request.urlopen('http://127.0.0.1:8776/__agent/status',timeout=1) as rsp:
                           o=json.load(rsp)
                           if o.get('connected'): connected=True;break
                   except Exception:time.sleep(.5)
               if not connected:
                   state={}
                   try:
-                      with urllib.request.urlopen('http://127.0.0.1:8775/__agent/status',timeout=1) as rsp:state=json.load(rsp)
+                      with urllib.request.urlopen('http://127.0.0.1:8776/__agent/status',timeout=1) as rsp:state=json.load(rsp)
                   except Exception as exc:state={'error':str(exc)}
                   print('CLIENT:',state,flush=True)
                   raise AssertionError("Actual built client EXE failed to connect to actual built server EXE")
-              with urllib.request.urlopen('http://127.0.0.1:8775/api/status',timeout=3) as rsp:
+              with urllib.request.urlopen('http://127.0.0.1:8776/api/status',timeout=3) as rsp:
                   assert json.load(rsp)['ok']
               print("Actual CLIENT EXE and HTTP bridge ready; full end-to-end pass",flush=True)
           finally:
@@ -149,7 +149,7 @@ jobs:
                       subprocess.run(['taskkill','/F','/T','/PID',str(p.pid)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
                       try:p.wait(timeout=5)
                       except subprocess.TimeoutExpired:p.kill();p.wait(timeout=5)
-              for port in (8765,8775):
+              for port in (8765,8776):
                   import socket
                   for attempt in range(24):
                       sock=socket.socket()
@@ -165,7 +165,20 @@ jobs:
         shell: pwsh
         run: |
           @'
-          import os,subprocess,urllib.request,json,ssl,time,pathlib,tempfile
+          import os,subprocess,urllib.request,json,ssl,time,pathlib,tempfile,threading
+          from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
+          # Reproduce a broken v2.4 client still occupying port 8775.
+          class LegacyClient(BaseHTTPRequestHandler):
+              def do_GET(self):
+                  payload=b'{"service":"bastiyan-catalog-client","connected":false}'
+                  self.send_response(200)
+                  self.send_header('Content-Type','application/json')
+                  self.send_header('Content-Length',str(len(payload)))
+                  self.end_headers()
+                  self.wfile.write(payload)
+              def log_message(self,*args):pass
+          legacy=ThreadingHTTPServer(('127.0.0.1',8775),LegacyClient)
+          threading.Thread(target=legacy.serve_forever,daemon=True).start()
           data=pathlib.Path(tempfile.mkdtemp(prefix='bastiyan-launcher-'))
           env=dict(os.environ,LOCALAPPDATA=str(data),PYTHONIOENCODING='utf-8')
           serverexe=str(pathlib.Path('dist/Bastiyan-Catalog-Server.exe').resolve())
@@ -179,7 +192,7 @@ jobs:
                   try:
                       with urllib.request.urlopen('https://127.0.0.1:8765/api/status',timeout=1,context=ctx) as rsp:
                           healthy=json.load(rsp).get('database')=='ready'
-                      with urllib.request.urlopen('http://127.0.0.1:8775/__agent/status',timeout=1) as rsp:
+                      with urllib.request.urlopen('http://127.0.0.1:8776/__agent/status',timeout=1) as rsp:
                           bridge=json.load(rsp)
                       if healthy and bridge.get('connected'):ok=True;break
                   except Exception: time.sleep(.5)
@@ -198,7 +211,7 @@ jobs:
               errors=[]
               for attempt in range(8):
                   try:
-                      with urllib.request.urlopen('http://127.0.0.1:8775/api/status',timeout=4) as rsp:
+                      with urllib.request.urlopen('http://127.0.0.1:8776/api/status',timeout=4) as rsp:
                           stable=bool(json.load(rsp).get('ok'))
                       if stable:break
                   except Exception as exc:
@@ -214,6 +227,8 @@ jobs:
               subprocess.run(['taskkill','/F','/T','/PID',str(p.pid)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
               try:p.wait(timeout=6)
               except subprocess.TimeoutExpired:p.kill()
+              legacy.shutdown()
+              legacy.server_close()
           '@ | python -
       - name: Compile actual Windows installers
 
@@ -230,10 +245,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Server setup compile failed' }
           & $compiler 'catalog-client-installer.iss'
           if ($LASTEXITCODE -ne 0) { throw 'Client setup compile failed' }
-          if (!(Test-Path 'dist/Bastiyan-Catalog-Server-Setup-v2.4.exe')) { throw 'Server installer missing' }
-          if (!(Test-Path 'dist/Bastiyan-Catalog-Client-Setup-v2.4.exe')) { throw 'Client installer missing' }
+          if (!(Test-Path 'dist/Bastiyan-Catalog-Server-Setup-v2.5.exe')) { throw 'Server installer missing' }
+          if (!(Test-Path 'dist/Bastiyan-Catalog-Client-Setup-v2.5.exe')) { throw 'Client installer missing' }
       - uses: actions/upload-artifact@v4
         with:
-          name: Bastiyan-Catalog-v2.4-WINDOWS-INSTALLERS
+          name: Bastiyan-Catalog-v2.5-WINDOWS-INSTALLERS
           path: dist/*.exe
           if-no-files-found: error
