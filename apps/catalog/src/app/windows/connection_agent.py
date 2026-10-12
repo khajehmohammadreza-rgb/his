@@ -5,13 +5,19 @@ verified against a pinned per-center local CA. First use is trust-on-first-use
 on a *private* LAN; never use on untrusted Wi-Fi at initial pairing.
 """
 from __future__ import annotations
-import hashlib, http.client, ipaddress, json, os, socket, ssl, threading, time, urllib.request, urllib.error, webbrowser, concurrent.futures
+import hashlib, http.client, ipaddress, json, os, socket, ssl, threading, time, urllib.request, urllib.error, webbrowser, concurrent.futures, sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 MAGIC=b'BASTIYAN_CATALOG_DISCOVER_V2'
 ROOT=Path(os.environ.get('LOCALAPPDATA') or (Path.home()/'.bastiyan'))/'Bastiyan Catalog'
 ROOT.mkdir(parents=True,exist_ok=True)
+# PyInstaller --windowed gives stdout/stderr=None on Windows. A print() call
+# otherwise terminates the client after showing an endless searching page.
+if sys.stdout is None:
+    sys.stdout=(ROOT/'client.log').open('a',encoding='utf-8',errors='replace')
+if sys.stderr is None:
+    sys.stderr=(ROOT/'client.log').open('a',encoding='utf-8',errors='replace')
 CONFIG=ROOT/'trusted-center.json'
 CA=ROOT/'trusted-center-ca.crt'
 LOCAL_DATA=ROOT/'data'
