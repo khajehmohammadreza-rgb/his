@@ -1,0 +1,26 @@
+name: Remove fully merged release synchronization branch
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cleanup-release-sync.yml'
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    if: github.repository == 'khajehmohammadreza-rgb/his'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Confirm synchronization is merged and remove temporary branch
+        run: |
+          set -euo pipefail
+          git fetch origin main release-sync-20261012
+          git merge-base --is-ancestor origin/release-sync-20261012 origin/main
+          git cat-file -e origin/main:apps/his/src/version.json
+          git cat-file -e origin/main:apps/his/src/api/config.local.example.php
+          git cat-file -e origin/main:apps/catalog/src/app/server.py
+          git push origin --delete release-sync-20261012
