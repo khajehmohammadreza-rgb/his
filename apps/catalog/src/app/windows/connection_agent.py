@@ -107,11 +107,14 @@ class Link:
                 return False
             pin=hashlib.sha256(root).hexdigest()
             config={'server_id':identity,'ca_sha256':pin,'host':'127.0.0.1'}
-            # Local proof holds: use replace to avoid partial trust files.
-            for path,data in ((CA,root),(CONFIG,json.dumps(config).encode('utf-8'))):
-                temp=path.with_name(path.name+'.new')
-                temp.write_bytes(data)
-                os.replace(temp,path)
+            # Avoid rewriting the pinned files every few seconds on healthy links.
+            with self.lock:
+                already=(self.config==config)
+            if not already or not CA.exists() or CA.read_bytes()!=root:
+                for path,data in ((CA,root),(CONFIG,json.dumps(config).encode('utf-8'))):
+                    temp=path.with_name(path.name+'.new')
+                    temp.write_bytes(data)
+                    os.replace(temp,path)
             with self.lock:
                 self.config=config
                 self.ctx=ctx
