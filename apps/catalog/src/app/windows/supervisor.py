@@ -22,7 +22,7 @@ def local_status():
         ctx=ssl.create_default_context(cafile=str(ca))
         with urllib.request.urlopen('https://127.0.0.1:8765/api/status',timeout=1.5,context=ctx) as response:
             result=json.loads(response.read(4096))
-        if result.get('ok') and result.get('https') and result.get('database')=='ready':
+        if result.get('ok') and result.get('https') and result.get('database')=='ready' and result.get('version')==server_app.VERSION:
             return result
     except (OSError,ValueError,ssl.SSLError):
         pass
