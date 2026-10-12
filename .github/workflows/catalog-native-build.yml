@@ -89,6 +89,8 @@ jobs:
       - name: Compile actual Windows installers
         shell: pwsh
         run: |
+          Copy-Item 'apps/catalog/installers/catalog-server-installer.iss' 'catalog-server-installer.iss' -Force
+          Copy-Item 'apps/catalog/installers/catalog-client-installer.iss' 'catalog-client-installer.iss' -Force
           $compiler = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
           if (!(Test-Path $compiler)) {
             choco install innosetup --yes --no-progress
