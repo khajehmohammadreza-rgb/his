@@ -131,7 +131,7 @@ def main():
             while True:
                 time.sleep(10)
         # The local client will discover this already-verified server directly without UDP.
-        start()
+        start(open_browser='--no-browser' not in sys.argv)
     except KeyboardInterrupt:
         return
 
