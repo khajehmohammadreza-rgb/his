@@ -1,0 +1,29 @@
+{
+  "updated_at": "2026-10-12",
+  "repository": "khajehmohammadreza-rgb/his",
+  "products": {
+    "his": {
+      "version": "5.1.4",
+      "release": "R24",
+      "status": "source_import_staging",
+      "path": "apps/his/src",
+      "validated_source_sha256": "7d6f39a14e3add99104bba94402f5014be0cbeccccd2e552328e19fef8927849",
+      "production_deploy": false
+    },
+    "catalog": {
+      "version": "2.2",
+      "status": "source_and_build_in_main",
+      "path": "apps/catalog/src"
+    },
+    "kiosk": {
+      "last_known_version": "3.3.19",
+      "status": "awaiting_verifiable_archive",
+      "source_imported": false
+    },
+    "his_ai_experimental": {
+      "release": "R25",
+      "status": "awaiting_verifiable_archive",
+      "promoted": false
+    }
+  }
+}

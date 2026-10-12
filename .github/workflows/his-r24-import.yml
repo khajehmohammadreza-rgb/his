@@ -1,0 +1,72 @@
+name: Import validated HIS R24 source (one time)
+on:
+  push:
+    branches: [release-sync-20261012]
+    paths:
+      - '.github/workflows/his-r24-import.yml'
+      - '.release-import/chunks/**'
+permissions:
+  contents: write
+jobs:
+  materialize:
+    if: github.repository == 'khajehmohammadreza-rgb/his'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: release-sync-20261012
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Verify exact source archive before extraction
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/bastiyan
+          cat .release-import/chunks/part-* > /tmp/bastiyan/his-r24.tar.xz
+          echo "b37dfce66532d407db6d817b8e453633cfae5257b5730a04b557ffa790eba3df  /tmp/bastiyan/his-r24.tar.xz" | sha256sum -c -
+          python3 - <<'PY'
+          import tarfile, pathlib
+          p=pathlib.Path('/tmp/bastiyan/his-r24.tar.xz')
+          with tarfile.open(p, 'r:xz') as t:
+              members=t.getmembers()
+              assert len(members)>=200, len(members)
+              for member in members:
+                  pp=pathlib.PurePosixPath(member.name)
+                  assert member.isfile(), member.name
+                  assert not pp.is_absolute() and '..' not in pp.parts, member.name
+                  assert member.size<10000000, member.name
+          print("Archive safe to extract, files:", len(members))
+          PY
+      - name: Extract HIS into isolated directory only
+        run: |
+          mkdir -p apps/his/src
+          tar -xJf /tmp/bastiyan/his-r24.tar.xz -C apps/his/src --no-same-owner --no-same-permissions
+          test -f apps/his/src/version.json
+          test -f apps/his/src/app/main457-final.js
+          test -f apps/his/src/api/config.php
+          test ! -f apps/his/src/api/config.local.php
+          test ! -f apps/his/src/fonts/BNazanin.ttf
+          test ! -d apps/his/src/api/data
+      - name: Validate PHP JSON and R24 scenario regression
+        run: |
+          set -euo pipefail
+          cd apps/his/src
+          find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l >/tmp/bastiyan-php-lint.log
+          python3 - <<'PY'
+          import json,pathlib
+          found=list(pathlib.Path('.').rglob('*.json'))
+          for p in found: json.loads(p.read_text(encoding='utf-8'))
+          print("Valid JSON files:",len(found))
+          PY
+          node --experimental-default-type=module tests/r24-regression.mjs >/tmp/bastiyan-r24-regression.log
+          tail -n 15 /tmp/bastiyan-r24-regression.log
+      - name: Commit verified sources and remove temporary source transport
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -r .release-import/chunks
+          git rm .github/workflows/his-r24-import.yml
+          git add apps/his/src
+          git commit -m 'feat(his): import validated R24 5.1.4 sources and safe public configuration'
+          git push origin HEAD:release-sync-20261012
