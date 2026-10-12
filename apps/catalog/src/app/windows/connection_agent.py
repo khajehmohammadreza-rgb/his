@@ -30,7 +30,27 @@ def discover(timeout=1.6):
     with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as sock:
         sock.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
         sock.settimeout(0.35)
-        targets=['127.0.0.1','255.255.255.255']
+        # Directed subnet broadcasts work on LANs where the all-ones broadcast is blocked.
+        targets={'127.0.0.1','255.255.255.255'}
+        candidates=[]
+        try:
+            candidates += [item[4][0] for item in socket.getaddrinfo(socket.gethostname(),None,socket.AF_INET)]
+        except OSError:
+            pass
+        try:
+            probe=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+            probe.connect(('1.1.1.1',80))
+            candidates.append(probe.getsockname()[0])
+            probe.close()
+        except OSError:
+            pass
+        for address in candidates:
+            try:
+                ip=ipaddress.ip_address(address)
+                if ip.is_private and not ip.is_loopback and not ip.is_link_local:
+                    targets.add(str(ipaddress.IPv4Network(f'{ip}/24',strict=False).broadcast_address))
+            except ValueError:
+                pass
         for target in targets:
             try:sock.sendto(MAGIC,(target,PORT+1))
             except OSError:pass
@@ -77,37 +97,71 @@ class Link:
                     x.get('server_id')==instance and x.get('database')=='ready')
         except (OSError,ValueError,ssl.SSLError):return False
 
+    def _pair_host(self,host,beacon=None):
+        """Authenticate a candidate before updating the trusted center; no blind re-pair."""
+        if not is_lan(host):
+            return False
+        with self.lock:
+            cached=dict(self.config or {})
+            ctx=self.ctx
+        try:
+            if cached:
+                if not ctx or not self.check(host,ctx,cached.get('server_id')):
+                    return False
+                cfg={**cached,'host':host}
+            else:
+                root=fetch_ca_first_use(host)
+                thumb=hashlib.sha256(root).hexdigest()
+                if beacon and thumb!=beacon.get('ca_sha256'):
+                    return False
+                ctx=ssl.create_default_context(cadata=root.decode('ascii'))
+                with urllib.request.urlopen('https://'+host+':8765/api/status',timeout=2.5,context=ctx) as r:
+                    status=json.loads(r.read(4096))
+                identity=status.get('server_id')
+                if not isinstance(identity,str) or len(identity)<10 or status.get('ok') is not True or status.get('https') is not True or status.get('database')!='ready':
+                    return False
+                if beacon and identity!=beacon.get('server_id'):
+                    return False
+                cfg={'server_id':identity,'ca_sha256':thumb,'host':host}
+                CA.write_bytes(root)
+                try:os.chmod(CA,0o600)
+                except OSError:pass
+            CONFIG.write_text(json.dumps(cfg),encoding='utf-8')
+            try:os.chmod(CONFIG,0o600)
+            except OSError:pass
+            with self.lock:
+                self.host=host
+                self.ctx=ctx
+                self.config=cfg
+                self.last_ping=time.monotonic()
+                self.error=''
+            return True
+        except (OSError,ValueError,ssl.SSLError,UnicodeError):
+            return False
+
     def connect(self):
-        with self.lock:cached=dict(self.config or {});old_host=self.host;old_ctx=self.ctx
+        with self.lock:
+            cached=dict(self.config or {})
+            old_host=self.host
+            old_ctx=self.ctx
         if old_host and old_ctx and self.check(old_host,old_ctx,cached.get('server_id')):
-            with self.lock:self.last_ping=time.monotonic();self.error='';return True
-        if cached.get('host') and old_ctx and self.check(cached['host'],old_ctx,cached.get('server_id')):
-            with self.lock:self.host=cached['host'];self.last_ping=time.monotonic();self.error='';return True
-        for host,beacon in discover(timeout=1.0):
+            with self.lock:self.last_ping=time.monotonic();self.error=''
+            return True
+        # Guaranteed same-machine path: never require UDP broadcast for local server.
+        if self._pair_host('127.0.0.1'):
+            return True
+        if cached.get('host') and cached['host']!='127.0.0.1' and self._pair_host(cached['host']):
+            return True
+        for host,beacon in discover(timeout=1.6):
             if cached and (beacon['server_id']!=cached.get('server_id') or beacon['ca_sha256']!=cached.get('ca_sha256')):
                 continue
-            try:
-                if cached:
-                    ctx=old_ctx;root=None
-                else:
-                    root=fetch_ca_first_use(host)
-                    if hashlib.sha256(root).hexdigest()!=beacon['ca_sha256']:continue
-                    ctx=ssl.create_default_context(cadata=root.decode('ascii'))
-                if not self.check(host,ctx,beacon['server_id']):continue
-                if not cached:
-                    # Keep trust anchor for reconnect after address/certificate rotation.
-                    CA.write_bytes(root)
-                    config={'server_id':beacon['server_id'],'ca_sha256':beacon['ca_sha256'],'host':host}
-                    CONFIG.write_text(json.dumps(config),encoding='utf-8')
-                    try:os.chmod(CONFIG,0o600);os.chmod(CA,0o600)
-                    except OSError:pass
-                else:
-                    config={**cached,'host':host};CONFIG.write_text(json.dumps(config),encoding='utf-8')
-                with self.lock:
-                    self.host=host;self.ctx=ctx;self.config=config;self.last_ping=time.monotonic();self.error=''
+            if self._pair_host(host,beacon):
                 return True
-            except (OSError,ValueError,ssl.SSLError):continue
-        with self.lock:self.host=None;self.error='سرور پیدا نشد؛ برنامه خودکار دوباره تلاش می‌کند.'
+        with self.lock:
+            self.host=None
+            self.error=('مرکز قبلی پاسخ نمی‌دهد یا شناسه گواهی تغییر کرده است. شبکه و سرور را بررسی کنید.'
+                        if cached else
+                        'هنوز سرور فعالی پیدا نشده است. رایانه مادر باید روشن و به همین شبکه متصل باشد.')
         return False
 
     def keepalive(self):
@@ -117,7 +171,7 @@ class Link:
 
 LINK=Link()
 
-OFFLINE='''<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>اتصال باستیان</title><style>body{background:#edf3fb;font-family:Tahoma,sans-serif;color:#193752;display:grid;place-items:center;min-height:90vh}.panel{padding:35px;max-width:540px;background:white;border-radius:24px;text-align:center;box-shadow:0 15px 40px #17314d19}h1{font-size:26px}small{color:#557}.dot{height:13px;width:13px;background:#ed9d28;border-radius:50%;display:inline-block;animation:a 1s infinite alternate}@keyframes a{to{opacity:.25}}</style><div class="panel"><h1>گردآورنده باستیان</h1><p><span class="dot"></span> در حال جست‌وجو و اتصال خودکار به سرور مرکز</p><p>برنامه فعال است؛ نیازی به واردکردن IP یا اجرای مجدد نیست.</p><small id="err"></small></div><script>setInterval(async()=>{try{const r=await fetch('/__agent/status',{cache:'no-store'});const d=await r.json();if(d.connected)location.replace('/');else document.getElementById('err').textContent=d.message||''}catch{}},2500)</script></html>'''.encode('utf-8')
+OFFLINE='''<!doctype html><html lang="fa" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>اتصال باستیان</title><style>body{background:#edf3fb;font-family:Tahoma,sans-serif;color:#193752;display:grid;place-items:center;min-height:90vh}.panel{padding:35px;max-width:540px;background:white;border-radius:24px;text-align:center;box-shadow:0 15px 40px #17314d19}h1{font-size:26px}small{color:#557}.dot{height:13px;width:13px;background:#ed9d28;border-radius:50%;display:inline-block;animation:a 1s infinite alternate}@keyframes a{to{opacity:.25}}</style><div class="panel"><h1>گردآورنده باستیان</h1><p><span class="dot"></span> در حال جست‌وجو و اتصال خودکار به سرور مرکز</p><p>در حال بررسی اتصال محلی و شبکه هستیم. در صورت تداوم مشکل، وضعیت رایانه مادر و Firewall را بررسی کنید.</p><small id="err"></small></div><script>setInterval(async()=>{try{const r=await fetch('/__agent/status',{cache:'no-store'});const d=await r.json();if(d.connected)location.replace('/');else document.getElementById('err').textContent=d.message||''}catch{}},2500)</script></html>'''.encode('utf-8')
 
 class Proxy(BaseHTTPRequestHandler):
     protocol_version='HTTP/1.1'
