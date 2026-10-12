@@ -5,7 +5,7 @@ verified against a pinned per-center local CA. First use is trust-on-first-use
 on a *private* LAN; never use on untrusted Wi-Fi at initial pairing.
 """
 from __future__ import annotations
-import hashlib, http.client, ipaddress, json, os, socket, ssl, threading, time, urllib.request, urllib.error, webbrowser
+import hashlib, http.client, ipaddress, json, os, socket, ssl, threading, time, urllib.request, urllib.error, webbrowser, concurrent.futures
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -14,6 +14,7 @@ ROOT=Path(os.environ.get('LOCALAPPDATA') or (Path.home()/'.bastiyan'))/'Bastiyan
 ROOT.mkdir(parents=True,exist_ok=True)
 CONFIG=ROOT/'trusted-center.json'
 CA=ROOT/'trusted-center-ca.crt'
+LOCAL_DATA=ROOT/'data'
 PORT=8765
 LOCAL_PORT=8775
 
@@ -87,6 +88,89 @@ class Link:
                     self.config=c;self.ctx=ssl.create_default_context(cafile=str(CA))
         except (OSError,ValueError,ssl.SSLError):pass
         self.last_ping=0;self.error='در حال جست‌وجوی سرور مرکز…';self.stop=threading.Event()
+        self.last_scan=0;self.last_error_kind='starting';self.last_mode='';self.scan_interval=55
+
+    def _local_trusted_center(self):
+        """Recover a stale client pin ONLY from the authentic CA and identity on this PC.
+        Never accept a changed certificate from an unverified remote host."""
+        certificate=LOCAL_DATA/'bastiyan-local-CA.crt'
+        marker=LOCAL_DATA/'server-identity.txt'
+        if not certificate.is_file() or not marker.is_file():
+            return False
+        try:
+            root=certificate.read_bytes()
+            identity=marker.read_text(encoding='ascii').strip()
+            if len(identity)<10 or len(root)>16384:
+                return False
+            ctx=ssl.create_default_context(cadata=root.decode('ascii'))
+            if not self.check('127.0.0.1',ctx,identity):
+                return False
+            pin=hashlib.sha256(root).hexdigest()
+            config={'server_id':identity,'ca_sha256':pin,'host':'127.0.0.1'}
+            # Local proof holds: use replace to avoid partial trust files.
+            for path,data in ((CA,root),(CONFIG,json.dumps(config).encode('utf-8'))):
+                temp=path.with_name(path.name+'.new')
+                temp.write_bytes(data)
+                os.replace(temp,path)
+            with self.lock:
+                self.config=config
+                self.ctx=ctx
+                self.host='127.0.0.1'
+                self.last_ping=time.monotonic()
+                self.last_error_kind=''
+                self.last_mode='same-machine'
+                self.error=''
+            return True
+        except (OSError,ValueError,UnicodeError,ssl.SSLError):
+            return False
+
+    @staticmethod
+    def _candidate_subnets():
+        """Scan only the current RFC1918 /24, not the internet or large LANs."""
+        ips=set()
+        try:
+            ips.update(x[4][0] for x in socket.getaddrinfo(socket.gethostname(),None,socket.AF_INET))
+        except OSError:
+            pass
+        try:
+            sock=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+            try:
+                sock.connect(('1.1.1.1',80))
+                ips.add(sock.getsockname()[0])
+            finally:sock.close()
+        except OSError:
+            pass
+        subnets=[]
+        for item in ips:
+            try:
+                ip=ipaddress.ip_address(item)
+                if ip.version==4 and ip.is_private and not ip.is_loopback and not ip.is_link_local:
+                    network=ipaddress.IPv4Network(f'{ip}/24',strict=False)
+                    if network not in subnets:subnets.append(network)
+            except ValueError:
+                pass
+        return subnets[:2]
+
+    def _probe_port(self,host):
+        try:
+            with socket.create_connection((host,PORT),timeout=.28):
+                return host
+        except OSError:
+            return None
+
+    def _scan_candidates(self):
+        """Bounded, infrequent fallback when UDP broadcasts are blocked by Wi-Fi."""
+        now=time.monotonic()
+        if now-self.last_scan<self.scan_interval:
+            return []
+        self.last_scan=now
+        candidates=[]
+        networks=self._candidate_subnets()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=24) as pool:
+            for network in networks:
+                results=pool.map(self._probe_port,(str(ip) for ip in network.hosts()))
+                candidates.extend(host for host in results if host)
+        return candidates
 
     def check(self,host,ctx,instance):
         if not is_lan(host):return False
@@ -148,7 +232,12 @@ class Link:
             with self.lock:self.last_ping=time.monotonic();self.error=''
             return True
         # Guaranteed same-machine path: never require UDP broadcast for local server.
+        # The local server's identity + CA files are stronger proof than old
+        # cached client configuration and can repair it without user interaction.
+        if self._local_trusted_center():
+            return True
         if self._pair_host('127.0.0.1'):
+            with self.lock:self.last_mode='localhost'
             return True
         if cached.get('host') and cached['host']!='127.0.0.1' and self._pair_host(cached['host']):
             return True
@@ -156,12 +245,21 @@ class Link:
             if cached and (beacon['server_id']!=cached.get('server_id') or beacon['ca_sha256']!=cached.get('ca_sha256')):
                 continue
             if self._pair_host(host,beacon):
+                with self.lock:self.last_mode='LAN-UDP'
+                return True
+        # A firewall or Wi-Fi AP can block UDP broadcast despite functional HTTPS.
+        for host in self._scan_candidates():
+            if self._pair_host(host):
+                with self.lock:self.last_mode='LAN-TCP'
                 return True
         with self.lock:
             self.host=None
-            self.error=('مرکز قبلی پاسخ نمی‌دهد یا شناسه گواهی تغییر کرده است. شبکه و سرور را بررسی کنید.'
-                        if cached else
-                        'هنوز سرور فعالی پیدا نشده است. رایانه مادر باید روشن و به همین شبکه متصل باشد.')
+            if cached:
+                self.last_error_kind='saved-trust-or-network'
+                self.error='سرور قبلی قابل تأیید نیست: گواهی تغییر کرده یا ارتباط شبکه مسدود است. اطلاعات ثبت‌شده حذف نشده‌اند.'
+            else:
+                self.last_error_kind='not-discovered'
+                self.error='هیچ سرور معتبری پیدا نشد. اگر سرور فعال است، اتصال Wi-Fi و دسترسی پورت ۸۷۶۵ را بررسی کنید.'
         return False
 
     def keepalive(self):
@@ -188,7 +286,7 @@ class Proxy(BaseHTTPRequestHandler):
             return self.reply(403,b'Forbidden')
         if self.path=='/__agent/status':
             with LINK.lock:
-                info={'service':'bastiyan-catalog-client','connected':bool(LINK.host),'host':LINK.host or '', 'message':LINK.error}
+                info={'service':'bastiyan-catalog-client','connected':bool(LINK.host),'host':LINK.host or '', 'mode':LINK.last_mode,'reason':LINK.last_error_kind,'message':LINK.error}
             return self.reply(200,json.dumps(info).encode(),'application/json; charset=utf-8')
         if self.path=='/favicon.ico':return self.reply(404,b'')
         with LINK.lock:host=LINK.host;ctx=LINK.ctx
