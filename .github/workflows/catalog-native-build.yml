@@ -1,8 +1,13 @@
 name: Bastiyan Catalog v2.2 Native Windows and Android
 on:
   push:
-    branches: [catalog-build-v22]
+    branches: [main]
+    paths:
+      - 'apps/catalog/**'
+      - '.github/workflows/catalog-native-build.yml'
   workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   android:
     name: Build genuine Android APK
@@ -10,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Unpack source
-        run: unzip -q -o catalog-build-src.zip -d catalog
+        run: unzip -q -o apps/catalog/source/v2.2-production-sources.zip -d catalog
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -22,9 +27,6 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
-      - name: Fix ambiguous Android CookieManager import
-        run: |
-          sed -i 's/CookieManager.getInstance()/android.webkit.CookieManager.getInstance()/g' catalog/android-app/app/src/main/java/ir/bastiyan/catalog/MainActivity.java
       - name: Android build
         working-directory: catalog/android-app
         run: gradle :app:assembleDebug --stacktrace --no-daemon
@@ -44,7 +46,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Unpack source
         shell: pwsh
-        run: Expand-Archive -Path catalog-build-src.zip -DestinationPath catalog -Force
+        run: Expand-Archive -Path apps/catalog/source/v2.2-production-sources.zip -DestinationPath catalog -Force
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -92,9 +94,9 @@ jobs:
             choco install innosetup --yes --no-progress
           }
           if (!(Test-Path $compiler)) { throw 'Inno Setup compiler unavailable' }
-          & $compiler 'catalog-server-installer.iss'
+          & $compiler 'apps/catalog/installers/catalog-server-installer.iss'
           if ($LASTEXITCODE -ne 0) { throw 'Server setup compile failed' }
-          & $compiler 'catalog-client-installer.iss'
+          & $compiler 'apps/catalog/installers/catalog-client-installer.iss'
           if ($LASTEXITCODE -ne 0) { throw 'Client setup compile failed' }
           if (!(Test-Path 'dist/Bastiyan-Catalog-Server-Setup-v2.2.exe')) { throw 'Server installer missing' }
           if (!(Test-Path 'dist/Bastiyan-Catalog-Client-Setup-v2.2.exe')) { throw 'Client installer missing' }
