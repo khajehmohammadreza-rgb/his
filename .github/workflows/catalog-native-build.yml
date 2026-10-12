@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unpack source
-        run: unzip -q -o apps/catalog/source/v2.2-production-sources.zip -d catalog
+      - name: Stage versioned editable catalog source
+        run: cp -a apps/catalog/src catalog
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -44,9 +44,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unpack source
+      - name: Stage versioned editable catalog source
         shell: pwsh
-        run: Expand-Archive -Path apps/catalog/source/v2.2-production-sources.zip -DestinationPath catalog -Force
+        run: |
+          New-Item -ItemType Directory -Path catalog -Force | Out-Null
+          Copy-Item -Path 'apps/catalog/src/*' -Destination 'catalog' -Recurse -Force
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -96,9 +98,9 @@ jobs:
             choco install innosetup --yes --no-progress
           }
           if (!(Test-Path $compiler)) { throw 'Inno Setup compiler unavailable' }
-          & $compiler 'apps/catalog/installers/catalog-server-installer.iss'
+          & $compiler 'catalog-server-installer.iss'
           if ($LASTEXITCODE -ne 0) { throw 'Server setup compile failed' }
-          & $compiler 'apps/catalog/installers/catalog-client-installer.iss'
+          & $compiler 'catalog-client-installer.iss'
           if ($LASTEXITCODE -ne 0) { throw 'Client setup compile failed' }
           if (!(Test-Path 'dist/Bastiyan-Catalog-Server-Setup-v2.2.exe')) { throw 'Server installer missing' }
           if (!(Test-Path 'dist/Bastiyan-Catalog-Client-Setup-v2.2.exe')) { throw 'Client installer missing' }
