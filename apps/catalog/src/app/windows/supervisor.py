@@ -1,5 +1,5 @@
 """Watchdog and entrypoint for both source and self-contained PyInstaller Windows builds."""
-import os,sys,subprocess,time,threading,sqlite3,shutil,socket,webbrowser,json,ssl,urllib.request,ctypes
+import os,sys,subprocess,time,threading,sqlite3,shutil,socket,webbrowser,json,ssl,urllib.request,ctypes,traceback
 from pathlib import Path
 from connection_agent import start
 HERE=Path(sys._MEIPASS) if getattr(sys,'frozen',False) else Path(__file__).resolve().parent.parent
@@ -102,6 +102,24 @@ def guard_server():
         print('Server exited; retry in',retry,'seconds; see',LOG,flush=True)
         time.sleep(retry);retry=min(retry*2,30)
 
+def serve_in_process():
+    """No second persistent frozen EXE: closing the server launcher releases port 8765."""
+    delay=1
+    while True:
+        try:
+            server_app.main(['--https','--data',str(DATA)])
+            msg='HTTPS service returned unexpectedly.'
+        except BaseException:
+            msg=traceback.format_exc()
+        try:
+            with LOG.open('a',encoding='utf-8',errors='replace') as log:
+                log.write(msg+'\n')
+        except OSError:
+            pass
+        print('HTTPS server stopped; retry in',delay,'seconds.',flush=True)
+        time.sleep(delay)
+        delay=min(delay*2,30)
+
 def main():
     try:
         import_legacy_data()
@@ -117,7 +135,7 @@ def main():
             if check.returncode:
                 explain_failure('Preflight failed: '+(check.stderr or check.stdout or 'unknown error')[-1000:])
                 raise SystemExit(1)
-            threading.Thread(target=guard_server,daemon=True).start()
+            threading.Thread(target=serve_in_process,daemon=True).start()
             for _ in range(60):
                 if local_status():
                     break
