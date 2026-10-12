@@ -173,8 +173,22 @@ jobs:
                   q.kill();q.wait()
                   raise AssertionError('Second client did not reuse existing loopback bridge')
               if q.returncode!=0:raise AssertionError('Second client exited with '+str(q.returncode))
-              with urllib.request.urlopen('http://127.0.0.1:8775/api/status',timeout=4) as rsp:
-                  assert json.load(rsp)['ok']
+              # A second EXE must not disturb the already-running bridge or main API.
+              stable=False
+              errors=[]
+              for attempt in range(8):
+                  try:
+                      with urllib.request.urlopen('http://127.0.0.1:8775/api/status',timeout=4) as rsp:
+                          stable=bool(json.load(rsp).get('ok'))
+                      if stable:break
+                  except Exception as exc:
+                      errors.append(type(exc).__name__+': '+str(exc))
+                      time.sleep(.75)
+              if not stable:
+                  print('Parent exit:',p.poll(),flush=True)
+                  print('Recent bridge errors:',errors,flush=True)
+                  print('Parent log:',(data/'launcher.log').read_text(encoding='utf-8',errors='replace')[-5000:],flush=True)
+                  raise AssertionError('Real HTTPS bridge did not stay responsive after second client launch')
               print('Duplicate-click client gracefully reused existing session',flush=True)
           finally:
               subprocess.run(['taskkill','/F','/T','/PID',str(p.pid)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
