@@ -1,7 +1,7 @@
 name: Bastiyan Catalog v2.2 Native Windows and Android
 on:
   push:
-    branches: [main]
+    branches: [main, 'fix/catalog-startup-v23']
     paths:
       - 'apps/catalog/**'
       - '.github/workflows/catalog-native-build.yml'
@@ -88,7 +88,61 @@ jobs:
         run: |
           if (!(Test-Path dist/Bastiyan-Catalog-Server.exe) -or !(Test-Path dist/Bastiyan-Catalog-Client.exe)) { throw 'Windows EXE missing' }
           Get-Item dist/*.exe | Select-Object Name,Length
+      - name: Real Windows runtime smoke - server, client, and API
+        shell: pwsh
+        run: |
+          @'
+          import os,sys,json,ssl,subprocess,time,urllib.request,urllib.error,pathlib,tempfile,socket
+          root=pathlib.Path(tempfile.mkdtemp(prefix='bastiyan-runtime-'))
+          env=dict(os.environ,LOCALAPPDATA=str(root))
+          server=subprocess.Popen([str(pathlib.Path('dist/Bastiyan-Catalog-Server.exe').resolve()),'--bastiyan-server'],
+                                  env=env,stdout=(root/'server-stdout.txt').open('wb'),stderr=subprocess.STDOUT)
+          client=None
+          try:
+              ctx=ssl._create_unverified_context()
+              ok=False
+              for i in range(90):
+                  if server.poll() is not None:
+                      break
+                  try:
+                      with urllib.request.urlopen('https://127.0.0.1:8765/api/status',context=ctx,timeout=1) as rsp:
+                          o=json.load(rsp)
+                          if o.get('ok') and o.get('database')=='ready':ok=True;break
+                  except Exception:
+                      time.sleep(.5)
+              if not ok:
+                  print("SERVER EXIT:",server.poll(),"LOG:",(root/'server-stdout.txt').read_text(errors='replace')[-6000:],flush=True)
+                  raise AssertionError("Actual built server EXE failed to start and respond via TLS")
+              print("Actual SERVER EXE ready (HTTPS+database)",flush=True)
+              client=subprocess.Popen([str(pathlib.Path('dist/Bastiyan-Catalog-Client.exe').resolve()),'--no-browser'],
+                                      env=env)
+              connected=False
+              for i in range(35):
+                  if client.poll() is not None:break
+                  try:
+                      with urllib.request.urlopen('http://127.0.0.1:8775/__agent/status',timeout=1) as rsp:
+                          o=json.load(rsp)
+                          if o.get('connected'): connected=True;break
+                  except Exception:time.sleep(.5)
+              if not connected:
+                  state={}
+                  try:
+                      with urllib.request.urlopen('http://127.0.0.1:8775/__agent/status',timeout=1) as rsp:state=json.load(rsp)
+                  except Exception as exc:state={'error':str(exc)}
+                  print('CLIENT:',state,flush=True)
+                  raise AssertionError("Actual built client EXE failed to connect to actual built server EXE")
+              with urllib.request.urlopen('http://127.0.0.1:8775/api/status',timeout=3) as rsp:
+                  assert json.load(rsp)['ok']
+              print("Actual CLIENT EXE and HTTP bridge ready; full end-to-end pass",flush=True)
+          finally:
+              for p in (client,server):
+                  if p:
+                      p.terminate()
+                      try:p.wait(timeout=4)
+                      except subprocess.TimeoutExpired:p.kill();p.wait(timeout=5)
+          '@ | python -
       - name: Compile actual Windows installers
+
         shell: pwsh
         run: |
           Copy-Item 'apps/catalog/installers/catalog-server-installer.iss' 'catalog-server-installer.iss' -Force
