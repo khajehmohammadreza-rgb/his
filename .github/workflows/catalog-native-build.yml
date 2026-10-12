@@ -227,10 +227,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Server setup compile failed' }
           & $compiler 'catalog-client-installer.iss'
           if ($LASTEXITCODE -ne 0) { throw 'Client setup compile failed' }
-          if (!(Test-Path 'dist/Bastiyan-Catalog-Server-Setup-v2.3.exe')) { throw 'Server installer missing' }
-          if (!(Test-Path 'dist/Bastiyan-Catalog-Client-Setup-v2.3.exe')) { throw 'Client installer missing' }
+          if (!(Test-Path 'dist/Bastiyan-Catalog-Server-Setup-v2.4.exe')) { throw 'Server installer missing' }
+          if (!(Test-Path 'dist/Bastiyan-Catalog-Client-Setup-v2.4.exe')) { throw 'Client installer missing' }
       - uses: actions/upload-artifact@v4
         with:
-          name: Bastiyan-Catalog-v2.3-WINDOWS-INSTALLERS
+          name: Bastiyan-Catalog-v2.4-WINDOWS-INSTALLERS
           path: dist/*.exe
           if-no-files-found: error
