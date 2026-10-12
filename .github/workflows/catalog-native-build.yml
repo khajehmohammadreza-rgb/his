@@ -1,7 +1,7 @@
-name: Bastiyan Catalog v2.3 Windows Hotfix and Android CI
+name: Bastiyan Catalog v2.4 Connection Recovery CI
 on:
   push:
-    branches: [main, 'fix/catalog-startup-v23']
+    branches: [main, 'fix/catalog-stale-trust-automatic-v24']
     paths:
       - 'apps/catalog/**'
       - '.github/workflows/catalog-native-build.yml'
@@ -55,6 +55,10 @@ jobs:
       - name: Install app builder
         shell: pwsh
         run: python -m pip install --disable-pip-version-check pyinstaller cryptography
+      - name: Run real local TLS and stale trust regression tests
+        shell: pwsh
+        run: |
+          python -m unittest discover -s catalog/app/tests -p test_autoconnection.py -v
       - name: Fix frozen executable paths
         shell: pwsh
         run: |
