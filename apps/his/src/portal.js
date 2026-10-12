@@ -9,7 +9,7 @@ let syncTimer = null, pullTimer = null, stateRevision = 0;
 const nativeFetch = window.fetch.bind(window);
 let LOCAL_MODE = false;
 let APP_META = { version: '5.1.4', buildNumber: 514 };
-const UI_BUILD = '514-1405-r24';
+const UI_BUILD = '514-1405-r25';
 async function loadAppMeta() {
     try {
         const r = await nativeFetch(`./version.json?t=${Date.now()}`, { cache: 'no-store' });

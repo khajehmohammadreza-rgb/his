@@ -1,0 +1,22 @@
+/* Bastiyan HIS typography contract — root-local fonts only. */
+@font-face{font-family:"BNazanin";src:url("./BNazanin.ttf") format("truetype");font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:"BNazanin";src:url("./BNazanin.ttf") format("truetype");font-style:normal;font-weight:500;font-display:swap}
+@font-face{font-family:"BNazanin";src:url("./BNazanin.ttf") format("truetype");font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:"BNazanin";src:url("./BNazanin.ttf") format("truetype");font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:"BNazanin";src:url("./BNazanin.ttf") format("truetype");font-style:normal;font-weight:800;font-display:swap}
+@font-face{font-family:"BTitr";src:url("./BTitr.ttf") format("truetype");font-style:normal;font-weight:700;font-display:swap}
+@font-face{font-family:"BTitr";src:url("./BTitr.ttf") format("truetype");font-style:normal;font-weight:800;font-display:swap}
+@font-face{font-family:"BTitr";src:url("./BTitr.ttf") format("truetype");font-style:normal;font-weight:900;font-display:swap}
+html,body,html body,html body *{font-family:"BNazanin" !important;font-synthesis:none}
+html body h1,html body h2,html body h3,html body h4,html body h5,html body h6,html body th,html body strong,html body b,html body button,html body .font-bold,html body .font-extrabold,html body .font-black,html body .font-semibold,html body [class*="font-bold"],html body [class*="font-extrabold"],html body [class*="font-black"],html body [class*="font-semibold"],html body [style*="font-weight:700"],html body [style*="font-weight:800"],html body [style*="font-weight:900"],html body .brand-title,html body .page-title,html body .section-title,html body .card-title,html body .panel-title,html body .modal-title,html body .display-title,html body .display-section-title{font-family:"BTitr" !important}
+html body input,html body textarea,html body select{font-family:"BNazanin" !important}
+html body{font-size:17px}
+html body p,html body label,html body input,html body textarea,html body select,html body table,html body td{font-size:17px;line-height:1.75}
+html body button{font-size:17px}
+html body h1{font-size:34px;line-height:1.25}html body h2{font-size:30px;line-height:1.3}html body h3{font-size:26px;line-height:1.35}html body h4{font-size:22px;line-height:1.4}html body h5{font-size:20px;line-height:1.45}html body h6{font-size:18px;line-height:1.5}
+html body .text-xs{font-size:15px !important;line-height:1.7 !important}html body .text-sm{font-size:16px !important;line-height:1.75 !important}
+html body #bastian-global-nav button{font-family:"BTitr" !important;font-size:16px !important}
+html body [class*="text-[9px]"],html body [class*="text-[10px]"],html body [class*="text-[11px]"],html body [class*="text-[12px]"],html body [class*="text-[13px]"]{font-size:15px !important;line-height:1.7 !important}
+html body .brand h1,html body .page-title{font-family:"BTitr" !important;font-size:34px !important;line-height:1.25 !important}
+html body .section-head h2,html body .section-head h3{font-family:"BTitr" !important;font-size:30px !important;line-height:1.3 !important}
+html body .center-title h3{font-family:"BTitr" !important;font-size:24px !important;line-height:1.4 !important}

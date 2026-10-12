@@ -1,0 +1,35 @@
+{
+  "product": "Bastiyan Kiosk",
+  "version": "3.3.14",
+  "baseVersion": "3.3.13",
+  "releaseType": "secretary-bulk-queue-safe-deploy",
+  "releasedAt": "2026-10-11",
+  "windowsNativeInstallerSHA256": "d89a13ddeca1b86f93bd0806834cbf3689133a1d519162f740c947d58acefbba",
+  "windowsRuntimeChanged": false,
+  "persistentDataShipped": false,
+  "dataMigrationRequired": false,
+  "installedClientReinstallRequired": false,
+  "tests": {
+    "phpSyntax": "passed",
+    "javascriptSyntax": "passed",
+    "bulkApiIntegration": "passed: mixed active/inactive bulk registration",
+    "bulkAtomicity": "passed: conflict rejects whole request with no partial registration",
+    "secretaryPermission": "passed",
+    "interactiveBrowserUI": "static/syntax validated; final field check recommended on secretary workstation"
+  },
+  "mandatoryPersistentPaths": [
+    "data/",
+    "data/.client_package_secret",
+    "data/clinic_store.json",
+    "data/users_store.json",
+    "data/sessions_store.json",
+    "data/center-logo-*",
+    "data/center-qr-*",
+    "data/center-media-*",
+    "data/backups/"
+  ],
+  "readBeforeDeployment": [
+    "DEPLOY-CHABOKAN-3.3.14.md",
+    "CHANGES-3.3.14.md"
+  ]
+}

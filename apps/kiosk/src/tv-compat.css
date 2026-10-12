@@ -1,0 +1,159 @@
+/* TV compatibility layer for Android TV / Smart TV browsers */
+html.tv-route,
+html.tv-route body,
+html.tv-route #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  min-width: 100vw !important;
+  min-height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+  background: #070b14 !important;
+  color: #e2e8f0 !important;
+  overscroll-behavior: none !important;
+  touch-action: manipulation !important;
+  -webkit-font-smoothing: antialiased !important;
+  font-smoothing: antialiased !important;
+}
+
+html.tv-route body {
+  position: fixed !important;
+  inset: 0 !important;
+  background: radial-gradient(circle at center, #0f172a 0%, #070b14 45%, #020712 100%) !important;
+  filter: contrast(1.08) saturate(1.18) brightness(1.02) !important;
+}
+
+html.tv-route #root {
+  display: block !important;
+  transform: none !important;
+  scale: 1 !important;
+  background: #070b14 !important;
+}
+
+html.tv-route * {
+  box-sizing: border-box !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  background-image: none !important;
+}
+
+html.tv-route #bastian-tv-display-root,
+html.tv-route [id*="tv-display"],
+html.tv-route [data-tv-root] {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  max-height: none !important;
+  min-width: 100vw !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-rows: minmax(52px, 8vh) minmax(0, 1fr) minmax(26px, 4vh) !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  background: linear-gradient(180deg, #0a1220 0%, #060b14 35%, #030712 100%) !important;
+  box-shadow: none !important;
+  color: #e2e8f0 !important;
+}
+
+html.tv-route #bastian-tv-display-root > header,
+html.tv-route #bastian-tv-display-root > section,
+html.tv-route #bastian-tv-display-root > main,
+html.tv-route #bastian-tv-display-root > footer {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  background: transparent !important;
+}
+
+html.tv-route #bastian-tv-display-root > header {
+  grid-row: 1 !important;
+  overflow: hidden !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 4px 8px !important;
+}
+
+html.tv-route #bastian-tv-display-root > main {
+  grid-row: 2 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: 4px !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+html.tv-route #bastian-tv-display-root > section {
+  grid-row: 3 !important;
+  overflow: hidden !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+html.tv-route #bastian-tv-display-root > footer {
+  display: none !important;
+}
+
+html.tv-route #bastian-tv-display-root article,
+html.tv-route #bastian-tv-display-root div,
+html.tv-route #bastian-tv-display-root section,
+html.tv-route #bastian-tv-display-root main,
+html.tv-route #bastian-tv-display-root header,
+html.tv-route #bastian-tv-display-root footer {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+html.tv-route #bastian-tv-display-root img,
+html.tv-route #bastian-tv-display-root video {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+}
+
+html.tv-route #bastian-tv-display-root .animate-ticker,
+html.tv-route #bastian-tv-display-root [class*="ticker"],
+html.tv-route #bastian-tv-display-root [class*="marquee"] {
+  display: inline-block !important;
+  white-space: nowrap !important;
+  width: max-content !important;
+  min-width: max-content !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: plaintext !important;
+  animation: ticker-scroll-rtl 28s linear infinite !important;
+}
+
+html.tv-route #root * {
+  color: inherit !important;
+}
+
+html.tv-route #root [class*="bg-"] {
+  background-color: inherit !important;
+}
+
+@keyframes ticker-scroll-rtl {
+  0% { transform: translateX(-12%); }
+  100% { transform: translateX(42%); }
+}
+
+@media (max-width: 1200px) {
+  html.tv-route #bastian-tv-display-root {
+    grid-template-rows: minmax(48px, 7.5vh) minmax(0, 1fr) minmax(24px, 4vh) !important;
+  }
+}

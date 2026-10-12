@@ -1,0 +1,40 @@
+{
+  "version": "3.3.16",
+  "release": "FINAL-SECRETARY-INTERCOM-SAFE",
+  "baseVersion": "3.3.15",
+  "builtAt": "2026-10-11",
+  "files": {
+    "api.php": {
+      "sha256": "4be9f0936552ace5e4a95baa1ca926408d4fccd325e763d80892f89cac0a8df1",
+      "size": 161734
+    },
+    "index.html": {
+      "sha256": "c7e56a2b31e3a1373fe66a423484d42006501b10cb07afac37f02919d5c755f3",
+      "size": 10021
+    },
+    "manifest.json": {
+      "sha256": "27325eed83a82d0d33a0df0900c230fa5c201e49df4bdeee5676cba33ae54075",
+      "size": 857
+    },
+    "assets/index-2.8.9.js": {
+      "sha256": "a63504fd87eab3bb34ec9f793b8355f43d739c43d85ea97c70dff2ac504ae8bf",
+      "size": 639932
+    },
+    "assets/secretary-call-3.3.16.js": {
+      "sha256": "480c8ddf67a5208354a8c158abe59cbde832557bef4508789e5d672e0772692d",
+      "size": 3696
+    },
+    "sounds/secretary-chime.wav": {
+      "sha256": "bf1506c299c4c11cdfcc86a95f83fe55550913adacb9381aa0bb60d91f1bf6e8",
+      "size": 119114
+    },
+    "windows-runtime/Bastiyan-Windows-Installer-x64.exe": {
+      "sha256": "d89a13ddeca1b86f93bd0806834cbf3689133a1d519162f740c947d58acefbba",
+      "size": 5717504
+    },
+    "assets/secretary-workspace-3.3.15.js": {
+      "sha256": "bb286b6d1ad680102dde958bec387ac5f7ae902fca7921d3f32366fdac9c32f2",
+      "size": 44626
+    }
+  }
+}

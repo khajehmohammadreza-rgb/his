@@ -1,0 +1,35 @@
+{
+  "product": "Bastiyan Kiosk",
+  "version": "3.3.11",
+  "releaseType": "safe-code-deploy",
+  "releasedAt": "2026-10-07",
+  "windowsClientCompatibility": {
+    "minimumKnownCompatible": "3.3.9",
+    "reinstallRequired": false,
+    "conditions": [
+      "Preserve the production data directory",
+      "Preserve data/.client_package_secret",
+      "Keep the installed clients' server base URL reachable"
+    ]
+  },
+  "persistentPaths": [
+    "data/.client_package_secret",
+    "data/clinic_store.json",
+    "data/users_store.json",
+    "data/sessions_store.json",
+    "data/center-logo-*",
+    "data/center-qr-*",
+    "data/center-media-*",
+    "data/backups/"
+  ],
+  "queueChanges": [
+    "Single authoritative doctor call workspace",
+    "Call-next never marks current patient visited",
+    "Round-robin unresolved queue behavior",
+    "Per-ticket call count and timestamp history",
+    "Legacy finish-and-next endpoint mapped to safe advance behavior"
+  ],
+  "bookingClosedMeaning": "Stop new admissions only; existing appointments remain callable",
+  "dataMigrationRequired": false,
+  "notes": "No live data files or client signing secret are included in this release."
+}

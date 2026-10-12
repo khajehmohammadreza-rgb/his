@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="icon" type="image/png" href="/image/favicon.png">
+<link rel="apple-touch-icon" href="/image/icon-192.png">
+<title>فراخوان | نمایشگر مرکز</title>
+<style>
+@font-face{font-family:"BNazanin";src:url("/BNazanin.ttf") format("truetype");font-style:normal;font-weight:400 900;font-display:swap}@font-face{font-family:"BTitr";src:url("/BTitr.ttf") format("truetype");font-style:normal;font-weight:400 900;font-display:swap}
+:root{--bg:#050a12;--panel:#0c1623;--panel2:#111f30;--line:#294258;--gold:#ffd76a;--cyan:#58d6ff;--green:#63e6a0;--red:#ff7070;--text:#f5f8fb;--muted:#a9bac7}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:"BNazanin"}button{font-family:"BNazanin"}
+#app{width:100%;height:100%}.hidden{display:none!important}
+/* انتخاب سبک؛ همین کلیک، مجوزهای لازم مرورگر را نیز فعال می‌کند */
+.styleGate{font-family:"BNazanin" !important;position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 0,#174a68 0,#07111d 45%,#02060b 100%)}
+.gateBox{width:min(850px,94vw);padding:34px;border:1px solid #3e7089;border-radius:30px;background:#07121eeF;box-shadow:0 35px 100px #000c;text-align:center}.gateBrand{display:flex;justify-content:center;align-items:center;gap:16px}.gateBrand img{width:82px;height:82px;object-fit:contain;background:#fff;border-radius:20px;padding:3px}.gateBox h1{font:900 clamp(28px,4vw,52px) "BTitr";margin:8px 0}.gateBox p{font-size:clamp(15px,1.5vw,21px);color:#c5d5df;margin:0 0 25px}.styleChoices{display:grid;grid-template-columns:1fr 1fr;gap:18px}.styleChoice{min-height:170px;border:1px solid #31556b;border-radius:22px;background:linear-gradient(145deg,#0f2333,#08131f);color:#fff;cursor:pointer;padding:22px;transition:.2s;box-shadow:0 12px 35px #0007}.styleChoice:hover{transform:translateY(-4px);border-color:var(--cyan);box-shadow:0 18px 45px #0009}.styleChoice strong{font-family:"BTitr" !important;display:block;font:900 30px "BTitr";margin-bottom:8px}.styleChoice span{display:block;color:#b6cbd6;font-size:17px;line-height:1.7}.modernIcon{font-size:42px;color:#65ddff}.classicIcon{font-size:42px;color:#ffd66b}
+/* کلاسیک */
+.tv.classic{position:fixed;inset:0;width:100vw;height:100vh;display:grid;grid-template-rows:minmax(82px,12vh) minmax(0,1fr) minmax(74px,9vh) minmax(34px,4.2vh);background:radial-gradient(circle at 50% -20%,#174b6a 0,#0a1c2c 32%,#050b15 75%);overflow:hidden}
+.classic .header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(160px,.28fr);align-items:center;gap:1.1vw;padding:1vh 1.4vw;border-bottom:1px solid #2e6d89;background:#071725EE;box-shadow:0 8px 35px #0008;min-width:0}.brand{display:flex;align-items:center;gap:.9vw;min-width:0;padding-right:0}.logoFallback{display:grid;place-items:center;width:min(8.8vh,84px);height:min(8.8vh,84px);min-width:58px;border-radius:16px;background:#162433;border:1px solid #3b6275;color:#86d9f2;font:900 28px "BTitr"}.centerLogo{width:min(8.8vh,84px);height:min(8.8vh,84px);min-width:58px;object-fit:contain;background:#fff;border-radius:16px;padding:3px;box-shadow:0 0 0 1px #64d7ff55,0 8px 24px #0008}.bastianLogo{width:45px;height:45px;object-fit:contain;background:#fff;border-radius:11px;padding:2px;opacity:.96}.brandText{min-width:0}.clinic{font-family:"BTitr";font-size:clamp(20px,1.75vw,31px);font-weight:900;max-width:70vw;line-height:1.16;white-space:normal;overflow:visible;display:block;overflow-wrap:anywhere;word-break:break-word;text-shadow:0 3px 14px #000}.subtitle{font-size:clamp(12px,1.05vw,18px);color:#bcd5e2;margin-top:.3vh;white-space:normal;overflow:visible;text-overflow:clip}.clock{font:900 clamp(27px,3vw,52px) "BTitr";color:#ffe28b;white-space:nowrap;text-shadow:0 3px 15px #000}.connection{font:900 clamp(11px,.9vw,16px) "BTitr";color:#8bd8ee;text-align:left}.connection b{display:inline-flex;align-items:center;gap:6px}.dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}.dot.off{background:var(--red);box-shadow:0 0 12px var(--red)}
+.main{min-height:0;overflow:hidden;padding:1vh 1vw}.cards{width:100%;height:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(31vw,440px),1fr));grid-auto-rows:minmax(0,1fr);gap:1vw;min-height:0}.card{position:relative;min-width:0;min-height:0;overflow:hidden;border:1px solid #28566e;border-radius:22px;background:linear-gradient(145deg,#102c40,#071522);box-shadow:0 12px 38px #0009;display:grid;grid-template-rows:auto minmax(0,1fr) auto}.card.calling{border:2px solid var(--gold);box-shadow:0 0 0 3px #f5c94d16,0 14px 45px #000b}.docHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:1vh 1vw;border-bottom:1px solid #224b60;background:#0b2130;min-width:0}.docInfo{min-width:0;flex:1}.docName{font:900 clamp(22px,2vw,35px) "BTitr";white-space:nowrap;overflow:visible;text-overflow:clip}.docSpec{font-size:clamp(14px,1.15vw,20px);color:#c2d6e0;margin-top:.2vh;white-space:nowrap;overflow:visible;text-overflow:clip}.room{font:900 clamp(15px,1.25vw,22px) "BTitr";white-space:nowrap;padding:.55vh .7vw;border-radius:11px;background:#07536d;border:1px solid #3286a6;flex-shrink:0}.center{display:grid;place-items:center;text-align:center;padding:1vh;min-height:0;overflow:hidden}.number{font:900 clamp(72px,10vw,190px)/.88 "BTitr";color:#ffe071;text-shadow:0 6px 24px #000;direction:ltr;unicode-bidi:plaintext;white-space:nowrap;max-width:100%;overflow:visible}.patient{font:900 clamp(19px,1.75vw,31px) "BTitr";max-width:94%;white-space:nowrap;overflow:visible;text-overflow:clip;margin-top:1.2vh}.hint{font-size:clamp(14px,1.15vw,20px);color:#b9cdd8;margin-top:.6vh}.status{font:900 clamp(14px,1.2vw,20px) "BTitr";text-align:center;padding:.7vh;border-top:1px solid #244b5d;color:#8be9ad}.calling .status{color:var(--gold)}
+.ticker{min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:1vw;padding:0 1vw;border-top:2px solid #397f9b;background:linear-gradient(90deg,#06121d,#0c2a3c,#06121d);overflow:hidden}.tickerLabel{font:900 clamp(15px,1.35vw,23px) "BTitr";background:linear-gradient(135deg,#d29a25,#795100);border:1px solid #f0c85e;color:#fff;border-radius:11px;padding:.7vh .9vw;white-space:nowrap}.tickerWindow{width:100%;min-width:0;overflow:hidden;direction:ltr;position:relative}.tickerTrack{display:flex;width:max-content;align-items:center;gap:0;white-space:nowrap;will-change:transform;animation:ticker 34s linear infinite;transform:translate3d(0,0,0)}.tickerGroup{display:flex;flex:none;align-items:center;white-space:nowrap}.tickerItem{padding-inline:1.6vw;font-size:clamp(20px,1.8vw,32px);font-weight:900;color:#ffe7a0;white-space:nowrap;direction:rtl}.tickerItem:after{content:" ◆ ";color:#55c7e8;margin:0 1.3vw}@keyframes ticker{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
+.copyright{display:flex;align-items:center;justify-content:center;text-align:center;background:#030913;color:#e2edf2;border-top:1px solid #173746;font:900 clamp(13px,1vw,17px) "BTitr";padding:0 10px}.exitBtn{position:absolute;top:12px;right:14px;z-index:80;border:1px solid #6d8795;background:#07131feF;color:#fff;border-radius:11px;padding:7px 14px;font:900 clamp(13px,.95vw,17px) "BTitr";cursor:pointer;box-shadow:0 5px 18px #0008}.tvControls{position:fixed;left:14px;right:auto;top:auto;bottom:calc(4.2vh + 92px);z-index:80;display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:46vw}.screenBtn{border:1px solid #3a7188;background:#071a27eF;color:#d9f7ff;border-radius:11px;padding:7px 12px;font:900 clamp(12px,.9vw,16px) "BTitr";cursor:pointer;box-shadow:0 5px 18px #0008}.screenBtn:hover{background:#0d2d3e}.tvControls .exitBtn{position:static;top:auto;right:auto}.tv:fullscreen,.tv:fullscreen .main{width:100vw;height:100vh}.exitBtn:hover{background:#173447}.qrBox{position:absolute;left:14px;bottom:14px;z-index:20;width:min(170px,11vw);min-width:115px;padding:8px;border:1px solid #47748a;border-radius:14px;background:#07131eef;box-shadow:0 8px 30px #0009;text-align:center}.qrBox img{width:100%;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:8px;padding:4px}.qrSite{font:900 14px "BTitr";color:#fff;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.qrUrl{font-size:10px;color:#a9c4d0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:ltr}.qrDesc{font-size:10px;color:#d7e4eb;line-height:1.35;margin-top:2px}
+.tv.hasQr.qrLeft .main{padding-left:calc(var(--qr-size,185px) + 34px)}.tv.hasQr.qrRight .main{padding-right:calc(var(--qr-size,185px) + 34px)}
+.tv.hasQr .qrBox{top:calc(15vh + 12px);bottom:auto;max-height:calc(100vh - 15vh - 7vh - 3.5vh - 24px);overflow:hidden}.tv.classic.hasQr .qrBox{top:calc(12vh + 12px);max-height:calc(100vh - 12vh - 9vh - 4.2vh - 24px)}
+.tv.hasQr .qrBox.qrRight{left:auto;right:14px}.tv.hasQr .qrBox img{max-height:min(var(--qr-size,185px),24vh)}
+@media(max-width:900px){.tv.hasQr.qrLeft .main,.tv.hasQr.qrRight .main{padding-left:1vw;padding-right:1vw}.tv.hasQr .qrBox{width:min(125px,14vw);min-width:90px;opacity:.96}}
+/* مدرن — بازطراحی کامل NeoCare / Command Center */
+.tv.modern{
+ position:fixed;inset:0;width:100vw;height:100vh;overflow:hidden;
+ display:grid;grid-template-rows:15vh minmax(0,1fr) 7vh 3.5vh;
+ background:
+ radial-gradient(circle at 78% 12%,rgba(34,211,238,.16),transparent 26%),
+ radial-gradient(circle at 18% 85%,rgba(129,140,248,.12),transparent 30%),
+ linear-gradient(135deg,#030712 0%,#07111f 48%,#02050b 100%);
+ color:#f8fbff;
+}
+.modern:before,.modern:after{content:"";position:absolute;pointer-events:none;border-radius:50%;filter:blur(2px);opacity:.45}
+.modern:before{width:38vw;height:38vw;right:-15vw;top:-22vw;border:1px solid rgba(88,214,255,.18);box-shadow:0 0 100px rgba(88,214,255,.08)}
+.modern:after{width:28vw;height:28vw;left:-12vw;bottom:-18vw;border:1px solid rgba(167,139,250,.14)}
+.modern .header{
+ position:relative;z-index:3;display:grid;grid-template-columns:minmax(0,1fr) auto;
+ align-items:center;gap:2vw;padding:1.0vh 2.2vw;
+ background:rgba(3,9,18,.78);border-bottom:1px solid rgba(104,210,239,.18);
+ backdrop-filter:blur(18px);box-shadow:0 10px 45px rgba(0,0,0,.38);
+}
+.modern .brand{padding:0;display:flex;align-items:center;gap:1vw;min-width:0}
+.modern .logoFallback{width:clamp(52px,7vh,78px);height:clamp(52px,7vh,78px);border-radius:18px}.modern .centerLogo{width:clamp(52px,7vh,78px);height:clamp(52px,7vh,78px);border-radius:18px;background:#fff;padding:4px;box-shadow:0 0 0 1px rgba(255,255,255,.16),0 10px 30px rgba(0,0,0,.35)}
+.modern .bastianLogo{width:clamp(34px,5vh,54px);height:clamp(34px,5vh,54px);border-radius:14px;background:#fff;padding:3px;opacity:.9}
+.modern .brandText{min-width:0}
+.modern .clinic{font:900 clamp(21px,1.8vw,34px) "BTitr";max-width:64vw;line-height:1.18;white-space:normal;overflow:visible;display:block;overflow-wrap:anywhere;word-break:break-word}
+.modern .subtitle{font-size:clamp(13px,1vw,18px);color:#b7ccda;margin-top:.35vh;line-height:1.45;white-space:normal;overflow:visible}
+.modern .clock{font:900 clamp(25px,3vw,48px) "BTitr";letter-spacing:.04em;color:#e9fbff;text-shadow:0 0 22px rgba(88,214,255,.28)}
+.modern .connection{position:absolute;right:2.2vw;bottom:-19px;font:900 11px "BTitr";color:#8caabd}
+.modern .connection b{display:flex;align-items:center;gap:6px}.modern .dot{width:7px;height:7px}
+.modern .tvControls{position:absolute;left:2.2vw;right:auto;top:50%;transform:translateY(-50%);z-index:8;display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
+.modern .tvControls .screenBtn,.modern .tvControls .exitBtn{position:static;top:auto;right:auto;left:auto;transform:none}
+.modern .exitBtn{padding:8px 13px;border:1px solid rgba(255,255,255,.16);border-radius:11px;background:rgba(7,15,27,.90);color:#dcebf3;font:900 14px "BTitr";cursor:pointer}
+.modern .screenBtn{padding:8px 13px;border:1px solid rgba(88,214,255,.28);border-radius:11px;background:rgba(7,26,39,.94);color:#d9f7ff;font:900 14px "BTitr";cursor:pointer}
+.modern .main{position:relative;z-index:2;min-height:0;padding:1.7vh 2vw 1vh;overflow:hidden}
+.modern .cards{
+ width:100%;height:100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ grid-auto-rows:minmax(0,1fr);gap:1vw;min-height:0;
+}
+.modern .card{
+ position:relative;min-width:0;min-height:0;overflow:hidden;
+ border:1px solid rgba(133,177,204,.14);border-radius:24px;
+ background:linear-gradient(145deg,rgba(16,31,49,.88),rgba(5,12,23,.88));
+ box-shadow:0 14px 42px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.035);
+ display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+ transition:transform .25s ease,border-color .25s ease;
+}
+.modern .card:before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,rgba(88,214,255,.06),transparent 42%,rgba(129,140,248,.04));pointer-events:none}
+.modern .card:hover{transform:translateY(-2px);border-color:rgba(88,214,255,.32)}
+.modern .card.calling{
+ grid-column:span 2;grid-row:span 2;
+ border-color:rgba(255,218,112,.65);
+ background:radial-gradient(circle at 72% 35%,rgba(255,209,83,.11),transparent 36%),linear-gradient(145deg,rgba(25,34,48,.96),rgba(8,13,22,.96));
+ box-shadow:0 0 0 1px rgba(255,216,104,.08),0 0 65px rgba(255,210,83,.10),0 20px 60px rgba(0,0,0,.5);
+ animation:neoPulse 2.8s ease-in-out infinite;
+}
+@keyframes neoPulse{0%,100%{box-shadow:0 0 0 1px rgba(255,216,104,.08),0 0 45px rgba(255,210,83,.06),0 20px 60px rgba(0,0,0,.5)}50%{box-shadow:0 0 0 1px rgba(255,216,104,.22),0 0 75px rgba(255,210,83,.14),0 20px 60px rgba(0,0,0,.5)}}
+.modern .docHead{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:1.2vh 1vw;border-bottom:1px solid rgba(130,177,204,.10);background:rgba(9,20,34,.54)}
+.modern .docInfo{min-width:0;flex:1}.modern .docName{font:900 clamp(17px,1.35vw,26px) "BTitr";line-height:1.15;color:#f4f9fc}
+.modern .docSpec{font-size:clamp(11px,.9vw,16px);color:#91aabd;margin-top:3px}
+.modern .room{
+ flex:0 0 auto;padding:6px 9px;border-radius:10px;border:1px solid rgba(88,214,255,.22);
+ background:rgba(88,214,255,.07);color:#a9edff;font:900 clamp(12px,1vw,17px) "BTitr"
+}
+.modern .center{position:relative;z-index:1;display:grid;place-items:center;text-align:center;padding:.5vh 1vw 2.8vh;min-height:0;overflow:hidden}
+.modern .center > div{transform:translateY(-2.4vh);max-width:100%}
+.modern .number{font:900 clamp(70px,7vw,150px) "BTitr";line-height:.82;color:#e8fbff;text-shadow:0 0 35px rgba(88,214,255,.18)}
+.modern .calling .number{font-size:clamp(120px,16vw,300px);color:#ffe27a;text-shadow:0 0 35px rgba(255,214,87,.25)}
+.modern .card:not(.calling) .number{font-size:clamp(42px,4vw,82px);line-height:1;color:#ffe27a}
+.modern .patient{font:900 clamp(16px,1.5vw,28px) "BTitr";margin-top:1.1vh;color:#fff}
+.modern .hint{font-size:clamp(14px,1.05vw,19px);color:#b7cbd8;margin-top:.5vh;line-height:1.5;white-space:nowrap;overflow:visible}
+.modern .status{position:relative;z-index:1;min-height:5.2vh;display:flex;align-items:center;justify-content:center;padding:.45vh 1vw;background:rgba(3,8,16,.58);border-top:1px solid rgba(130,177,204,.09);font:900 clamp(11px,.85vw,15px) "BTitr";color:#8fa9b9}
+.modern .calling .status{color:#ffe58d;background:rgba(83,60,10,.18)}
+.modern .ticker{position:relative;z-index:4;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;padding:0 2vw;border-top:1px solid rgba(88,214,255,.16);background:rgba(3,9,17,.86);backdrop-filter:blur(14px)}
+.modern .tickerLabel{padding:.55vh .9vw;border-radius:9px;background:rgba(88,214,255,.09);border:1px solid rgba(88,214,255,.18);color:#9eeeff;font:900 clamp(12px,1vw,17px) "BTitr";white-space:nowrap}
+.modern .tickerItem{font:900 clamp(15px,1.3vw,24px) "BTitr";color:#d9e9f1}
+.bookingClosedBadge{display:inline-flex;align-items:center;gap:.45vw;margin-top:.55vh;padding:.45vh .75vw;border-radius:999px;background:rgba(225,29,72,.16);border:1px solid rgba(251,113,133,.62);color:#fecdd3;font:900 clamp(13px,1.05vw,18px) "BTitr";box-shadow:0 0 0 3px rgba(225,29,72,.05),0 0 22px rgba(225,29,72,.16);animation:closedPulse 1.9s ease-in-out infinite}.card.bookingClosed{border-color:rgba(251,113,133,.48)!important}.card.bookingClosed .status{background:rgba(136,19,55,.34)!important;color:#fecdd3!important;border-top-color:rgba(251,113,133,.34)!important}.card.bookingClosed .number{color:#fb7185!important}@keyframes closedPulse{0%,100%{opacity:1}50%{opacity:.72}}
+.modern .copyright{position:relative;z-index:4;display:flex;align-items:center;justify-content:center;background:#02060d;color:#7891a1;font-size:clamp(10px,.75vw,13px)}
+.modern .qrBox{
+ position:absolute;z-index:8;left:2vw;bottom:11vh;width:min(175px,12vw);padding:9px;border-radius:18px;
+ border:1px solid rgba(88,214,255,.28);background:rgba(3,10,19,.92);box-shadow:0 14px 40px rgba(0,0,0,.45);text-align:center
+}
+.modern .qrBox img{width:100%;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:10px}
+.modern .qrSite{font:900 13px "BTitr";color:#eafaff;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:clip}
+.modern .qrUrl,.modern .qrDesc{font-size:9px;color:#91a9b7;white-space:nowrap;overflow:hidden;text-overflow:clip}
+.modern .empty{grid-column:1/-1;display:grid;place-items:center;font:900 clamp(28px,3vw,48px) "BTitr";color:#b6cbd7}
+@media(max-width:1200px){
+ .modern .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .modern .card.calling{grid-column:span 2}
+}
+@media(max-width:800px){
+ .tv.modern{grid-template-rows:15vh minmax(0,1fr) 9vh 5vh}
+ .modern .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.4vw}
+ .modern .card.calling{grid-column:span 2;grid-row:span 1}
+ .modern .clock{display:none}.modern .bastianLogo{display:none}
+ .modern .qrBox{display:none}.modern .tvControls{left:auto;right:2vw;top:16px;transform:none}
+}
+/* جلوگیری از ellipsis: فونت با JS بر اساس طول متن کاهش داده می‌شود */
+.fitText{white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;display:block!important;transform-origin:right center}
+@media(max-width:900px){.styleChoices{grid-template-columns:1fr}.tv.classic,.tv.modern{grid-template-rows:15vh minmax(0,1fr) 11vh 5vh}.clock,.connection{display:none}.modern .connection{display:block}.cards{grid-template-columns:1fr 1fr;gap:1vw}.docName{font-size:20px}.number{font-size:clamp(70px,15vw,145px)}.qrBox{display:none}.modern .brand,.classic .brand{padding-right:76px}.centerLogo{width:7vh;height:7vh;min-width:54px}.bastianLogo{display:none}.clinic{font-size:20px}.copyright{font-size:11px}}
+
+.qrTitle{font:900 13px "BTitr";color:#fff;margin-bottom:5px}.qrGrid{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:6px}.qrItem{padding:5px;border:1px solid #355a6b;border-radius:9px;background:#0b1d29}.qrItem img{width:100%;aspect-ratio:1;object-fit:contain;background:#fff;border-radius:7px;padding:3px}.qrItem .qrSite{font-size:12px;white-space:normal;overflow:hidden;text-overflow:ellipsis;line-height:1.2}.qrItem .qrUrl{font-size:8px;white-space:normal;overflow:hidden;line-height:1.2;word-break:break-all}.qrItem .qrDesc{font-size:8px;white-space:normal;overflow:hidden;line-height:1.2}.modern .qrBox{width:min(205px,14vw);max-height:calc(100vh - 100px);overflow:hidden}.modern .qrTitle{color:#8be7ff}.modern .qrGrid{gap:5px}.modern .qrItem{background:#08151f;border-color:#1d5266}.modern .qrItem .qrSite{color:#eafaff;font-size:11px}.modern .qrItem .qrUrl,.modern .qrItem .qrDesc{color:#91a9b7}.qrBox{max-width:calc(100vw - 28px)}
+
+/* Editable center display theme — all values are supplied by displaySettings. */
+.tv{background:var(--tv-bg,#07111f)!important;}
+.tv .header{background:var(--tv-header,#071725)!important;}
+.tv .cards{gap:var(--tv-card-gap,1vw)!important;}
+.tv .card{background:var(--tv-card,#0f2232)!important;border-radius:var(--tv-card-radius,22px)!important;}
+.tv .docHead{background:var(--tv-dochead,#0b2130)!important;}
+.tv .docName{color:var(--tv-doctor,#ffffff)!important;}
+.tv .docSpec{color:var(--tv-specialty,#b9ceda)!important;}
+.tv .room{color:var(--tv-room,#8be7ff)!important;}
+.tv .number{color:var(--tv-number,#ffe071)!important;}
+.tv .calling .number,.tv .calling .status{color:var(--tv-calling,#ffd76a)!important;}
+.tv .status{color:var(--tv-status,#8be9ad)!important;}
+.tv .ticker{background:var(--tv-ticker-bg,#07131f)!important;}
+.tv .tickerLabel{color:var(--tv-ticker-label,#8be7ff)!important;}
+.tv .tickerItem{color:var(--tv-ticker-text,#d9e9f1)!important;}
+.tv .tickerTrack{animation-duration:var(--tv-ticker-speed,34s)!important;}
+.tv .qrBox{width:var(--tv-qr-size,185px)!important;}
+.tv .docPhoto{flex:0 0 auto;width:clamp(36px,4.3vh,58px);height:clamp(36px,4.3vh,58px);border-radius:12px;overflow:hidden;background:#fff;border:1px solid rgba(255,255,255,.14);box-shadow:0 5px 18px rgba(0,0,0,.24);}
+.tv .docPhoto img{width:100%;height:100%;object-fit:cover;display:block;}
+.tv .header .clinic{font-size:calc(clamp(19px,1.65vw,30px) * var(--tv-header-scale,1));}
+.tv .header .subtitle{font-size:calc(clamp(11px,.9vw,16px) * var(--tv-header-scale,1));}
+.tv .docName{font-size:calc(clamp(17px,1.35vw,26px) * var(--tv-doctor-scale,1));}
+.tv .number{font-size:calc(clamp(70px,7vw,150px) * var(--tv-number-scale,1));}
+.tv .tickerItem{font-size:calc(clamp(15px,1.3vw,24px) * var(--tv-ticker-scale,1));}
+</style>
+
+<style id="tv-font-lock">
+html,body,#app,.tv,.tv *{font-family:"BNazanin" !important}
+.tv h1,.tv h2,.tv h3,.tv h4,.tv h5,.tv h6,.tv strong,.tv b,.tv button,.tv label,.tv .clinic,.tv .docName,.tv .room,.tv .number,.tv .patient,.tv .status,.tv .tickerLabel,.tv .tickerItem,.tv .qrTitle,.tv .qrSite{font-family:"BTitr" !important}
+</style>
+
+<style id="display-settings-overrides">
+.tv{background:var(--tv-bg,#07111f)!important}
+.tv .header{background:var(--tv-header,#071725)!important}
+.tv .cards{gap:var(--tv-card-gap,1vw)!important}
+.tv .card{background:var(--tv-card,#0f2232)!important;border-radius:var(--tv-card-radius,22px)!important}
+.tv .docHead{background:var(--tv-dochead,#0b2130)!important}
+.tv .docName{color:var(--tv-doctor,#fff)!important}
+.tv .docSpec{color:var(--tv-specialty,#b9ceda)!important}.tv .patient{color:var(--tv-patient,#ffffff)!important}.tv .hint{color:var(--tv-hint,#9db5c5)!important}.tv .copyright{color:var(--tv-copyright,#7891a1)!important}.tv .card,.tv .docHead,.tv .ticker,.tv .copyright{border-color:var(--tv-line,#294258)!important}
+.tv .room{color:var(--tv-room,#8be7ff)!important}
+.tv .number{color:var(--tv-number,#ffe071)!important}
+.tv .calling{border-color:var(--tv-calling,#ffd76a)!important}
+.tv .calling .number,.tv .calling .status{color:var(--tv-calling,#ffd76a)!important}
+.tv .status{color:var(--tv-status,#8be9ad)!important}
+.tv .ticker{background:var(--tv-ticker-bg,#07131f)!important}
+.tv .tickerLabel{color:var(--tv-ticker-label,#8be7ff)!important}
+.tv .tickerItem{color:var(--tv-ticker-text,#d9e9f1)!important}
+.tv .tickerTrack{animation-duration:var(--tv-ticker-speed,34s)!important}
+.tv .qrBox{width:var(--tv-qr-size,185px)!important}
+.tv .qrBox.qrRight{left:auto!important;right:2vw!important}
+.tv .docPhoto{flex:0 0 auto;width:clamp(36px,4.3vh,58px);height:clamp(36px,4.3vh,58px);border-radius:12px;overflow:hidden;background:#fff;border:1px solid rgba(255,255,255,.14);box-shadow:0 5px 18px rgba(0,0,0,.24)}
+.tv .docPhoto img{width:100%;height:100%;object-fit:cover;display:block}
+.tv .clinic,.tv .subtitle,.tv .docName,.tv .docSpec,.tv .room,.tv .patient,.tv .number,.tv .tickerItem{transform-origin:center}
+.tv .clinic{transform:scale(var(--tv-header-scale,1));transform-origin:right center}
+.tv .docName{transform:scale(var(--tv-doctor-scale,1));transform-origin:right center}
+.tv .number{transform:scale(var(--tv-number-scale,1))}
+.tv .tickerItem{transform:scale(var(--tv-ticker-scale,1));transform-origin:right center}
+
+/* 3.3.4 — safe controls + pixel-accurate HQ media renderer + installed-client logout */
+.tv{--tv-safe-qr:clamp(132px,var(--tv-qr-size,160px),180px)}
+.classic .header{grid-template-columns:minmax(0,1fr) auto minmax(130px,.22fr) auto!important}
+.modern .header{grid-template-columns:minmax(0,1fr) auto auto!important}
+.classic .tvControls,.modern .tvControls{position:static!important;inset:auto!important;transform:none!important;z-index:8!important;display:flex!important;align-items:center!important;justify-self:start!important;gap:6px!important;flex-wrap:nowrap!important;max-width:none!important}
+.classic .tvControls .screenBtn,.classic .tvControls .exitBtn,.modern .tvControls .screenBtn,.modern .tvControls .exitBtn{position:static!important;inset:auto!important;transform:none!important;white-space:nowrap!important;padding:7px 10px!important;font-size:clamp(11px,.78vw,14px)!important}
+.tv.hasQr.qrDockLeft > main,.tv.hasQr.qrDockLeft > .main{padding-left:calc(var(--tv-safe-qr) + 30px)!important}
+.tv.hasQr.qrDockRight > main,.tv.hasQr.qrDockRight > .main{padding-right:calc(var(--tv-safe-qr) + 30px)!important}
+.tv.hasQr .qrBox{top:50%!important;bottom:auto!important;transform:translateY(-50%)!important;width:var(--tv-safe-qr)!important;max-height:64vh!important;overflow:hidden!important;margin:0!important}
+.tv.hasQr.qrDockLeft .qrBox{left:14px!important;right:auto!important}.tv.hasQr.qrDockRight .qrBox{right:14px!important;left:auto!important}
+.tv.hasQr .qrTitle{font-size:11px!important;margin-bottom:4px!important}.tv.hasQr .qrItem{padding:4px!important}.tv.hasQr .qrSite{font-size:10px!important;line-height:1.25!important}.tv.hasQr .qrDesc{font-size:8px!important;line-height:1.25!important;white-space:normal!important}
+.mediaStage{position:relative!important;isolation:isolate!important;background:#02060b!important;overflow:hidden!important}
+.mediaImageWrap{position:relative;width:100%;height:100%;display:grid;place-items:center;overflow:hidden;background:#02060b}
+.mediaImageBackdrop{position:absolute;inset:-34px;background-position:center;background-size:cover;background-repeat:no-repeat;filter:blur(28px) brightness(.35) saturate(.8);opacity:.48;transform:scale(1.05);z-index:0}
+.mediaImage{position:relative;z-index:1;display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important;transform:none!important;filter:none!important;image-rendering:auto!important;background:transparent!important}
+.mediaVideo{display:block;width:100%!important;height:100%!important;object-fit:contain!important;object-position:center center!important;background:#000!important}
+.mediaVideoWrap{position:relative;width:100%;height:100%;overflow:hidden;display:grid;place-items:center;background:#000;contain:layout paint size}.mediaVideoCanvas{display:block;width:100%;height:100%;background:#000;image-rendering:auto;transform:none!important;filter:none!important}.mediaVideoSource{position:absolute!important;width:2px!important;height:2px!important;left:-20px!important;bottom:-20px!important;opacity:.001!important;pointer-events:none!important;object-fit:contain!important;transform:none!important;filter:none!important}
+@media(max-width:1100px){.classic .tvControls,.modern .tvControls{gap:4px!important}.classic .tvControls .screenBtn,.classic .tvControls .exitBtn,.modern .tvControls .screenBtn,.modern .tvControls .exitBtn{padding:6px 8px!important;font-size:11px!important}.tv.hasQr{--tv-safe-qr:132px}}
+@media(max-width:900px){.tv.hasQr > main,.tv.hasQr > .main{padding-left:8px!important;padding-right:8px!important}.tv.hasQr .qrBox{display:none!important}.classic .header,.modern .header{grid-template-columns:minmax(0,1fr) auto!important}.classic .tvControls,.modern .tvControls{position:static!important;justify-self:start!important}.classic .connection{display:none!important}}
+
+</style>
+<link rel="stylesheet" href="/fonts.css?v=3.3.4">
+
+<link rel="stylesheet" href="/assets/readability-3.3.19.css?v=3.3.19">
+</head>
+<body class="bastian-tv"><div id="app"></div>
+<script>
+(function(){'use strict';
+var TOKEN_KEY='bc_display_token',token='',lastCallId='',source=null,reconnectTimer=null,heartbeat=null,clockTimer=null,wakeLock=null,audioCtx=null,audioUnlocked=false,audioPlayer=null,audioQueue=[],audioBusy=false,currentStyle='modern',lastSig='',lastVersion=0,app=document.getElementById('app'),currentMediaEl=null,mediaTimer=null,mediaIndex=0,mediaBaseVolume=.8,mediaDuckEnabled=true,mediaAnnouncementMuted=false,currentRepeatCount=2,pendingCompleteCallId='',completeRetryTimer=null,lastStateSettings={},currentMediaList=[],renderedMode='',lastModeCheckAt=0,videoFrameHandle=null,videoFrameMode='',videoResizeObserver=null;
+function get(k){try{return localStorage.getItem(k)||sessionStorage.getItem(k)||''}catch(e){return''}}
+function clientLoginTarget(){try{var raw=localStorage.getItem('bc_installed_client_url')||sessionStorage.getItem('bc_installed_client_url')||'';if(!raw)return '/';var u=new URL(raw,location.origin);if(u.origin===location.origin&&u.pathname==='/client.php'&&u.searchParams.get('center')&&u.searchParams.get('role')&&u.searchParams.get('sig'))return u.href}catch(e){}return '/'}
+function cancelVideoRenderer(){try{if(videoFrameMode==='rvfc'&&currentMediaEl&&videoFrameHandle!=null&&currentMediaEl.cancelVideoFrameCallback)currentMediaEl.cancelVideoFrameCallback(videoFrameHandle);else if(videoFrameMode==='raf'&&videoFrameHandle!=null)cancelAnimationFrame(videoFrameHandle)}catch(e){}videoFrameHandle=null;videoFrameMode='';if(videoResizeObserver){try{videoResizeObserver.disconnect()}catch(e){}videoResizeObserver=null}}
+function saveToken(t){token=t;try{localStorage.setItem(TOKEN_KEY,t);sessionStorage.setItem(TOKEN_KEY,t);localStorage.setItem('bc_role','display')}catch(e){}}
+function clear(){token='';try{localStorage.removeItem(TOKEN_KEY);sessionStorage.removeItem(TOKEN_KEY);if(localStorage.getItem('bc_role')==='display')localStorage.removeItem('bc_role');localStorage.removeItem('bc_token');localStorage.removeItem('bc_centerId')}catch(e){}}
+function fa(v){return String(v==null?'':v).replace(/[0-9]/g,function(d){return '۰۱۲۳۴۵۶۷۸۹'.charAt(+d)})}
+function en(v){return String(v==null?'':v).replace(/[۰-۹]/g,function(d){return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))}).replace(/[٠-٩]/g,function(d){return String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))})}
+function num(v){var s=en(v).replace(/[^0-9]/g,'');return s?parseInt(s,10):0}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]})}
+function roomText(v){var s=String(v==null?'':v).trim().replace(/^اتاق\s*/i,'').trim();return s?'اتاق '+fa(s):'اتاق پزشک'}
+function api(path,method,data,done,fail){var x=new XMLHttpRequest();x.open(method||'GET','/api/'+path,true);x.timeout=6000;x.setRequestHeader('Accept','application/json');if(data)x.setRequestHeader('Content-Type','application/json;charset=UTF-8');if(token)x.setRequestHeader('Authorization','Bearer '+token);x.onreadystatechange=function(){if(x.readyState!==4)return;var j={};try{j=JSON.parse(x.responseText||'{}')}catch(e){}if(x.status===401){clear();location.replace(clientLoginTarget());return}if(x.status>=200&&x.status<300&&j.success!==false)done(j);else(fail||function(){}) (j.error||j.message||('HTTP '+x.status),x.status)};x.onerror=function(){(fail||function(){} )('ارتباط با سرور برقرار نشد.',0)};x.ontimeout=function(){(fail||function(){} )('پاسخ سرور بیش از حد طول کشید.',0)};try{x.send(data?JSON.stringify(data):null)}catch(e){(fail||function(){})(e.message||'خطای ارتباط',0)}}
+function requestWake(){try{if('wakeLock'in navigator)navigator.wakeLock.request('screen').then(function(l){wakeLock=l;l.addEventListener('release',function(){wakeLock=null;setTimeout(requestWake,1200)})}).catch(function(){})}catch(e){}}
+function unlockAudio(){try{var AC=window.AudioContext||window.webkitAudioContext;if(AC){audioCtx=audioCtx||new AC();if(audioCtx.state==='suspended')audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();g.gain.value=.0001;o.frequency.value=440;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.03)}}catch(e){} audioUnlocked=true;try{localStorage.setItem('bc_audio_unlocked','1')}catch(e){} if(!audioPlayer)audioPlayer=new Audio();audioPlayer.preload='auto';audioPlayer.volume=1;}
+function fullscreen(){try{var e=document.documentElement;if(e.requestFullscreen)e.requestFullscreen().catch(function(){});else if(e.webkitRequestFullscreen)e.webkitRequestFullscreen()}catch(e){}}
+function prepareBrowser(){unlockAudio();fullscreen();requestWake();document.addEventListener('visibilitychange',function(){if(!document.hidden)requestWake()});window.addEventListener('resize',function(){fitLongText()});}
+function styleGate(){
+ var saved='';try{saved=localStorage.getItem('bc_tv_style')||''}catch(e){}
+ currentStyle=(saved==='classic'||saved==='modern')?saved:'modern';
+ // بدون مرحله اضافه: نشست معتبر مستقیماً نمایشگر را باز می‌کند؛ در غیر این صورت فقط فرم ورود مرکز نمایش داده می‌شود.
+ loginOrStart();
+}
+function loginView(msg){app.innerHTML='<div class="styleGate"><div class="gateBox" style="max-width:500px"><div class="gateBrand"><img src="/image/LOGO-BU-256.png" alt="هلدینگ باستیان"></div><h1>ورود نمایشگر مرکز</h1><p>نام کاربری و رمز مشترک مرکز / نمایشگر را وارد کنید.</p><input id="u" autocomplete="username" placeholder="نام کاربری مرکز" style="width:100%;height:54px;margin:6px 0;padding:10px 14px;border-radius:12px;border:1px solid #3b5e70;background:#06131f;color:#fff;font-size:19px"><input id="p" type="password" autocomplete="current-password" placeholder="رمز عبور مرکز" style="width:100%;height:54px;margin:6px 0;padding:10px 14px;border-radius:12px;border:1px solid #3b5e70;background:#06131f;color:#fff;font-size:19px"><div id="e" style="min-height:24px;color:#ffadad;font-size:15px;margin:7px 0">'+(msg?esc(msg):'')+'</div><button id="login" style="width:100%;height:55px;border:0;border-radius:12px;background:#167da2;color:#fff;font:900 21px BTitr">ورود به نمایشگر</button></div></div>';document.getElementById('login').onclick=function(){prepareBrowser();var u=document.getElementById('u').value.trim(),p=document.getElementById('p').value;if(!u||!p){document.getElementById('e').textContent='نام کاربری و رمز عبور را وارد کنید.';return}document.getElementById('login').disabled=true;api('auth/display-login','POST',{username:u,password:p},function(j){saveToken(j.token);start();},function(e){document.getElementById('login').disabled=false;document.getElementById('e').textContent=e});};}
+function stateSig(j){return JSON.stringify({v:j.version,c:j.centerName,s:j.settings,d:j.doctors,q:j.queues,t:j.tickers})}
+function applyFullState(j){lastVersion=Number(j.version)||0;lastSig=stateSig(j);render(j);lastModeCheckAt=Date.now();}
+function fetchFullState(){if(!token)return;api('state','GET',null,function(j){applyFullState(j)},function(){setConn(false,'ارتباط موقتاً قطع شد؛ تلاش خودکار…')})}
+function loginOrStart(){var t=get(TOKEN_KEY);if(t){token=t;api('state','GET',null,function(j){try{applyFullState(j);start()}catch(e){clear();loginView('خطا در راه‌اندازی نمایشگر: '+(e&&e.message?e.message:'خطای ناشناخته'));}},function(){clear();loginView('نشست قبلی معتبر نیست؛ لطفاً وارد شوید.')});}else loginView('');}
+function setConn(ok,text){var d=document.getElementById('connDot'),t=document.getElementById('connText');if(d)d.className='dot'+(ok?'':' off');if(t)t.textContent=text|| (ok?'اتصال زنده و پایدار':'در حال اتصال مجدد…')}
+function clock(){var e=document.getElementById('clock');if(e){try{e.textContent=new Intl.DateTimeFormat('fa-IR',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date())}catch(x){e.textContent=new Date().toLocaleTimeString('fa-IR')}}if(clockTimer)clearTimeout(clockTimer);clockTimer=setTimeout(clock,1000)}
+function qrUrl(url){return 'https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=4&data='+encodeURIComponent(url)}
+function bindDisplayButtons(){var eb=document.getElementById('exitBtn');if(eb)eb.onclick=logout;var fs=document.getElementById('fullscreenBtn');if(fs)fs.onclick=function(){fullscreen()};var rb=document.getElementById('returnBtn');if(rb){var rt='';try{rt=localStorage.getItem('bc_return_token')||''}catch(e){}if(!rt)rb.style.display='none';else rb.onclick=returnToPanel;}}
+function returnToPanel(){var rt='',rp='/',rr='';try{rt=localStorage.getItem('bc_return_token')||'';rp=localStorage.getItem('bc_return_path')||'/';rr=localStorage.getItem('bc_return_role')||''}catch(e){}if(!rt){logout();return}fetch('/api/auth/restore-panel',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+rt},body:'{}'}).then(function(r){return r.json().then(function(j){if(!r.ok||!j.success)throw new Error(j.error||'نشست پنل معتبر نیست');return j})}).then(function(){try{localStorage.setItem('bc_token',rt);localStorage.setItem('bc_role',rr);localStorage.removeItem('bc_display_token');sessionStorage.removeItem('bc_display_token');localStorage.removeItem('bc_return_token');localStorage.removeItem('bc_return_role');localStorage.removeItem('bc_return_path')}catch(e){}location.replace(rp)}).catch(function(){logout()})}
+
+function fitText(el,max,min){if(!el)return;el.classList.add('fitText');var size=parseFloat(getComputedStyle(el).fontSize)||max;var maxWidth=el.parentElement?el.parentElement.clientWidth:0;if(!maxWidth)return;size=Math.min(max,size);el.style.fontSize=size+'px';while(el.scrollWidth>maxWidth&&size>min){size-=.5;el.style.fontSize=size+'px';} }
+function fitLongText(){Array.prototype.forEach.call(document.querySelectorAll('.docName'),function(e){fitText(e,parseFloat(getComputedStyle(e).fontSize)||36,13)});Array.prototype.forEach.call(document.querySelectorAll('.docSpec,.patient'),function(e){fitText(e,parseFloat(getComputedStyle(e).fontSize)||22,11)});Array.prototype.forEach.call(document.querySelectorAll('.number'),function(e){fitText(e,parseFloat(getComputedStyle(e).fontSize)||190,42)});}
+function appointmentLinksFromSettings(set){var a=Array.isArray(set.appointmentLinks)?set.appointmentLinks.filter(function(x){return x&&x.active!==false&&x.url}):[];if(!a.length&&(set.appointmentUrl||'').trim())a=[{id:'legacy',name:(set.appointmentSiteName||'دریافت نوبت آنلاین').trim(),url:(set.appointmentUrl||'').trim(),description:(set.appointmentDescription||'').trim()||'برای دریافت نوبت آنلاین، QR را اسکن کنید.'}];return a.slice(0,1);}
+function qrDisplayMeta(set){var settings=set||{},ds0=settings.displaySettings||{},codes=Array.isArray(ds0.qrCodes)?ds0.qrCodes.filter(function(x){return x&&x.active!==false&&(x.imageUrl||x.url)}):[];if(!codes.length)codes=appointmentLinksFromSettings(settings);return{visible:ds0.showQr!==false&&codes.length>0,position:ds0.qrPosition==='right'?'right':'left',size:Math.max(100,Math.min(320,Number(ds0.qrSize||185)))}}
+function appointmentQrHtml(set){
+ var settings=set||{}, ds0=settings.displaySettings||{};
+ var codes=Array.isArray(ds0.qrCodes)?ds0.qrCodes.filter(function(x){return x&&x.active!==false&&(x.imageUrl||x.url)}):[];
+ if(!codes.length) codes=appointmentLinksFromSettings(settings);
+ if(ds0.showQr===false||!codes.length)return '';
+ var qm=qrDisplayMeta(settings);return '<div class="qrBox '+(qm.position==='right'?'qrRight':'')+'" style="--qr-size:'+qm.size+'px;width:min('+qm.size+'px,22vw)"><div class="qrTitle">دریافت نوبت اینترنتی</div><div class="qrGrid">'+codes.slice(0,1).map(function(x){var src=x.imageUrl||qrUrl(x.url);return '<div class="qrItem"><img src="'+esc(src)+'" alt="QR '+esc(x.name||'دریافت نوبت')+'" onerror="this.onerror=null;if(this.src!=='+JSON.stringify(qrUrl(x.url||'')) + ') this.src='+JSON.stringify(qrUrl(x.url||''))+';else this.style.display=&quot;none&quot;"><div class="qrSite">'+esc(x.name||'دریافت نوبت آنلاین')+'</div><div class="qrDesc">'+esc(x.description||'')+'</div></div>';}).join('')+'</div></div>'; }function safeLogoUrl(v){var u=String(v==null?'':v).trim();if(!u)return '';if(/^data:image\//i.test(u))return u;if(/^https:\/\//i.test(u)||/^http:\/\//i.test(u))return u;if(u.charAt(0)==='/')return u;return '';}
+function logoTag(url,alt,cls){
+ var u=safeLogoUrl(url);
+ if(!u)return '<div class=\"logoFallback '+(cls||'')+'\" aria-label=\"'+esc(alt||'لوگو')+'\">⌁</div>';
+ return '<img class=\"'+(cls||'')+'\" src=\"'+esc(u)+'\" alt=\"'+esc(alt||'لوگو')+'\" loading=\"eager\" decoding=\"async\" onerror=\"this.onerror=null;this.style.display=\'none\';if(this.nextElementSibling)this.nextElementSibling.style.display=\'grid\'\"><span class=\"logoFallback '+(cls||'')+'\" style=\"display:none\" aria-label=\"'+esc(alt||'لوگو')+'\">⌁</span>';
+}
+
+function safeHex(v,f){var x=String(v||'').trim();return /^#[0-9a-fA-F]{6}$/.test(x)?x:f;}
+function displayVars(ds){var d=ds||{};return {
+ '--tv-bg':safeHex(d.backgroundColor,'#07111f'),'--tv-header':safeHex(d.headerColor,'#071725'),'--tv-card':safeHex(d.cardColor,'#0f2232'),'--tv-dochead':safeHex(d.doctorHeaderColor,'#0b2130'),
+ '--tv-doctor':safeHex(d.doctorNameColor,'#ffffff'),'--tv-specialty':safeHex(d.doctorSpecialtyColor,'#b9ceda'),'--tv-room':safeHex(d.roomColor,'#8be7ff'),'--tv-number':safeHex(d.numberColor,'#ffe071'),'--tv-calling':safeHex(d.callingColor,'#ffd76a'),
+ '--tv-status':safeHex(d.statusColor,'#8be9ad'),'--tv-patient':safeHex(d.patientColor,'#ffffff'),'--tv-hint':safeHex(d.hintColor,'#9db5c5'),'--tv-copyright':safeHex(d.copyrightColor,'#7891a1'),'--tv-line':safeHex(d.lineColor,'#294258'),'--tv-ticker-bg':safeHex(d.tickerBackground,'#07131f'),'--tv-ticker-label':safeHex(d.tickerLabelColor,'#8be7ff'),'--tv-ticker-text':safeHex(d.tickerTextColor,'#d9e9f1'),
+ '--tv-ticker-speed':Math.max(12,Math.min(120,Number(d.tickerSpeed)||34))+'s','--tv-qr-size':Math.max(100,Math.min(320,Number(d.qrSize)||185))+'px','--tv-card-radius':Math.max(8,Math.min(42,Number(d.cardRadius)||22))+'px','--tv-card-gap':Math.max(4,Math.min(32,Number(d.cardGap)||12))+'px',
+ '--tv-header-scale':(Math.max(70,Math.min(140,Number(d.headerScale)||100))/100),'--tv-number-scale':(Math.max(60,Math.min(150,Number(d.numberScale)||100))/100),'--tv-doctor-scale':(Math.max(70,Math.min(150,Number(d.doctorScale)||100))/100),'--tv-ticker-scale':(Math.max(60,Math.min(150,Number(d.tickerScale)||100))/100)
+};}
+function applyDisplaySettings(ds){var tv=document.querySelector('.tv');if(!tv)return;var q=tv.querySelector('.qrBox');tv.classList.toggle('hasQr',!!q);tv.classList.remove('qrDockLeft','qrDockRight');if(q)tv.classList.add(ds&&ds.qrPosition==='right'?'qrDockRight':'qrDockLeft');var v=displayVars(ds);Object.keys(v).forEach(function(k){tv.style.setProperty(k,v[k])}); if(ds.showClock===false){var cl=document.getElementById('clock');if(cl)cl.style.display='none';} if(ds.showConnection===false){var cn=document.querySelector('.connection');if(cn)cn.style.display='none';} if(ds.showTicker===false){var tk=document.querySelector('.ticker');if(tk)tk.style.display='none';} if(ds.showBastianBrand===false){var cp=document.querySelector('.copyright');if(cp)cp.style.display='none';} }
+
+function renderModern(s){
+ var set=s.settings||{},ds=set.displaySettings||{},docs=s.doctors||[],queues=s.queues||[],ticks=s.tickers||[];
+ var clinic=s.centerName||set.clinicName||'درمانگاه تخصصی بیمارستان امام حسین (ع) اهرم';
+ var sub=set.subtitle||'سامانه هوشمند فراخوان نوبت';
+ var logo=(ds.showCenterLogo!==false)?(set.logoUrl||''):'';
+ var qm=qrDisplayMeta(set),qrClass=qm.visible?' hasQr qr'+(qm.position==='right'?'Right':'Left'):'';var html='<div class="tv modern'+qrClass+'" style="--qr-size:'+qm.size+'px"><header class="header"><div class="brand">'+logoTag(logo,'لوگوی مرکز','centerLogo')+'<div class="brandText"><div class="clinic">'+esc(clinic)+'</div><div class="subtitle">'+esc(sub)+'</div></div></div><div class="clock" id="clock"></div><div class="connection"><b><span id="connDot" class="dot"></span><span id="connText">اتصال زنده و پایدار</span></b></div><div class="tvControls"><button class="screenBtn" id="fullscreenBtn" type="button">⛶ تمام‌صفحه</button><button class="screenBtn" id="returnBtn" type="button">↩ بازگشت به پنل</button><button class="exitBtn" id="exitBtn" type="button">خروج</button></div></header><main class="main"><div class="cards">';
+ var count=0;
+ for(var i=0;i<docs.length;i++){
+   var d=docs[i]; if(d.isActive===false||d.active===false)continue; count++;
+   var q=null; for(var k=0;k<queues.length;k++){var qq=queues[k];if(String(qq.doctorId)===String(d.id)&&qq.status==='calling'&&qq.isActive!==false){q=qq;break}}
+   var photo=(ds.showDoctorPhoto!==false&&(d.photoUrl||d.photo))?(d.photoUrl||d.photo):''; html+='<section class="card '+(q?'calling ':'')+(d.bookingClosed?'bookingClosed':'')+'"><div class="docHead">'+(photo?'<div class="docPhoto"><img src="'+esc(photo)+'" alt="" loading="lazy"></div>':'')+'<div class="docInfo"><div class="docName">'+esc(d.name||'')+'</div><div class="docSpec">'+esc(d.specialty||'')+'</div>'+(d.bookingClosed?'<div class="bookingClosedBadge">⛔ پذیرش نوبت جدید پایان یافته است</div><div style="margin-top:.35vh;color:#fda4af;font:700 clamp(10px,.78vw,14px) BNazanin">نوبت‌های ثبت‌شده قبلی همچنان فراخوان می‌شوند</div>':'')+'</div>'+((ds.showRoom!==false)?'<div class="room">'+esc(roomText(d.room))+'</div>':'')+'</div><div class="center">';
+   if(q) html+='<div><div class="number">'+fa(q.number)+'</div>'+((ds.showPatientName!==false&&q.patientName&&q.patientName!=='بدون نام')?'<div class="patient">'+esc(q.patientName)+'</div>':'')+'<div class="hint">لطفاً به اتاق پزشک مراجعه فرمایید</div></div>';
+   else html+='<div><div class="number">—</div><div class="hint">'+(d.bookingClosed?'پذیرش نوبت جدید پایان یافته است':'در انتظار فراخوان')+'</div></div>';
+   html+='</div><div class="status">'+(q?'🔔 شماره '+fa(q.number)+' فراخوان شد':(d.bookingClosed?'⛔ پذیرش جدید پایان یافته؛ نوبت‌های قبلی در حال پیگیری است':'آماده فراخوان'))+'</div></section>';
+ }
+ if(!count)html+='<div class="empty">پزشک فعالی برای نمایش وجود ندارد</div>';
+ html+='</div></main><div class="ticker"><div class="tickerLabel">اطلاعیه</div><div class="tickerWindow"><div class="tickerTrack">';
+ var texts=[];for(var t=0;t<ticks.length;t++)if(ticks[t]&&ticks[t].active!==false&&ticks[t].text)texts.push(String(ticks[t].text));
+ var tx=texts.join('   ◆   ')||'لطفاً تا زمان اعلام شماره نوبت خود در سالن انتظار شکیبا باشید.';
+ var tickerGroup='<div class="tickerGroup"><span class="tickerItem">'+esc(tx)+'</span><span class="tickerItem">'+esc(tx)+'</span><span class="tickerItem">'+esc(tx)+'</span></div>'; html+=tickerGroup+tickerGroup+'</div></div></div><div class="copyright">© هلدینگ باستیان &nbsp; | &nbsp; تهیه و توسعه توسط هلدینگ باستیان &nbsp; | &nbsp; حق نشر محفوظ است</div>';
+ html+=appointmentQrHtml(set);
+ html+='</div>'; app.innerHTML=html; bindDisplayButtons(); clock(); fitLongText();
+ setConn(true,'اتصال زنده و پایدار'); applyDisplaySettings(ds); if(ds.showClock===false){var c0=document.getElementById('clock');if(c0)c0.style.display='none';} if(ds.showConnection===false){var c1=document.querySelector('.connection');if(c1)c1.style.display='none';}
+}
+function renderMedia(s){
+ var set=s.settings||{},ds=set.displaySettings||{},docs=s.doctors||[],queues=s.queues||[],ticks=s.tickers||[],playlist=(ds.mediaPlaylist||[]).filter(function(x){return x&&x.active!==false&&x.url});
+ var clinic=s.centerName||set.clinicName||'مرکز درمانی',logo=(ds.showCenterLogo!==false)?(set.logoUrl||''):'';
+ var tx=(ticks||[]).filter(function(x){return x&&x.active!==false&&x.text}).map(function(x){return x.text}).join('   ◆   ')||'لطفاً تا زمان فراخوان شماره نوبت خود شکیبا باشید.';
+ var cards='';docs.filter(function(d){return d.isActive!==false&&d.active!==false}).forEach(function(d){var q=queues.find(function(x){return String(x.doctorId)===String(d.id)&&x.status==='calling'&&x.isActive!==false});cards+='<div style="padding:9px;border:1px solid #294258;border-radius:12px;background:#0b1725;margin-bottom:7px"><div style="display:flex;justify-content:space-between;gap:7px"><b style="font:900 18px BTitr">'+esc(d.name||'')+'</b><span style="color:#8be7ff">'+esc(roomText(d.room))+'</span></div>'+(q?'<div style="text-align:center;font:900 42px BTitr;color:#ffe071">'+fa(q.number)+'</div><div style="text-align:center;color:#8be9ad">در حال فراخوان</div>':(d.bookingClosed?'<div style="padding:15px 4px;text-align:center;color:#fb7185;font:900 17px BTitr">پذیرش نوبت جدید پایان یافته است</div>':'<div style="padding:15px 4px;text-align:center;color:#94a3b8">در انتظار فراخوان</div>'))+'</div>'});
+ var qm=qrDisplayMeta(set),qrClass=qm.visible?' hasQr qr'+(qm.position==='right'?'Right':'Left'):'';app.innerHTML='<div class="tv modern'+qrClass+'" style="--qr-size:'+qm.size+'px;display:grid;grid-template-rows:minmax(64px,10vh) minmax(0,1fr) minmax(48px,7vh);overflow:hidden"><header class="header" style="position:relative"><div class="brand">'+logoTag(logo,'لوگوی مرکز','centerLogo')+'<div class="brandText"><div class="clinic">'+esc(clinic)+'</div><div class="subtitle">نمایشگر جامع چندرسانه‌ای + صف</div></div></div><div class="clock" id="clock"></div><div class="connection"><b><span id="connDot" class="dot"></span><span id="connText">اتصال زنده و پایدار</span></b></div><div class="tvControls"><button class="screenBtn" id="fullscreenBtn">⛶ تمام‌صفحه</button><button class="screenBtn" id="returnBtn">↩ بازگشت به پنل</button><button class="exitBtn" id="exitBtn">خروج</button></div></header><main style="min-height:0;display:grid;grid-template-columns:minmax(0,3.4fr) minmax(260px,1fr);gap:10px;padding:8px"><section id="mediaStage" class="mediaStage" style="min-width:0;min-height:0;border:1px solid #294258;border-radius:16px;background:#02060b;overflow:hidden;display:grid;place-items:center"></section><aside style="min-width:0;overflow:auto;padding:3px">'+(cards||'<div class="empty">پزشک فعالی وجود ندارد</div>')+'</aside></main><div class="ticker"><div class="tickerLabel">اطلاعیه</div><div class="tickerWindow"><div class="tickerTrack"><div class="tickerGroup"><span class="tickerItem">'+esc(tx)+'</span><span class="tickerItem">'+esc(tx)+'</span><span class="tickerItem">'+esc(tx)+'</span></div><div class="tickerGroup"><span class="tickerItem">'+esc(tx)+'</span><span class="tickerItem">'+esc(tx)+'</span><span class="tickerItem">'+esc(tx)+'</span></div></div></div></div>'+appointmentQrHtml(set)+'</div>';
+ bindDisplayButtons();clock();setConn(true,'اتصال زنده و پایدار');applyDisplaySettings(ds);mediaBaseVolume=Math.max(0,Math.min(1,Number(ds.mediaVolume==null?.8:ds.mediaVolume)));currentMediaList=playlist;startMediaPlaylist(currentMediaList);
+}
+function stopMediaPlayback(){cancelVideoRenderer();if(mediaTimer){clearTimeout(mediaTimer);mediaTimer=null}if(currentMediaEl){try{currentMediaEl.pause()}catch(e){}try{currentMediaEl.removeAttribute('src');currentMediaEl.load&&currentMediaEl.load()}catch(e){}}currentMediaEl=null;currentMediaList=[],renderedMode='',lastModeCheckAt=0;mediaIndex=0;}
+function startHighQualityVideoRenderer(video,canvas,host){
+ cancelVideoRenderer();var ctx=null;try{ctx=canvas.getContext('2d',{alpha:false,desynchronized:true})||canvas.getContext('2d')}catch(e){}if(!ctx)return false;
+ function resize(){var r=host.getBoundingClientRect(),cssW=Math.max(2,Math.round(r.width)),cssH=Math.max(2,Math.round(r.height)),dpr=Math.max(1,Math.min(2,window.devicePixelRatio||1)),w=Math.round(cssW*dpr),h=Math.round(cssH*dpr),maxPixels=8294400,p=w*h;if(p>maxPixels){var k=Math.sqrt(maxPixels/p);w=Math.max(2,Math.round(w*k));h=Math.max(2,Math.round(h*k))}if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}canvas.style.width='100%';canvas.style.height='100%'}
+ function paint(){if(!ctx||!video||video.readyState<2||!video.videoWidth||!video.videoHeight)return;resize();var cw=canvas.width,ch=canvas.height,vw=video.videoWidth,vh=video.videoHeight,scale=Math.min(cw/vw,ch/vh),dw=Math.max(1,Math.round(vw*scale)),dh=Math.max(1,Math.round(vh*scale)),dx=Math.floor((cw-dw)/2),dy=Math.floor((ch-dh)/2);ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#000';ctx.fillRect(0,0,cw,ch);ctx.imageSmoothingEnabled=true;try{ctx.imageSmoothingQuality='high'}catch(e){};ctx.drawImage(video,0,0,vw,vh,dx,dy,dw,dh);ctx.restore()}
+ function next(){paint();if(video.requestVideoFrameCallback){videoFrameMode='rvfc';videoFrameHandle=video.requestVideoFrameCallback(next)}else{videoFrameMode='raf';videoFrameHandle=requestAnimationFrame(next)}}
+ resize();if(window.ResizeObserver){try{videoResizeObserver=new ResizeObserver(function(){resize();paint()});videoResizeObserver.observe(host)}catch(e){}}video.addEventListener('loadedmetadata',function(){resize();paint()},{once:true});video.addEventListener('resize',function(){resize();paint()});next();return true;
+}
+function scheduleNextMedia(list,sec){if(mediaTimer)clearTimeout(mediaTimer);mediaTimer=setTimeout(function(){startMediaPlaylist(list)},Math.max(3,Number(sec)||12)*1000)}
+function startMediaPlaylist(list){if(mediaTimer){clearTimeout(mediaTimer);mediaTimer=null}if(currentMediaEl){try{currentMediaEl.pause()}catch(e){}}currentMediaEl=null;var stage=document.getElementById('mediaStage');if(!stage)return;list=Array.isArray(list)?list.filter(function(x){return x&&x.active!==false&&x.url}):[];currentMediaList=list;if(!list.length){stage.innerHTML='<div style="color:#64748b;font:900 24px BTitr;text-align:center;padding:20px">رسانه‌ای برای نمایش ثبت نشده است</div>';return}if(mediaIndex>=list.length)mediaIndex=0;var x=list[mediaIndex++],el,wrap,dur=Math.max(3,Number(x.duration)||12);stage.innerHTML='';
+ if(x.type==='video'){wrap=document.createElement('div');wrap.className='mediaVideoWrap';var cv=document.createElement('canvas');cv.className='mediaVideoCanvas';el=document.createElement('video');el.src=x.url;el.autoplay=true;el.controls=false;el.playsInline=true;el.preload='auto';el.className='mediaVideoSource';el.volume=mediaAnnouncementMuted?0:mediaBaseVolume;el.disablePictureInPicture=true;try{el.setAttribute('controlsList','nodownload noplaybackrate noremoteplayback');el.setAttribute('webkit-playsinline','');el.setAttribute('playsinline','');}catch(e){}el.onended=function(){cancelVideoRenderer();startMediaPlaylist(list)};el.onerror=function(){cancelVideoRenderer();scheduleNextMedia(list,4)};wrap.appendChild(cv);wrap.appendChild(el);stage.appendChild(wrap);currentMediaEl=el;if(!startHighQualityVideoRenderer(el,cv,wrap)){cv.remove();el.className='mediaVideo';el.style.cssText='position:static!important;width:100%!important;height:100%!important;opacity:1!important;object-fit:contain!important;object-position:center center!important;background:#000!important;transform:none!important';}var pv=el.play();if(pv&&pv.catch)pv.catch(function(){showAudioUnlock()});if(dur)mediaTimer=setTimeout(function(){cancelVideoRenderer();try{el.pause()}catch(e){}startMediaPlaylist(list)},dur*1000);return;}
+ if(x.type==='audio'){wrap=document.createElement('div');wrap.style='width:100%;height:100%;display:grid;place-items:center;background:radial-gradient(circle at center,#12334a 0,#06111c 55%,#02060b 100%);text-align:center;padding:30px';wrap.innerHTML='<div><div style="font-size:72px;margin-bottom:12px">♫</div><div style="font:900 28px BTitr;color:#e0f2fe;max-width:70vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(x.name||'فایل صوتی')+'</div><div style="color:#7dd3fc;margin-top:8px">در حال پخش رسانه صوتی</div></div>';el=document.createElement('audio');el.src=x.url;el.autoplay=true;el.preload='auto';el.volume=mediaAnnouncementMuted?0:mediaBaseVolume;el.onended=function(){startMediaPlaylist(list)};el.onerror=function(){scheduleNextMedia(list,4)};wrap.appendChild(el);stage.appendChild(wrap);currentMediaEl=el;var pa=el.play();if(pa&&pa.catch)pa.catch(function(){showAudioUnlock()});if(dur)mediaTimer=setTimeout(function(){try{el.pause()}catch(e){}startMediaPlaylist(list)},dur*1000);return;}
+ if(x.type==='office'){el=document.createElement('iframe');el.src='https://view.officeapps.live.com/op/embed.aspx?src='+encodeURIComponent(location.origin+x.url);el.style='border:0;width:100%;height:100%;background:#fff';stage.appendChild(el);currentMediaEl=el;scheduleNextMedia(list,Math.max(8,dur));return;}
+ if(x.type==='pdf'){el=document.createElement('iframe');el.src=x.url+'#toolbar=0&navpanes=0&scrollbar=0';el.style='border:0;width:100%;height:100%;background:#fff';stage.appendChild(el);currentMediaEl=el;scheduleNextMedia(list,dur);return;}
+ wrap=document.createElement('div');wrap.className='mediaImageWrap';var bg=document.createElement('div');bg.className='mediaImageBackdrop';try{bg.style.backgroundImage='url("'+String(x.url).replace(/"/g,'%22')+'")'}catch(_e){};el=document.createElement('img');el.src=x.url;el.alt=x.name||'';el.className='mediaImage';el.decoding='async';el.loading='eager';el.onerror=function(){scheduleNextMedia(list,4)};wrap.appendChild(bg);wrap.appendChild(el);stage.appendChild(wrap);currentMediaEl=el;scheduleNextMedia(list,dur);}
+function duckMedia(on){mediaAnnouncementMuted=!!on;if(currentMediaEl&&(currentMediaEl.tagName==='VIDEO'||currentMediaEl.tagName==='AUDIO')){try{currentMediaEl.volume=mediaAnnouncementMuted?0:mediaBaseVolume}catch(e){}}}
+function render(s){var ds=(s&&s.settings&&s.settings.displaySettings)||{};renderedMode=(ds.mode==='media'?'media':'queue');lastStateSettings=ds;currentRepeatCount=Math.max(1,Math.min(3,Number(ds.repeatCount||((s.settings||{}).repeatCount)||2)));mediaDuckEnabled=true;if(ds.mode==='media'){renderMedia(s);return;}stopMediaPlayback(); if(ds.style==='modern'||ds.style==='classic') currentStyle=ds.style; if(currentStyle==='modern'){renderModern(s);applyDisplaySettings(ds);return;}var set=s.settings||{},docs=s.doctors||[],queues=s.queues||[],ticks=s.tickers||[],clinic=s.centerName||set.clinicName||'درمانگاه تخصصی بیمارستان امام حسین (ع) اهرم',sub=set.subtitle||'سامانه هوشمند فراخوان نوبت',logo=(ds.showCenterLogo!==false)?(set.logoUrl||''):'';var qm=qrDisplayMeta(set),qrClass=qm.visible?' hasQr qr'+(qm.position==='right'?'Right':'Left'):'';var html='<div class="tv '+(currentStyle==='modern'?'modern':'classic')+qrClass+'" style="--qr-size:'+qm.size+'px"><header class="header"><div class="brand">'+logoTag(logo,'لوگوی مرکز','centerLogo')+'<div class="brandText"><div class="clinic">'+esc(clinic)+'</div><div class="subtitle">'+esc(sub)+'</div></div></div><div class="clock" id="clock"></div><div class="connection"><b><span id="connDot" class="dot"></span><span id="connText">اتصال زنده و پایدار</span></b></div><div class="tvControls"><button class="screenBtn" id="fullscreenBtn" type="button">⛶ تمام‌صفحه</button><button class="screenBtn" id="returnBtn" type="button">↩ بازگشت به پنل</button><button class="exitBtn" id="exitBtn" type="button">خروج</button></div></header><main class="main"><div class="cards">';var count=0;for(var i=0;i<docs.length;i++){var d=docs[i];if(d.isActive===false||d.active===false)continue;count++;var q=null;for(var k=0;k<queues.length;k++){var qq=queues[k];if(String(qq.doctorId)===String(d.id)&&qq.status==='calling'&&qq.isActive!==false){q=qq;break}}var dn=esc(d.name||'');var sp=esc(d.specialty||'');var photo=(ds.showDoctorPhoto!==false&&(d.photoUrl||d.photo))?(d.photoUrl||d.photo):'';html+='<section class="card '+(q?'calling ':'')+(d.bookingClosed?'bookingClosed':'')+'"><div class="docHead">'+(photo?'<div class="docPhoto"><img src="'+esc(photo)+'" alt="" loading="lazy"></div>':'')+'<div class="docInfo"><div class="docName">'+dn+'</div><div class="docSpec">'+sp+'</div>'+(d.bookingClosed?'<div class="bookingClosedBadge">⛔ پذیرش نوبت جدید پایان یافته است</div><div style="margin-top:.35vh;color:#fda4af;font:700 clamp(10px,.78vw,14px) BNazanin">نوبت‌های ثبت‌شده قبلی همچنان فراخوان می‌شوند</div>':'')+'</div>'+((ds.showRoom!==false)?'<div class="room">'+esc(roomText(d.room))+'</div>':'')+'</div><div class="center">';if(q)html+='<div><div class="number">'+fa(q.number)+'</div>'+((ds.showPatientName!==false&&q.patientName&&q.patientName!=='بدون نام')?'<div class="patient">'+esc(q.patientName)+'</div>':'')+'<div class="hint">لطفاً به اتاق پزشک مراجعه فرمایید</div></div>';else html+='<div><div class="number">—</div><div class="hint">'+(d.bookingClosed?'پذیرش نوبت جدید پایان یافته است':'در انتظار فراخوان')+'</div></div>';html+='</div><div class="status">'+(q?'🔔 شماره '+fa(q.number)+' فراخوان شد':(d.bookingClosed?'⛔ پذیرش جدید پایان یافته؛ نوبت‌های قبلی در حال پیگیری است':'آماده فراخوان'))+'</div></section>'}if(!count)html+='<div class="empty">پزشک فعالی برای نمایش وجود ندارد</div>';html+='</div></main><div class="ticker"><div class="tickerLabel">اطلاعیه</div><div class="tickerWindow"><div class="tickerTrack">';var texts=[];for(var t=0;t<ticks.length;t++)if(ticks[t]&&ticks[t].active!==false&&ticks[t].text)texts.push(String(ticks[t].text));var tx=texts.join('   ◆   ')||'لطفاً تا زمان اعلام شماره نوبت خود در سالن انتظار شکیبا باشید.';html+=Array(12).fill('<span class="tickerItem">'+esc(tx)+'</span>').join('')+'</div></div></div><div class="copyright">© هلدینگ باستیان &nbsp; | &nbsp; تهیه و توسعه توسط هلدینگ باستیان &nbsp; | &nbsp; حق نشر محفوظ است</div>';html+=appointmentQrHtml(set);html+='</div>';app.innerHTML=html;clock();setConn(true,'اتصال زنده و پایدار');bindDisplayButtons();applyDisplaySettings(ds);fitLongText();}
+var pollBusy=false;function pollOnce(){if(pollBusy||!token)return;pollBusy=true;api('sync/poll?version='+encodeURIComponent(lastVersion), 'GET', null, function(j){var cur=(j.announcementBus&&j.announcementBus.current)||j.triggerAnnouncement;if(j.hasUpdate){lastVersion=Number(j.version)||lastVersion;var sig=stateSig(j);if(sig!==lastSig){lastSig=sig;render(j);lastModeCheckAt=Date.now()}}else{if(j.version)lastVersion=Number(j.version)||lastVersion;var authoritative=(j.displayMode==='media'?'media':'queue');if(j.displayMode&&authoritative!==renderedMode){fetchFullState()}else if(Date.now()-lastModeCheckAt>8000){/* hard recovery sync: keeps queue-only and media displays aligned with server */fetchFullState()}}if(cur)announce(cur);setConn(true,'اتصال زنده و پایدار');pollBusy=false},function(){pollBusy=false;setConn(false,'ارتباط موقتاً قطع شد؛ تلاش خودکار…')})}
+function connectSSE(){}
+function completeServerAnnouncement(callId){if(!callId||!token)return;if(completeRetryTimer)clearTimeout(completeRetryTimer);api('announcements/complete','POST',{callId:callId},function(){pendingCompleteCallId='';setTimeout(pollOnce,60)},function(){completeRetryTimer=setTimeout(function(){completeServerAnnouncement(callId)},1800)})}function runAudioQueue(){if(audioBusy)return;if(!audioQueue.length){duckMedia(false);if(pendingCompleteCallId)completeServerAnnouncement(pendingCompleteCallId);return}audioBusy=true;var src=audioQueue.shift();audioPlayer=audioPlayer||new Audio();audioPlayer.src=src;audioPlayer.preload='auto';audioPlayer.volume=1;var done=function(){audioPlayer.removeEventListener('ended',done);audioPlayer.removeEventListener('error',done);setTimeout(function(){audioBusy=false;runAudioQueue()},100)};audioPlayer.addEventListener('ended',done);audioPlayer.addEventListener('error',done);var p=audioPlayer.play();if(p&&p.catch)p.catch(function(){audioPlayer.removeEventListener('ended',done);audioPlayer.removeEventListener('error',done);audioQueue.unshift(src);audioBusy=false;showAudioUnlock()})}
+function soundPath(prefix,n){n=num(n);if(!n)return'';if(prefix==='N'&&n>50)return'';if(prefix==='R'&&n>10)return'';var f=prefix+(n<10?'0'+n:n);return '/sounds/'+f+'.mp3'}
+function speakFallbackAnnouncement(q,done){done=done||function(){};try{if(!('speechSynthesis'in window)||!window.SpeechSynthesisUtterance){done();return}var u=new SpeechSynthesisUtterance('شماره '+fa(q.number)+'، '+roomText(q.room));u.lang='fa-IR';u.rate=.82;u.pitch=1;u.volume=1;var voices=window.speechSynthesis.getVoices?window.speechSynthesis.getVoices():[],v=voices.find(function(x){return /^fa(-|_)?/i.test(x.lang||'')})||voices.find(function(x){return /Persian|Farsi/i.test(x.name||'')});if(v)u.voice=v;var finished=false,finish=function(){if(finished)return;finished=true;done()};u.onend=finish;u.onerror=finish;window.speechSynthesis.cancel();window.speechSynthesis.speak(u);setTimeout(finish,7000)}catch(e){done()}}
+function announce(q){if(!q||!q.callId||q.callId===lastCallId)return;lastCallId=q.callId;duckMedia(true);var base=[],np=soundPath('N',q.number),rp=soundPath('R',q.room);pendingCompleteCallId=q.callId;if(!np||!rp){speakFallbackAnnouncement(q,function(){duckMedia(false);completeServerAnnouncement(q.callId)});return}base.push(np);base.push(rp);var files=[];for(var i=0;i<currentRepeatCount;i++)files=files.concat(base);audioQueue=audioQueue.concat(files);runAudioQueue()}
+function showAudioUnlock(){if(document.getElementById('audioUnlockBtn'))return;var b=document.createElement('button');b.id='audioUnlockBtn';b.textContent='🔊 فعال‌سازی صدا';b.style='position:fixed;right:18px;bottom:18px;z-index:120;padding:11px 16px;border:1px solid #38bdf8;border-radius:11px;background:#0c4a6e;color:#fff;font:900 17px BTitr;box-shadow:0 10px 30px #0009';b.onclick=function(){unlockAudio();b.remove();setTimeout(function(){runAudioQueue();if(currentMediaEl&&(currentMediaEl.tagName==='VIDEO'||currentMediaEl.tagName==='AUDIO')){try{var p=currentMediaEl.play();if(p&&p.catch)p.catch(function(){})}catch(e){}}},80)};document.body.appendChild(b)}function start(){clearTimeout(reconnectTimer);if(heartbeat)clearInterval(heartbeat);source=null;pollOnce();heartbeat=setInterval(function(){if(document.hidden===false)pollOnce()},1500);requestWake();if(!audioUnlocked)showAudioUnlock();}
+function logout(){if(source){try{source.close()}catch(e){}}clearInterval(heartbeat);clearTimeout(reconnectTimer);stopMediaPlayback();clear();location.replace(clientLoginTarget());}
+window.addEventListener('beforeunload',function(){try{if(source)source.close()}catch(e){}});
+window.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.fullscreenElement){try{document.exitFullscreen()}catch(x){}}});
+styleGate();
+})();
+</script>
+</body></html>

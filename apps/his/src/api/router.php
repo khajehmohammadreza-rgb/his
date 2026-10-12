@@ -5,6 +5,7 @@
  */
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/chabokan_ai_lib.php';
 if (is_file(__DIR__ . '/recovery_lib.php')) require_once __DIR__ . '/recovery_lib.php';
 if (is_file(__DIR__ . '/updater.php')) require_once __DIR__ . '/updater.php';
 if (is_file(__DIR__ . '/appointment_reminder_lib.php')) require_once __DIR__ . '/appointment_reminder_lib.php';
@@ -760,31 +761,31 @@ function lilianAiSystemPrompt(array $allowed): string {
       ". هرگز ابزاری خارج از این فهرست انتخاب نکن. عملیات حذف یا تغییر داده را انتخاب نکن. بکاپ فقط وقتی کاربر صریحاً درخواست بکاپ/پشتیبان کرده انتخاب شود. ".
       "برای فهرست تماس بیماران با فیلتر جنسیت از patient_contacts استفاده کن؛ برای نام/شماره بیمار از search_patients؛ بیماران امروز today_patients؛ بکاپ کامل create_system_snapshot.";
 }
-function lilianChooseChabokanModel(string $prompt,array $cfg): string {
-    $fixed=trim((string)($cfg['defaultModel']??''));
-    $auto=filter_var($cfg['autoModel']??true,FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE); if($auto===null)$auto=true;
-    if(!$auto && $fixed!=='') return $fixed;
-    $q=lilianNormalizeText($prompt);
-    if($fixed!=='') return $fixed;
-    // Admin can override this at any time. These are preference IDs, not a hard dependency.
-    if(str_contains($q,'کد')||str_contains($q,'توسعه')||str_contains($q,'برنامه')||str_contains($q,'دیپلوی')) return 'openai/gpt-6.1-sol';
-    if(str_contains($q,'تحلیل')||str_contains($q,'گزارش')||mb_strlen($prompt,'UTF-8')>900) return 'openai/gpt-6.1-sol';
-    return 'openai/gpt-6-luna';
-}
 function lilianChabokanPlan(string $prompt,array $allowed,array $session): ?array {
-    $centerId=lilianCenterId($session); if($centerId==='')return null;
-    $cfg=bastianDbIntegrationConfig($centerId,'chabokan_ai');
-    $apiKey=trim((string)($cfg['apiKey']??''));$base=rtrim(trim((string)($cfg['baseUrl']??'')),'/');
-    if($apiKey===''||$base==='')return null;
-    if(!preg_match('#^https://#i',$base))return null;
-    $model=lilianChooseChabokanModel($prompt,$cfg);
-    $payload=json_encode(['model'=>$model,'temperature'=>0.1,'response_format'=>['type'=>'json_object'],'messages'=>[['role'=>'system','content'=>lilianAiSystemPrompt($allowed)],['role'=>'user','content'=>$prompt]]],JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
-    $res=httpCurlRequest($base.'/chat/completions','POST',['Content-Type: application/json','Authorization: Bearer '.$apiKey],$payload,35);
-    if(($res['code']??0)<200||($res['code']??0)>=300)return null;
-    $d=json_decode((string)($res['response']??''),true);$text=(string)($d['choices'][0]['message']['content']??'');$plan=json_decode($text,true);
-    if(!is_array($plan))return null;
-    if(($plan['kind']??'')==='tool'&&!in_array((string)($plan['tool']??''),$allowed,true))return null;
-    return $plan;
+    $centerId = lilianCenterId($session);
+    if ($centerId === '') return null;
+    $cfg = bastianAiConfig($centerId);
+    if (trim((string)($cfg['apiKey'] ?? '')) === '') return null; // Keep the legacy Gemini path independent.
+    try {
+        $catalog = bastianAiModels($centerId);
+        $model = bastianAiPickModel($catalog, trim((string)($cfg['defaultModel'] ?? '')));
+        if ($model === '') throw new RuntimeException('هیچ مدل گفت‌وگوی قابل استفاده‌ای دریافت نشد.');
+        $response = bastianAiChat($centerId, $model, [
+            ['role'=>'system','content'=>lilianAiSystemPrompt($allowed)],
+            ['role'=>'user','content'=>$prompt]
+        ], 450, 'lilian');
+        $content = (string)($response['data']['choices'][0]['message']['content'] ?? '');
+        $content = trim(preg_replace('/^```(?:json)?\s*|\s*```$/u', '', trim($content)));
+        $plan = json_decode($content, true);
+        if (!is_array($plan)) throw new RuntimeException('قالب پاسخ مدل برای لیلیان معتبر نیست.');
+        if (($plan['kind']??'') === 'tool' && !in_array((string)($plan['tool']??''), $allowed, true)) {
+            throw new RuntimeException('مدل ابزاری خارج از سطح دسترسی درخواست کرده است.');
+        }
+        return $plan;
+    } catch (Throwable $e) {
+        // Never silently fail over clinical prompts to another external AI provider.
+        return ['kind'=>'reply', 'reply'=>'ارتباط لیلیان با هوش مصنوعی چابکان در این لحظه کامل نشد. لطفاً وضعیت کلید، مدل و اعتبار را در مرکز مدیریت هوش مصنوعی بررسی کنید. (' . $e->getMessage() . ')'];
+    }
 }
 function lilianGeminiPlan(string $prompt,array $allowed,array $session): array {
     $ch=lilianChabokanPlan($prompt,$allowed,$session); if(is_array($ch))return $ch;
@@ -1439,7 +1440,7 @@ switch ($route) {
               'kavenegar'=>['fields'=>['apiKey','sender'],'secrets'=>['apiKey']],
               'gemini'=>['fields'=>['apiKey','model'],'secrets'=>['apiKey']],
               'identity'=>['fields'=>['apiKey','url'],'secrets'=>['apiKey']],
-              'chabokan_ai'=>['fields'=>['apiKey','baseUrl','defaultModel','autoModel'],'secrets'=>['apiKey']],
+              'chabokan_ai'=>['fields'=>['apiKey','baseUrl','defaultModel','autoModel','dailyRequestLimit'],'secrets'=>['apiKey']],
               'chabokan_platform'=>['fields'=>['apiKey','serviceId','deployHookUrl'],'secrets'=>['apiKey']],
               'tamin'=>['fields'=>['mode','username','password','portalUrl'],'secrets'=>['password']],
               'salamat'=>['fields'=>['mode','username','password','portalUrl'],'secrets'=>['password']],
@@ -1456,6 +1457,16 @@ switch ($route) {
                     }
                     foreach($def['secrets'] as $secret)if(!empty($incoming['clear'.ucfirst($secret)]))unset($existing[$secret]);
                     foreach(['url','baseUrl','deployHookUrl','portalUrl'] as $urlField){if(!empty($existing[$urlField])){$u=parse_url((string)$existing[$urlField]);if(!$u||strtolower((string)($u['scheme']??''))!=='https')throw new InvalidArgumentException('تمام آدرس‌های سرویس باید HTTPS باشند.');}}
+                    if($provider==='chabokan_ai') {
+                        // Prevent SSRF or accidentally sending secrets to an untrusted custom endpoint.
+                        if(!empty($existing['baseUrl']) && rtrim((string)$existing['baseUrl'],'/')!==bastianAiEndpoint())
+                            throw new InvalidArgumentException('آدرس API هوش مصنوعی باید دقیقاً آدرس رسمی چابکان باشد.');
+                        $existing['baseUrl']=bastianAiEndpoint();
+                        $limit=(string)($existing['dailyRequestLimit']??'100');
+                        if(!preg_match('/^(?:0|[1-9][0-9]{0,4})$/',$limit)||(int)$limit>10000)
+                            throw new InvalidArgumentException('سقف روزانه باید عددی بین صفر و ۱۰۰۰۰ باشد.');
+                        $existing['dailyRequestLimit']=$limit;
+                    }
                     if(in_array($provider,['tamin','salamat'],true) && isset($existing['mode']) && !in_array($existing['mode'],['portal_rpa','official_api'],true))throw new InvalidArgumentException('حالت اتصال بیمه معتبر نیست.');
                     bastianDbSetIntegrationConfig($integrationCenter,$provider,$existing,'superadmin');
                 }
@@ -1468,9 +1479,48 @@ switch ($route) {
                 foreach($def['secrets'] as $secret){$val=(string)($cfg[$secret]??'');if($secret==='apiKey'&&$val===''&&isset($globalKeys[$provider]))$val=(string)$globalKeys[$provider];$public['configured'.ucfirst($secret)]=$val!=='';$public[$secret==='apiKey'?'maskedKey':'masked'.ucfirst($secret)]=bastianMaskedSecret($val);}
                 $out[$provider]=$public;
             }
-            $kvCfg=bastianDbIntegrationConfig($integrationCenter,'kavenegar');$out['kavenegar']['webhookUrl']=bastianKavenegarWebhookUrl($integrationCenter);$out['kavenegar']['webhookToken']=bastianKavenegarWebhookToken($integrationCenter);$out['kavenegar']['webhookMode']='token-or-line-match';$out['kavenegar']['webhookPath']='/api/webhook/kavenegar/incoming';
+            $out['chabokan_ai']['baseUrl']=bastianAiEndpoint();
+            $out['chabokan_ai']['dailyRequestLimit']=$out['chabokan_ai']['dailyRequestLimit']?:'100';
+            $out['chabokan_ai']['configuredApiKey'] = !empty($out['chabokan_ai']['configuredApiKey']) || (getenv('CHABOKAN_AI_API_KEY') ?: '') !== '';
+                        $kvCfg=bastianDbIntegrationConfig($integrationCenter,'kavenegar');$out['kavenegar']['webhookUrl']=bastianKavenegarWebhookUrl($integrationCenter);$out['kavenegar']['webhookToken']=bastianKavenegarWebhookToken($integrationCenter);$out['kavenegar']['webhookMode']='token-or-line-match';$out['kavenegar']['webhookPath']='/api/webhook/kavenegar/incoming';
             echo json_encode(['success'=>true,'centerId'=>$integrationCenter,'providers'=>$out,'message'=>$method==='POST'?'تنظیمات سرویس‌های مرکز با موفقیت و به‌صورت رمزگذاری‌شده ذخیره شد.':null],JSON_UNESCAPED_UNICODE);
         } catch(Throwable $e){http_response_code(400);echo json_encode(['success'=>false,'error'=>$e->getMessage()],JSON_UNESCAPED_UNICODE);}
+        break;
+
+    // R25: Central Chabokan AI management - admin-only, never exposes provider keys.
+    case 'bastian/ai/status':
+    case 'bastian/ai/models':
+    case 'bastian/ai/test':
+        $aiSession=requireAccess(['superadmin']);
+        $aiCenter=(string)($aiSession['centerId']??'');
+        if($aiCenter===''||!bastianDbCenter($aiCenter)){
+            http_response_code(403);echo json_encode(['success'=>false,'error'=>'ابتدا مرکز موردنظر را انتخاب کنید.'],JSON_UNESCAPED_UNICODE);break;
+        }
+        try {
+            $cfg=bastianAiConfig($aiCenter);
+            if($route==='bastian/ai/status'){
+                if($method!=='GET')throw new InvalidArgumentException('متد درخواست معتبر نیست.');
+                echo json_encode(['success'=>true,'configured'=>trim((string)($cfg['apiKey']??''))!=='',
+                    'baseUrl'=>bastianAiEndpoint(), 'dailyRequestLimit'=>(int)($cfg['dailyRequestLimit']??100),
+                    'usage'=>bastianAiRecentUsage($aiCenter)],JSON_UNESCAPED_UNICODE);break;
+            }
+            if($route==='bastian/ai/models'){
+                if($method!=='GET')throw new InvalidArgumentException('متد درخواست معتبر نیست.');
+                $list=bastianAiModels($aiCenter,($_GET['refresh']??'')==='1');
+                echo json_encode(['success'=>true]+$list,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);break;
+            }
+            if($method!=='POST')throw new InvalidArgumentException('متد درخواست معتبر نیست.');
+            $model=trim((string)($jsonInput['model']??''));
+            $catalog=bastianAiModels($aiCenter);
+            if($model!=='' && !in_array($model,array_column($catalog['models'],'id'),true))throw new InvalidArgumentException('مدل انتخابی در فهرست فعلی چابکان نیست.');
+            $model=bastianAiPickModel($catalog,$model);
+            if($model==='')throw new RuntimeException('مدل مناسبی یافت نشد.');
+            // Only synthetic input is used in the smoke test; no patient records are sent.
+            $reply=bastianAiChat($aiCenter,$model,[['role'=>'user','content'=>'فقط عبارت «اتصال برقرار است» را به فارسی بنویس.']],64,'smoke_test');
+            echo json_encode(['success'=>true,'connected'=>true,'model'=>$model,
+                'reply'=>(function_exists('mb_substr') ? mb_substr((string)($reply['data']['choices'][0]['message']['content']??''),0,250) : substr((string)($reply['data']['choices'][0]['message']['content']??''),0,250)),
+                'usage'=>$reply['data']['usage']??[], 'requestId'=>$reply['requestId']??''],JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+        }catch(Throwable $e){http_response_code(400);echo json_encode(['success'=>false,'error'=>$e->getMessage()],JSON_UNESCAPED_UNICODE);}
         break;
 
     // 8. Bastian Tickets - SQLite backed and center-scoped

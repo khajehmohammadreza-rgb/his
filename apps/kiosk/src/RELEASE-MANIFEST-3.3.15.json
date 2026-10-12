@@ -1,0 +1,37 @@
+{
+  "product": "Bastiyan Kiosk",
+  "version": "3.3.15",
+  "baseVersion": "3.3.14",
+  "releaseType": "secretary-premium-ui-safe-deploy",
+  "releasedAt": "2026-10-11",
+  "windowsNativeInstallerSHA256": "d89a13ddeca1b86f93bd0806834cbf3689133a1d519162f740c947d58acefbba",
+  "windowsRuntimeChanged": false,
+  "persistentDataShipped": false,
+  "dataMigrationRequired": false,
+  "installedClientReinstallRequired": false,
+  "tests": {
+    "phpSyntax": "passed: all root PHP files",
+    "javascriptSyntax": "passed: all assets/*.js",
+    "jsonSyntax": "passed",
+    "secretaryWorkflowRegression": "passed: required single/bulk registration, print, notes and lower-list edit hooks preserved",
+    "backendCompatibility": "passed: api.php SHA-256 unchanged from 3.3.14",
+    "windowsInstallerCompatibility": "passed: native installer SHA-256 unchanged",
+    "persistentDataSafety": "passed: data/ not shipped",
+    "layoutStructure": "passed: secretary primary and registered-queue cards promoted to full-width vertical workflow",
+    "interactiveBrowserUI": "syntax/static DOM validated; final workstation visual check recommended after deploy"
+  },
+  "mandatoryPersistentPaths": [
+    "data/",
+    "data/.client_package_secret",
+    "data/clinic_store.json",
+    "data/users_store.json",
+    "data/sessions_store.json",
+    "data/center-logo-*",
+    "data/center-qr-*",
+    "data/center-media-*",
+    "data/backups/"
+  ],
+  "readBeforeDeployment": [
+    "CHANGES-3.3.15.md"
+  ]
+}

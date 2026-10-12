@@ -35,7 +35,7 @@ import { InternalConsumptionComponent } from "./components/InternalConsumption.j
 import { ReturnsWastage } from "./components/ReturnsWastage.js?b=r24-514-1405";
 import { ReportsFinancials } from "./components/ReportsFinancials.js?b=r24-514-1405";
 import { AuditLogs } from "./components/AuditLogs.js?b=r24-514-1405";
-import { SettingsBackup } from "./components/SettingsBackup.js?b=r24-514-1405";
+import { SettingsBackup } from "./components/SettingsBackup.js?b=r25-514-1405";
 import { AppPackageInstall } from "./components/AppPackageInstall.js?b=r24-514-1405";
 import { ArchivedFeatures } from "./components/ArchivedFeatures.js?b=r24-514-1405";
 import { UnifiedEncounterWorkflow } from "./components/UnifiedEncounterWorkflow457-final.js?b=r24-514-1405";

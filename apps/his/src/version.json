@@ -1,8 +1,9 @@
 {
   "version": "5.1.4",
-  "description": "R24: unified cross-browser barcode scanning, offline CODE128/EAN, retail/purchase workflows and attendance fixes",
-  "release": "20261010-514-r24-scanner-workflow",
-  "build": "514-1405-r24",
+  "description": "R25: Central Chabokan AI management, model discovery, safe test and usage counters; R24 functionality preserved.",
+  "release": "20261011-514-r25-ai-center",
+  "build": "514-1405-r25",
   "buildNumber": 514,
-  "mandatory": false
+  "mandatory": false,
+  "releaseDate": "2026-10-11"
 }

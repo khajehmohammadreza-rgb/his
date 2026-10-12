@@ -18,6 +18,6 @@ DirectoryIndex router.php
   RewriteRule ^(.*)$ router.php?route=$1 [QSA,L]
 </IfModule>
 
-<FilesMatch "^(config(?:\.local)?|db|updater|vendor_prepare_lib|restore_backup_cli|recovery_lib|patch[0-9]+_verify)\.php$">
+<FilesMatch "^(config(?:\.local)?|db|updater|chabokan_ai_lib|vendor_prepare_lib|restore_backup_cli|recovery_lib|patch[0-9]+_verify)\.php$">
   Require all denied
 </FilesMatch>

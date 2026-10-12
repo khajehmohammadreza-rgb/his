@@ -1,0 +1,41 @@
+name: Validate HIS R25 and Kiosk 3.3.20 sources
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/his/src/**'
+      - 'apps/kiosk/src/**'
+      - '.github/workflows/source-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  php-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: sqlite3, pdo_sqlite
+      - name: PHP syntax check
+        shell: bash
+        run: |
+          find apps/his/src apps/kiosk/src -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: AI offline R25 regression tests
+        run: |
+          php apps/his/src/tests/r25-ai-offline.php
+  js-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax check
+        shell: bash
+        run: |
+          find apps/his/src apps/kiosk/src -type f -name '*.js' -print0 | while IFS= read -r -d '' file; do
+            node --check "$file" || exit 1
+          done

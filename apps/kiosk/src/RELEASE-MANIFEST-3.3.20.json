@@ -1,0 +1,45 @@
+{
+  "version": "3.3.20",
+  "release": "DOCTOR-FLOATING-HOTKEYS-WINDOWS",
+  "baseVersion": "3.3.19",
+  "builtAt": "2026-10-12",
+  "scope": "New optional doctor assistant and Windows hotkey launcher. No queue API changes.",
+  "files": {
+    "client.php": {
+      "sha256": "4668a51f0eee35f8fd08bea7c7a090dca1cec33004e5d9d4b6636fc49011c91a",
+      "size": 18237
+    },
+    "download.php": {
+      "sha256": "8f36aa6f0f43b1f875aec2439eadb42aaca79ab355029947f8f8afd9c673df5e",
+      "size": 11241
+    },
+    "doctor-assistant.html": {
+      "sha256": "14475d140ab3b8a8804c65dec3ea839eccce8e2da5853eb4ab22862d83f083cb",
+      "size": 4270
+    },
+    "assets/doctor-assistant-3.3.20.js": {
+      "sha256": "3f4f585435cc357be0df675f4a758c5a4e4c06885531ca670df05bbaed96b46e",
+      "size": 5428
+    },
+    "windows-native-installer/main.go": {
+      "sha256": "8fa3aa63c79565fdee35d3ed5f3c06ddc0fe9c3b5a9bc7805ba2f870f73410cd",
+      "size": 12660
+    },
+    "windows-native-installer/assistant.go": {
+      "sha256": "8dea28d05b12523d230ce4c2c6f74faed37bf131e2b7fa0849484c6e1113e55b",
+      "size": 6745
+    },
+    "windows-runtime/Bastiyan-Windows-Installer-x64.exe": {
+      "sha256": "7e7138056e018e15dbd1e0ff7d15ffc817899524c812c645d3688d189e93f755",
+      "size": 5732352
+    },
+    "windows-runtime/version.json": {
+      "sha256": "5ce565af9be958486feb0a8ce5e7d43273083b1d06e183f895c93f7a73688e26",
+      "size": 170
+    },
+    "windows-runtime/README.md": {
+      "sha256": "43722cc0593903ffd27b73cc3e04adb0839c45351e0411ee35e6c93ed63a51fb",
+      "size": 5108
+    }
+  }
+}

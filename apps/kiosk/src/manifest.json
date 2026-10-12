@@ -1,0 +1,32 @@
+{
+  "short_name": "فراخوان",
+  "name": "فراخوان",
+  "icons": [
+    {
+      "src": "/image/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/image/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/image/icon.ico",
+      "sizes": "16x16 24x24 32x32 48x48 64x64 128x128 256x256",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "background_color": "#07111c",
+  "theme_color": "#07111c",
+  "display": "standalone",
+  "orientation": "landscape",
+  "dir": "rtl",
+  "lang": "fa",
+  "description": "سامانه فراخوان باستیان — صف اتمیک، پنل‌های یکپارچه، نمایشگر رسانه‌ای و آپدیت امن",
+  "version": "3.3.19",
+  "build": "readability-typography-2026-10-11"
+}

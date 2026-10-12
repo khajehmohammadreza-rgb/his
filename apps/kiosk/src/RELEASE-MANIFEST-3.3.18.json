@@ -1,0 +1,36 @@
+{
+  "version": "3.3.18",
+  "release": "FINAL-SECRETARY-TABLE-UI-SAFE",
+  "baseVersion": "3.3.17",
+  "builtAt": "2026-10-11",
+  "files": {
+    "index.html": {
+      "sha256": "91b1495507ead6931e4bf8607bdcc02e1d8d2157cf6242f5e8412b24fd3dd4d7",
+      "size": 10439
+    },
+    "manifest.json": {
+      "sha256": "42c776ae6f1671bb783bf2d23cd53b6ffb804624a1a13517a04814e1a42f91e0",
+      "size": 853
+    },
+    "assets/secretary-workspace-3.3.18.js": {
+      "sha256": "8ff9ad71561849cdd97e3821df7f47f01ea64f39267272119fbcd209e745ead3",
+      "size": 48176
+    },
+    "api.php": {
+      "sha256": "4be9f0936552ace5e4a95baa1ca926408d4fccd325e763d80892f89cac0a8df1",
+      "size": 161734
+    },
+    "assets/network-resilience-3.3.17.js": {
+      "sha256": "3351d63c52239aeac73f08beaad2661240d19a80fdaeac43f4e3ea40e9bc93da",
+      "size": 3830
+    },
+    "assets/secretary-call-3.3.16.js": {
+      "sha256": "480c8ddf67a5208354a8c158abe59cbde832557bef4508789e5d672e0772692d",
+      "size": 3696
+    },
+    "windows-runtime/Bastiyan-Windows-Installer-x64.exe": {
+      "sha256": "d89a13ddeca1b86f93bd0806834cbf3689133a1d519162f740c947d58acefbba",
+      "size": 5717504
+    }
+  }
+}

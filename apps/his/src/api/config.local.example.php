@@ -1,18 +1,27 @@
 <?php
-/** Public, safe template for Bastiyan HIS 5.1.4 (R24), PHP 8.4 + SQLite.
- * Copy locally to api/config.local.php; never commit that file.
- * Application runtime database, backups and secrets are outside version control.
+/**
+ * config.local.php - نمونه فایل تنظیمات محلی
+ * 
+ * این فایل را با اطلاعات هاست نت‌افراز خود پر کرده و به نام config.local.php ذخیره کنید.
+ * پس از اجرای api/setup.php این فایل به‌صورت خودکار ساخته می‌شود.
+ * هرگز این فایل را در مخزن کد عمومی قرار ندهید.
  */
-define('BASTIAN_DB_DRIVER', 'sqlite');
-// Optional: use a persistent, private volume path (not a source-controlled directory).
-// define('BASTIAN_SQLITE_PATH', '/data/bastiyan/center.sqlite');
-define('BASTIAN_SUPERADMIN_USERNAME', 'admin');
-// Configure a bcrypt password hash and independent long random keys securely in the host environment.
-define('BASTIAN_SUPERADMIN_PASSWORD_HASH', '');
-define('BASTIAN_BACKUP_KEY', '');
-define('BASTIAN_DATA_ENCRYPTION_KEY', '');
-// Optional integrations: keep AI and Chabokan Platform API tokens independent.
-define('KAVENEGAR_API_KEY', '');
-define('GEMINI_API_KEY', '');
+
+// ─── دیتابیس ─────────────────────────────────────────────────
+define('BASTIAN_DB_HOST', 'localhost');
+define('BASTIAN_DB_PORT', 3306);
+define('BASTIAN_DB_NAME', 'نام_دیتابیس_شما');    // مثال: u12345_his
+define('BASTIAN_DB_USER', 'نام_کاربر_دیتابیس');   // مثال: u12345_hisuser
+define('BASTIAN_DB_PASS', 'رمز_دیتابیس_شما');
+
+// ─── سرویس‌های اختیاری ───────────────────────────────────────
+define('KAVENEGAR_API_KEY', '');   // کلید API کاوه‌نگار برای پیامک
+define('GEMINI_API_KEY', '');      // کلید Google Gemini برای هوش مصنوعی
 define('IDENTITY_PROVIDER_URL', '');
 define('IDENTITY_PROVIDER_API_KEY', '');
+
+// ─── مدیریت کل (توسط setup.php تنظیم می‌شود) ─────────────────
+define('BASTIAN_SUPERADMIN_USERNAME', 'admin');
+define('BASTIAN_SUPERADMIN_PASSWORD_HASH', '');    // bcrypt hash
+define('BASTIAN_BACKUP_KEY', '');                  // تولید خودکار
+define('BASTIAN_DATA_ENCRYPTION_KEY', '');         // تولید خودکار

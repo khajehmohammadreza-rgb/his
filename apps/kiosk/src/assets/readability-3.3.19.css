@@ -1,0 +1,71 @@
+/* Bastiyan Kiosk 3.3.19 — controlled readability layer
+   Purpose: improve small-text legibility without changing application logic or layout architecture. */
+html,body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+/* Common small utility text in the SPA */
+html body .text-xs{font-size:15.5px!important;line-height:1.75!important;font-weight:650!important}
+html body .text-sm{font-size:16.5px!important;line-height:1.75!important}
+html body [class*="text-[8px]"],
+html body [class*="text-[9px]"],
+html body [class*="text-[10px]"],
+html body [class*="text-[11px]"]{font-size:14px!important;line-height:1.65!important;font-weight:700!important}
+html body [class*="text-[12px]"],
+html body [class*="text-[13px]"]{font-size:14.5px!important;line-height:1.7!important;font-weight:650!important}
+html body input::placeholder,html body textarea::placeholder{opacity:.82!important;font-weight:600!important}
+
+/* Secretary premium workspace: enlarge only previously-small operational text. */
+#b313-workspace .b315-subtitle{font-size:14px!important;line-height:1.8!important;font-weight:700!important}
+#b313-workspace .b315-tag{font-size:12.5px!important;font-weight:800!important}
+#b313-workspace .b315-capacity-box label{font-size:12.5px!important;font-weight:800!important}
+#b313-workspace .b315-kpi .label{font-size:12.5px!important;font-weight:800!important}
+#b313-workspace .b315-message{font-size:14px!important;font-weight:800!important}
+#b313-workspace label{font-size:13.5px!important;font-weight:800!important}
+#b313-workspace input[type=text],#b313-workspace input[type=number]{font-size:15px!important;font-weight:700!important}
+#b313-workspace button{font-size:13.5px!important;font-weight:900!important;line-height:1.45!important}
+#b313-workspace .b315-table th{font-size:13.5px!important;line-height:1.45!important}
+#b313-workspace .b315-table th small{font-size:11.5px!important;line-height:1.5!important;font-weight:700!important}
+#b313-workspace .b315-table td{font-size:14.5px!important;line-height:1.55!important}
+#b313-workspace .b315-status{font-size:12.5px!important;font-weight:800!important}
+#b313-workspace .b315-active-wrap span{font-size:12px!important;font-weight:800!important}
+#b313-workspace .b315-help{font-size:12px!important;font-weight:700!important}
+#b313-workspace .b318-table-head h3{font-size:17px!important}
+#b313-workspace .b318-table-head p{font-size:12.5px!important;line-height:1.7!important}
+#b313-workspace .b318-quick-tip{font-size:12.5px!important;font-weight:800!important}
+#b313-workspace .b318-select-all label{font-size:13px!important;font-weight:900!important}
+#b313-workspace .b318-select-all small{font-size:11.5px!important}
+#b313-workspace .b318-helper{font-size:12px!important;line-height:1.65!important;font-weight:700!important}
+#b313-workspace .b318-row-selected-note{font-size:11.5px!important;font-weight:800!important}
+#b313-workspace .b315-mini-chip{font-size:12.5px!important}
+#b313-workspace .b315-mini-more{font-size:12px!important;font-weight:700!important}
+#b313-workspace .b313-lower-edit{font-size:12.5px!important;font-weight:900!important}
+#b313-workspace .b313-modal .muted{font-size:14px!important;line-height:1.8!important}
+
+/* User management page had the smallest typography in the system. */
+body .brand p{font-size:max(12.5px,1em)}
+body .head p{font-size:12.5px!important;line-height:1.7!important}
+body .table th{font-size:12.5px!important;font-weight:900!important;line-height:1.5!important}
+body .table td{font-size:13.5px!important;line-height:1.6!important}
+body .pill{font-size:11.5px!important;font-weight:900!important}
+body .doctor-data{font-size:12px!important}
+body .field label{font-size:13px!important;font-weight:800!important}
+body .hint{font-size:12px!important;line-height:1.65!important}
+body .role-box span{font-size:13px!important;font-weight:900!important}
+body .perm span{font-size:13px!important;line-height:1.55!important}
+body .notice{font-size:12.5px!important;line-height:1.8!important}
+body .msg{font-size:13px!important}
+body .modal .sub{font-size:12.5px!important;line-height:1.65!important}
+body .footer{font-size:12px!important}
+
+/* Login / installed-client entry screens */
+body .muted{font-size:max(13px,1em)}
+body .security,body .hint{line-height:1.8}
+
+/* TV: only tiny auxiliary text; preserve number/doctor sizing and viewport fit. */
+.bastian-tv .qrUrl,.bastian-tv .qrDesc{font-size:10px!important;line-height:1.35!important}
+.bastian-tv .qrItem .qrUrl,.bastian-tv .qrItem .qrDesc{font-size:9.5px!important;line-height:1.3!important}
+.bastian-tv .qrItem .qrSite{font-size:12px!important;font-weight:800!important}
+.bastian-tv .copyright{font-size:clamp(11px,.8vw,14px)!important;font-weight:600!important}
+
+/* Accessibility: avoid low-contrast disabled/help text becoming unreadable. */
+#b313-workspace button:disabled{opacity:.56!important}
+#b313-workspace input:disabled{opacity:.78!important}

@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>فراخوان | هلدینگ باستیان</title>
+    <meta name="description" content="سامانه هوشمند و جامع مدیریت و فراخوان نوبت بیماران درمانگاه تخصصی بیمارستان امام حسین (ع) اهرم - طراحی و توسعه: هلدینگ باستیان" />
+    <meta name="author" content="هلدینگ باستیان (Bastian Holding)" />
+    <meta name="copyright" content="Bastian Holding" />
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="64x64" href="/image/favicon.png">
+    <link rel="apple-touch-icon" href="/image/icon-192.png">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="/assets/network-resilience-3.3.17.js?v=3.3.18"></script>
+    <script type="module" crossorigin src="/assets/index-2.8.9.js?v=3.3.18"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-2.8.9.css?v=3.3.18">
+    <!-- TV layout hardening: one viewport, no duplicate header, no grid overflow -->
+    <style>
+      html,body,#root{min-height:100%;margin:0}
+      html.tv-route,html.tv-route body,html.tv-route #root{width:100vw;height:100vh;overflow:hidden;background:#070b14}
+      #bastian-tv-display-root{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0!important;overflow:hidden!important}
+      #bastian-tv-display-root>main{min-height:0!important;height:auto!important;overflow:hidden!important;padding:6px!important;display:flex!important}
+      #bastian-tv-display-root>main>div{min-height:0!important;height:100%!important;max-height:100%!important}
+      #bastian-tv-display-root article{min-height:0!important}
+      #bastian-tv-display-root section{min-height:0!important}
+      #bastian-tv-display-root footer{flex-shrink:0!important;min-height:0!important}
+      #bastian-tv-display-root .animate-ticker{display:inline-block!important;width:max-content!important;min-width:max-content!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;animation:ticker-scroll-ltr 28s linear infinite!important;will-change:transform!important}
+    
+      /* TV v2.8.1 hardening: deterministic four-row viewport, no nested flex/grid overflow */
+      html.tv-route,html.tv-route body,html.tv-route #root{width:100vw!important;height:100vh!important;min-height:100vh!important;max-height:100vh!important;overflow:hidden!important}
+      #bastian-tv-display-root{display:grid!important;grid-template-rows:minmax(56px,8.5vh) minmax(0,1fr) minmax(28px,4.5vh)!important;grid-template-columns:minmax(0,1fr)!important;gap:0!important}
+      #bastian-tv-display-root>header{grid-row:1;min-height:0!important;height:auto!important;overflow:hidden!important;padding-top:4px!important;padding-bottom:4px!important}
+      #bastian-tv-display-root>main{grid-row:2;min-height:0!important;height:auto!important;max-height:none!important;overflow:hidden!important;padding:4px!important;display:block!important}
+      #bastian-tv-display-root>main>div{width:100%!important;max-width:none!important;height:100%!important;min-height:0!important;max-height:100%!important;overflow:hidden!important}
+      #bastian-tv-display-root>main>div>div{min-width:0!important;min-height:0!important;max-height:100%!important;overflow:hidden!important}
+      #bastian-tv-display-root>section{grid-row:3;min-height:0!important;height:auto!important;overflow:hidden!important}
+      #bastian-tv-display-root>footer{display:none!important}
+      #bastian-tv-display-root article{min-width:0!important;min-height:0!important;max-height:100%!important;overflow:hidden!important}
+      #bastian-tv-display-root img{max-width:100%;max-height:100%;object-fit:contain}
+</style>
+    <!-- Canonical route + role guard. Route is inferred from pathname, not internal rewrite query strings. -->
+    <script>
+    window.BastiyanClientLoginTarget=function(){
+      try{
+        var raw=localStorage.getItem('bc_installed_client_url')||sessionStorage.getItem('bc_installed_client_url')||'';
+        if(!raw)return '/';
+        var u=new URL(raw,location.origin);
+        if(u.origin===location.origin && u.pathname==='/client.php' && u.searchParams.get('center') && u.searchParams.get('role') && u.searchParams.get('sig'))return u.href;
+      }catch(e){}
+      return '/';
+    };
+    window.BastiyanReturnToClientLogin=function(){location.replace(window.BastiyanClientLoginTarget());};
+    (function(){
+      var path=(location.pathname||'/').replace(/\/$/,'')||'/';
+      var role=localStorage.getItem('bc_role')||'';
+      var routes={tv:'tv',doctor:'doctor',secretary:'secretary',admin:'admin','center-settings':'center-settings',update:'update'};
+      var tab=routes[path.slice(1)]||'';
+      if(!tab){return;}
+      var token=tab==='tv'
+        ?(sessionStorage.getItem('bc_display_token')||localStorage.getItem('bc_display_token')||localStorage.getItem('bc_token'))
+        :localStorage.getItem('bc_token');
+      if(!token){location.replace(window.BastiyanClientLoginTarget());return;}
+      if(role==='doctor' && !['doctor','tv'].includes(tab)){location.replace('/doctor');return;}
+      if(role==='secretary' && !['secretary','doctor','tv'].includes(tab)){location.replace('/secretary');return;}
+      if(role==='display' && tab!=='tv'){location.replace('/tv');return;}
+      if(role==='super_admin' && !['admin','center-settings','doctor','secretary','tv','update'].includes(tab)){location.replace('/admin');return;}
+      var _fetch=window.fetch;
+      window.fetch=function(input,opts){
+        opts=opts||{};
+        var target='';
+        try{target=typeof input==='string'?input:(input&&input.url)||'';}catch(e){}
+        var u=null;
+        try{u=new URL(target||'',location.href);}catch(e){}
+        var isOwnApi=!!(u&&u.origin===location.origin&&(u.pathname.indexOf('/api/')===0||u.pathname==='/api.php'));
+        if(isOwnApi){
+          var h=new Headers((opts&&opts.headers)||(input&&input.headers)||{});
+          h.set('Authorization','Bearer '+token);
+          opts=Object.assign({},opts,{headers:h});
+        }
+        return _fetch(input,opts);
+      };
+      history.replaceState({role:role,tab:tab},'',path);
+      if(role!=='super_admin'&&role!=='display'){fetch('/api/auth/me',{headers:{Authorization:'Bearer '+token}}).then(function(r){return r.json()}).then(function(m){var pp=(m.user&&m.user.panelPermissions)||{};var panel=tab==='center-settings'?'settings':tab;if(pp[panel]===false){location.replace(role==='doctor'?'/doctor':'/secretary')}}).catch(function(){})}
+      window.addEventListener('popstate',function(){
+        var r=localStorage.getItem('bc_role')||'';
+        if(r==='display'){history.replaceState({lockedRole:'display',tab:'tv'},'','/tv');return;}
+        var allowed=r==='doctor'?['doctor','tv']:r==='secretary'?['secretary','doctor','tv']:r==='super_admin'?['admin','doctor','secretary','tv','update']:[];
+        if(!allowed.includes((location.pathname||'').replace(/^\//,'')))history.replaceState({role:r,tab:tab},'',path);
+      });
+      window.addEventListener('storage',function(e){if(e.key==='bc_token'&&!e.newValue&&role!=='display')location.replace(window.BastiyanClientLoginTarget());});
+    })();
+    </script>
+  <style>html,body,button,input,textarea,select{font-family:"BNazanin"!important}h1,h2,h3,h4,h5,h6,.font-black,.font-extrabold,.font-bold{font-family:"BTitr"!important}</style>
+  <link rel="stylesheet" href="/fonts.css?v=3.3.18">
+
+    <style id="bastian-thermal-print-v2">
+      @media print {
+        @page { size: 80mm 115mm; margin: 0 !important; }
+        html, body { width: 80mm !important; min-width: 80mm !important; max-width: 80mm !important; margin: 0 !important; padding: 0 !important; background: #fff !important; }
+        body * { visibility: hidden !important; }
+        #thermal-receipt-print-area, #thermal-receipt-print-area * { visibility: visible !important; }
+        #thermal-receipt-print-area {
+          display: block !important; position: absolute !important; left: 0 !important; top: 0 !important;
+          width: 80mm !important; min-width: 80mm !important; max-width: 80mm !important;
+          margin: 0 !important; padding: 2mm 5mm 1mm !important; box-sizing: border-box !important;
+          border: 1px solid #000 !important; border-radius: 0 !important; box-shadow: none !important;
+          background: #fff !important; color: #000 !important; overflow: visible !important;
+          font-family: "BNazanin" !important;
+        }
+        #thermal-receipt-print-area::after { content: none !important; display:none !important; }
+        #thermal-receipt-print-area img { max-width: 100% !important; }
+        #thermal-receipt-print-area * {color:#000!important;text-shadow:none!important;box-shadow:none!important;line-height:1.14!important}
+        #thermal-receipt-print-area .my-2\.5 {margin-top:3px!important;margin-bottom:3px!important}
+        #thermal-receipt-print-area .space-y-1>*+* {margin-top:2px!important}
+        #thermal-receipt-print-area img {max-height:15mm!important;object-fit:contain!important}
+        #thermal-receipt-print-area {break-after:avoid!important;page-break-after:avoid!important}
+
+        #thermal-receipt-print-area [data-receipt-qr] { break-inside: avoid; page-break-inside: avoid; }
+      }
+    </style>
+
+<link rel="stylesheet" href="/assets/readability-3.3.19.css?v=3.3.19">
+</head>
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-blue-600 selection:text-white" style="font-family: BNazanin;">
+    <div id="root"></div>
+  <script src="/assets/enhancements-2.9.6.js?v=3.3.18" defer></script><script src="/assets/core-v3.2.js?v=3.3.18" defer></script><script src="/assets/professional-3.3.11.js?v=3.3.18" defer></script><script src="/assets/secretary-call-3.3.16.js?v=3.3.18" defer></script><script src="/assets/secretary-workspace-3.3.18.js?v=3.3.18" defer></script><script src="/assets/media-settings-3.3.2.js?v=3.3.18" defer></script><script src="/assets/client-packages-3.3.2.js?v=3.3.18" defer></script></body>
+</html>

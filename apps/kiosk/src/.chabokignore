@@ -1,0 +1,33 @@
+# Local/development files
+.chabokignore
+chabok.json
+.DS_Store
+Thumbs.db
+*.ps1
+*.bat
+*.cmd
+*.txt
+
+# Persistent production data: never overwrite during deploy
+data/*.json
+data/*.lock
+data/.install.lock
+data/backups/
+data/center-logo-*
+data/center-qr-*
+data/center-media-*
+data/update-*.zip
+data/update-*.json
+data/update-*-part-*.bin
+data/update-stage-*/
+data/*.tmp-*
+data/*.log
+
+# Local secrets
+config.php
+.env
+.env.*
+
+# Persistent generated Windows client signing secret
+data/.client_package_secret
+data/.client_package_secret.lock

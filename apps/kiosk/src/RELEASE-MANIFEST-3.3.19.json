@@ -1,0 +1,64 @@
+{
+  "version": "3.3.19",
+  "release": "READABILITY-TYPOGRAPHY-SAFE",
+  "baseVersion": "3.3.18",
+  "builtAt": "2026-10-11",
+  "files": {
+    "index.html": {
+      "sha256": "ea5115c9403e970253fcd7fc2ef3444badb82993e9d858210a2ebfd795e06d25",
+      "size": 10511
+    },
+    "tv.html": {
+      "sha256": "eaf4abac4de7f8e0aa8e25fcf11dc444d7cc06575926fe2e82a14ba2a95b314d",
+      "size": 68148
+    },
+    "auth-gate.html": {
+      "sha256": "3a475b0f202239ec98f4cacf1ec795ddb01e62accf11ef2c5f56b57295ab8b73",
+      "size": 6313
+    },
+    "center-management.html": {
+      "sha256": "013d31ab13680e7aae9e893c3fd67f5df562d9fdd066c094787720f16a5ede74",
+      "size": 17607
+    },
+    "user-management.html": {
+      "sha256": "0a68b350385a2c882a1978533ba168df214523d929923681583dc7c61d794b8b",
+      "size": 21497
+    },
+    "client.php": {
+      "sha256": "2289c28854514fdc501d44fac8eafcaa3103652bcaa7aee217edfb3611adbc58",
+      "size": 17835
+    },
+    "setup.php": {
+      "sha256": "d73d9c2feb384bac7f4a0e161ad9ba1dc88653d499c768bc23725d68415d2431",
+      "size": 20206
+    },
+    "manifest.json": {
+      "sha256": "d7ccf44a711a24530b00d1b729653569f9366745bfdd536a4713964d4d925a36",
+      "size": 851
+    },
+    "assets/readability-3.3.19.css": {
+      "sha256": "838249b128b6aa38d771b108741b7f5adae6db86f93fdb7ae2ec989b3b9f01c0",
+      "size": 4937
+    },
+    "api.php": {
+      "sha256": "4be9f0936552ace5e4a95baa1ca926408d4fccd325e763d80892f89cac0a8df1",
+      "size": 161734
+    },
+    "assets/network-resilience-3.3.17.js": {
+      "sha256": "3351d63c52239aeac73f08beaad2661240d19a80fdaeac43f4e3ea40e9bc93da",
+      "size": 3830
+    },
+    "assets/secretary-call-3.3.16.js": {
+      "sha256": "480c8ddf67a5208354a8c158abe59cbde832557bef4508789e5d672e0772692d",
+      "size": 3696
+    },
+    "assets/secretary-workspace-3.3.18.js": {
+      "sha256": "8ff9ad71561849cdd97e3821df7f47f01ea64f39267272119fbcd209e745ead3",
+      "size": 48176
+    },
+    "windows-runtime/Bastiyan-Windows-Installer-x64.exe": {
+      "sha256": "d89a13ddeca1b86f93bd0806834cbf3689133a1d519162f740c947d58acefbba",
+      "size": 5717504
+    }
+  }
+}

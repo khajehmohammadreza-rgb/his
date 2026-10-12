@@ -1,7 +1,7 @@
 import { jsx as _jsx } from '../client-vendor/react-jsx-runtime.js?b=r24-514-1405';
 import { StrictMode } from '../client-vendor/react.js?b=r24-514-1405';
 import { createRoot } from '../client-vendor/react-dom-client.js?b=r24-514-1405';
-import App from './App457-final.js?b=r24-514-1405';
+import App from './App457-final.js?b=r25-514-1405';
 import { ErrorBoundary } from './ErrorBoundary.js?b=r24-514-1405';
 
 function ensureRootNode() {

@@ -1,0 +1,23 @@
+# Bastiyan safe Docker/Chabokan build context
+# Runtime state MUST stay on persistent storage and must never be baked into/replaced by a new image.
+.git
+.github
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.zip
+
+# Local secrets / environment
+config.php
+.env
+.env.*
+
+# Live application state and generated secrets
+data/*
+!data/.htaccess
+
+# Local/development leftovers
+kiosk_review/
+__pycache__/
+*.pyc

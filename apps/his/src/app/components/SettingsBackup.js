@@ -7,7 +7,7 @@ import React, { useState } from '../../client-vendor/react.js?b=r24-514-1405';
 import { CheckCircle2, Clock, CreditCard, Database, Download, FileText, Image as ImageIcon, MessageSquare, Printer, RefreshCw, Save, Settings, Shield, Trash2, Upload, Wifi, XCircle } from '../../client-vendor/lucide-react.js?b=r24-514-1405';
 import { testSamanKishPosConnection } from '../utils/pcpos.js?b=r24-514-1405';
 import { compressAndResizeImage } from '../utils/imageUtils.js?b=r24-514-1405';
-import { SystemIntegrationsPanel } from './SystemIntegrationsPanel.js?b=r24-514-1405';
+import { SystemIntegrationsPanel } from './SystemIntegrationsPanel.js?b=r25-514-1405';
 export const SettingsBackup = ({ settings, users, onSaveSettings, onResetData, onExportBackup, onImportBackup, onOpenGroupingModal, }) => {
     const [activeSubTab, setActiveSubTab] = useState('general');
     const [clinicName, setClinicName] = useState(settings.clinicName);

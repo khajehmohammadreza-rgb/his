@@ -6,18 +6,18 @@
   "build": 514,
   "buildNumber": 514,
   "minimum_version": "5.0.0",
-  "fromVersion": "5.1.3",
+  "fromVersion": "5.1.4",
   "target_version": "5.1.4",
   "update_type": "full-root-release",
   "requires_backup": true,
   "database_changes": false,
   "rollback_available": true,
   "checksum_algorithm": "SHA256",
-  "created_at": "2026-10-10",
+  "created_at": "2026-10-11",
   "author": "Bastiyan Development Team",
   "deployment_target": "Chabokan PHP + embedded SQLite",
   "docker_container_port": 8080,
   "database": "SQLite embedded",
   "external_database_required": false,
-  "release": "r24"
+  "release": "r25"
 }

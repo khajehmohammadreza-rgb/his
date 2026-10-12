@@ -1,4 +1,28 @@
-/* Licensed B Nazanin / B Titr font binaries intentionally excluded from Git.
-   System-installed local faces work when available; otherwise standard fallbacks apply. */
-@font-face { font-family: 'B Nazanin'; src: local('B Nazanin'), local('BNazanin'); font-weight: 400; font-display: swap; }
-@font-face { font-family: 'B Titr'; src: local('B Titr'), local('BTitr'); font-weight: 700; font-display: swap; }
+/* Bastiyan HIS - Local Persian Fonts (no CDN required) */
+
+@font-face {
+  font-family: 'B Nazanin';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./BNazanin.woff') format('woff'),
+       url('./BNazanin.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'B Nazanin';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./BNazanin.woff') format('woff'),
+       url('./BNazanin.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'B Titr';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./BTitr.woff') format('woff'),
+       url('./BTitr.ttf') format('truetype');
+}

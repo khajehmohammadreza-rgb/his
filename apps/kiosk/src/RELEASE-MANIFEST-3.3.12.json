@@ -1,0 +1,42 @@
+{
+  "product": "Bastiyan Kiosk",
+  "version": "3.3.12",
+  "baseVersion": "3.3.11",
+  "releaseType": "controlled-field-acceptance",
+  "releasedAt": "2026-10-10",
+  "windowsNativeInstallerSHA256": "d89a13ddeca1b86f93bd0806834cbf3689133a1d519162f740c947d58acefbba",
+  "persistentDataShipped": false,
+  "dataMigrationRequired": false,
+  "oldInstalledClientReinstallForNativeUpdater": true,
+  "roleInstallersGeneratedBy": "download.php",
+  "tests": {
+    "apiAndRolePackageSmoke": "20 passed",
+    "phpAndJavaScriptSyntax": "passed",
+    "goWindowsAmd64Build": "passed",
+    "interactiveBrowserUI": "not verified; environment denied browser navigation",
+    "realWindowsPrinting": "not verified; requires physical thermal printer"
+  },
+  "mandatoryPersistentPaths": [
+    "data/",
+    "data/.client_package_secret",
+    "data/clinic_store.json",
+    "data/users_store.json",
+    "data/sessions_store.json",
+    "data/center-logo-*",
+    "data/center-qr-*",
+    "data/center-media-*",
+    "data/backups/"
+  ],
+  "windowsRequirements": [
+    "Windows 10/11 x64",
+    "existing Chrome or Edge or Firefox",
+    "HTTPS for native EXE auto update",
+    "default thermal printer + Chrome/Edge for kiosk printing",
+    "IT approval may be needed for unsigned binary"
+  ],
+  "readBeforeDeployment": [
+    "DEPLOY-CHABOKAN-3.3.12.md",
+    "ACCEPTANCE-CHECKLIST-3.3.12.md",
+    "windows-runtime/README.md"
+  ]
+}

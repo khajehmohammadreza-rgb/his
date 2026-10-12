@@ -4,27 +4,28 @@
   "products": {
     "his": {
       "version": "5.1.4",
-      "release": "R24",
-      "status": "validated_source_in_repository",
+      "release": "R25",
+      "build": "514-1405-r25",
+      "status": "text_sources_synced_requires_assets_and_release_validation",
       "path": "apps/his/src",
-      "validated_source_sha256": "7d6f39a14e3add99104bba94402f5014be0cbeccccd2e552328e19fef8927849",
       "production_deploy": false,
-      "public_source_sanitized": true
+      "ai": "Chabokan AI central panel",
+      "original_archive": "Bastiyan-HIS-5.1.4-R25-CHABOKAN-AI-CENTER-SAFE(1).zip"
+    },
+    "kiosk": {
+      "version": "3.3.20",
+      "release": "DOCTOR-QUICK-HOTKEYS-SAFE",
+      "status": "text_sources_synced_binary_assets_not_in_repository",
+      "path": "apps/kiosk/src",
+      "production_deploy": false,
+      "original_archive": "Bastiyan-Kiosk-3.3.20-DOCTOR-QUICK-HOTKEYS-SAFE(1).zip"
     },
     "catalog": {
       "version": "2.2",
-      "status": "source_and_build_in_main",
-      "path": "apps/catalog/src"
-    },
-    "kiosk": {
-      "last_known_version": "3.3.19",
-      "status": "awaiting_verifiable_archive",
-      "source_imported": false
-    },
-    "his_ai_experimental": {
-      "release": "R25",
-      "status": "awaiting_verifiable_archive",
-      "promoted": false
+      "status": "native_android_windows_build_enabled",
+      "path": "apps/catalog/src",
+      "android_artifact": "APK debug",
+      "windows_artifacts": "EXE + Setup"
     }
   }
 }

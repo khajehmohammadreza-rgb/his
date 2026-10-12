@@ -1,0 +1,272 @@
+{
+  "profileVersion": "2026-10-03-baseline-restore-1",
+  "center": {
+    "id": "center-1",
+    "code": "BASTIAN-001",
+    "name": "درمانگاه تخصصی بیمارستان امام حسین (ع) اهرم",
+    "licenseUntil": "2027-09-08",
+    "isActive": true,
+    "username": "ahram",
+    "doctors": [
+      {
+        "id": "doc-1",
+        "name": "دکتر محمدرضا صالحی",
+        "specialty": "متخصص داخلی",
+        "room": "اتاق ۱",
+        "color": "indigo",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "salehi",
+        "passwordHash": "$2y$12$XAu4clZC8Bk1np2SJL3akeOsIG5wdGnN4f2KaQWWhl44svpSqoiFa",
+        "isDefault": true,
+        "protectedDefault": true
+      },
+      {
+        "id": "doc-2",
+        "name": "دکتر زهرا طاوسی",
+        "specialty": "متخصص داخلی",
+        "room": "اتاق 1",
+        "color": "emerald",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "tavosi",
+        "passwordHash": "$2y$12$VbNBY7GSOV8iAfkAOcqRhOBR0CbLHNzjMDs6biJZP07lO67jKHfbG"
+      },
+      {
+        "id": "doc-3",
+        "name": "دکتر الهام علیزاده",
+        "specialty": "متخصص اطفال و نوزادان",
+        "room": "اتاق ۳",
+        "color": "sky",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "alizade",
+        "passwordHash": "$2y$12$hidvr/4bGPuWNMYa0lyRxeX.1OPHDq7TNE1EDfa8jt8./kwEqBli6"
+      },
+      {
+        "id": "doc-4",
+        "name": "دکتر مریم بحرالعلوم",
+        "specialty": "متخصص اطفال و نوزادان",
+        "room": "اتاق ۳",
+        "color": "amber",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "bahrololom",
+        "passwordHash": "$2y$12$xwVJg7xxmMYEB8MnNklEPO9MzP.tZdpMuQoagm.OaLc4jA6r9xkFC"
+      },
+      {
+        "id": "doc-20260919040446-6782",
+        "name": "دکتر ثنا انصاری",
+        "specialty": "متخصص قلب و عروق",
+        "room": "اتاق ۴",
+        "color": "indigo",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "ansari",
+        "passwordHash": "$2y$12$LMt4Hupr9kgN8gkfIV7APen91HA/1NcZGlynwf/Gr82N/IlJQ69dy"
+      },
+      {
+        "id": "doc-20260919040540-8ec1",
+        "name": "دکتر خسرو باقری",
+        "specialty": "متخصص جراح عمومی",
+        "room": "اتاق ۶",
+        "color": "indigo",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "bagheri",
+        "passwordHash": "$2y$12$23EssuPvIs88Esr53jXdYucoR3G3j6L4eQNzEHrMGl0l8Iv.pq74e"
+      },
+      {
+        "id": "doc-20260919040746-c8ea",
+        "name": "دکتر فاطمه سیاکی",
+        "specialty": "متخصص زنان و زایمان",
+        "room": "اتاق ۸",
+        "color": "indigo",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "siyaki",
+        "passwordHash": "$2y$12$jWEfJ0/vyKeE/5LCOn0d2OeKb0F04yUhHSsz97HkDp5YXoMsfOBRy"
+      },
+      {
+        "id": "doc-20260919040843-55b6",
+        "name": "دکتر فروغ پاکباز",
+        "specialty": "متخصص زنان و زایمان",
+        "room": "اتاق ۸",
+        "color": "indigo",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "pakbaz",
+        "passwordHash": "$2y$12$z6JkVE/nodExfNfeqnRSHeiZ5pdTRI5B4HwK4yDvwNJSQmgxKKGJW"
+      },
+      {
+        "id": "doc-20260919040953-c1ba",
+        "name": "دکتر زهره رنجبر",
+        "specialty": "متخصص زنان و زایمان",
+        "room": "اتاق ۸",
+        "color": "indigo",
+        "isActive": true,
+        "active": true,
+        "photoUrl": null,
+        "username": "ranjbar",
+        "passwordHash": "$2y$12$ViRRe0An3.AkQdnuMdayGOjsXQ4MH1SXTDhaX88eQJi83wsKkUERW"
+      }
+    ],
+    "secretaries": [
+      {
+        "id": "sec-20260919041107-f4e4",
+        "name": "عباس پولادی",
+        "username": "poladi",
+        "passwordHash": "$2y$12$RYEVa56UebQD3E1H.vhYSeG99yQ0H/m40AdpGcV1PajrcggOUhnCy",
+        "isActive": true,
+        "active": true,
+        "isDefault": true,
+        "protectedDefault": true
+      }
+    ],
+    "tickers": [
+      {
+        "id": "t-2",
+        "text": "خواهشمند است هنگام فراخوان نوبت به شماره اتاق و پزشک مربوطه دقت فرمایید.",
+        "isActive": true
+      },
+      {
+        "id": "t-3",
+        "text": "جهت حفظ آرامش سایر بیماران، لطفا تلفن همراه خود را در حالت سکوت قرار دهید.",
+        "isActive": true
+      }
+    ],
+    "settings": {
+      "clinicName": "درمانگاه تخصصی بیمارستان امام حسین (ع) اهرم",
+      "subtitle": "سامانه هوشمند فراخوان نوبت و مدیریت درمانگاه",
+      "repeatCount": 2,
+      "volume": 0.9,
+      "autoPrintOnCreate": false,
+      "showDoctorPhoto": true,
+      "showLogo": true,
+      "phone": "۰۷۷-۳۵۲۲۸۴۹۰",
+      "address": "بوشهر، شهرستان تنگستان، اهرم، بلوار امام خمینی",
+      "lanIp": "192.168.1.100",
+      "port": 80,
+      "appointmentUrl": "https://www.paziresh24.com/",
+      "appointmentSiteName": "پذیرش ۲۴",
+      "appointmentDescription": "برای دریافت نوبت اینترنتی، QR را با دوربین تلفن همراه اسکن کنید.",
+      "appointmentLinks": [
+        {
+          "id": "paziresh24-default",
+          "name": "پذیرش ۲۴",
+          "url": "https://www.paziresh24.com/",
+          "description": "برای دریافت نوبت اینترنتی، QR را با دوربین تلفن همراه اسکن کنید.",
+          "active": true
+        }
+      ],
+      "qrLinks": [
+        {
+          "id": "paziresh24-default",
+          "name": "پذیرش ۲۴",
+          "url": "https://www.paziresh24.com/",
+          "description": "برای دریافت نوبت اینترنتی، QR را با دوربین تلفن همراه اسکن کنید.",
+          "active": true
+        }
+      ],
+      "displaySettings": {
+        "style": "modern",
+        "showClock": true,
+        "showConnection": true,
+        "showTicker": true,
+        "showQr": true,
+        "showBastianBrand": true,
+        "showCenterLogo": true,
+        "showDoctorPhoto": true,
+        "repeatCount": 2,
+        "volume": 0.9,
+        "backgroundColor": "#07111f",
+        "headerColor": "#071725",
+        "cardColor": "#0f2232",
+        "doctorHeaderColor": "#0b2130",
+        "doctorNameColor": "#ffffff",
+        "doctorSpecialtyColor": "#b9ceda",
+        "roomColor": "#8be7ff",
+        "numberColor": "#ffe071",
+        "patientColor": "#ffffff",
+        "hintColor": "#9db5c5",
+        "copyrightColor": "#7891a1",
+        "lineColor": "#294258",
+        "callingColor": "#ffd76a",
+        "statusColor": "#8be9ad",
+        "tickerBackground": "#07131f",
+        "tickerLabelColor": "#8be7ff",
+        "tickerTextColor": "#d9e9f1",
+        "tickerSpeed": 34,
+        "qrPosition": "left",
+        "qrSize": 185,
+        "cardRadius": 22,
+        "cardGap": 12,
+        "showPatientName": true,
+        "showRoom": true,
+        "headerScale": 100,
+        "numberScale": 100,
+        "doctorScale": 100,
+        "tickerScale": 100,
+        "qrCodes": [],
+        "mode": "queue",
+        "mediaVolume": 0.8,
+        "mediaMutedDuringCall": true,
+        "mediaPlaylist": []
+      }
+    },
+    "displayPasswordHash": "9eca45e4c1c05248a0b68431f8538b78f5a9c6d2bfb6d4987b7fd2942326a73d",
+    "permissionConfig": {
+      "roles": {
+        "doctor": {
+          "health": true,
+          "server-info": true,
+          "auth/me": true,
+          "auth/logout": true,
+          "state": true,
+          "sync/poll": true,
+          "queues/call": true,
+          "queues/status": true,
+          "queues/note": true,
+          "doctor/password": true,
+          "auth/switch-to-display": true
+        },
+        "secretary": {
+          "health": true,
+          "server-info": true,
+          "auth/me": true,
+          "auth/logout": true,
+          "state": true,
+          "sync/poll": true,
+          "queues/add": true,
+          "queues/call": true,
+          "queues/status": true,
+          "queues/delete": true,
+          "queues/clear-all": true,
+          "queues/note": true,
+          "tickers/save": true,
+          "announcements/broadcast": true,
+          "secretary/call": true,
+          "auth/switch-to-display": true,
+          "users/list": false,
+          "users/add": false,
+          "users/update": false,
+          "users/delete": false
+        }
+      }
+    },
+    "backupProfileVersion": "2026-09-19-backup-profile-1",
+    "doctorRosterVersion": "2026-09-19-backup-profile-1",
+    "version": 1,
+    "lastUpdated": 1789811855010,
+    "isDefault": true,
+    "protectedDefault": true
+  }
+}

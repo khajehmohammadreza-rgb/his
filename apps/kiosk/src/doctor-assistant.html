@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>دستیار سریع پزشک باستیان</title>
+<link rel="icon" href="/image/favicon.png">
+<link rel="stylesheet" href="/fonts.css?v=3.3.19">
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:BNazanin,Tahoma,sans-serif;direction:rtl}
+body{background:#081828;color:#f1f8fd;font-size:18px;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at top right,#14507055,transparent 65%);pointer-events:none}
+main{position:relative;min-height:100vh;padding:17px;display:flex;flex-direction:column;gap:12px}
+header{display:flex;align-items:center;gap:9px;border-bottom:1px solid #31526a;padding-bottom:12px}
+.logo{height:44px;width:44px;object-fit:contain}.name{font:normal 22px BTitr,Tahoma,sans-serif}.hint{color:#97c2d9;font-size:14px}
+.health{margin-right:auto;display:flex;align-items:center;gap:5px;color:#f9cb79;font-size:14px;white-space:nowrap}.dot{height:8px;width:8px;border-radius:50%;background:#f9cb79}
+.health.online{color:#75e4b3}.health.online .dot{background:#22ca87}.card{border:1px solid #31516b;background:#11283b;border-radius:16px;padding:12px 15px}
+.statLine{display:flex;justify-content:space-between;align-items:center;margin:4px 0}.number{font:normal 46px BTitr,Tahoma,sans-serif;color:#f7f9fe;line-height:1.15}.waiting{font:normal 26px BTitr,Tahoma,sans-serif;color:#b5e4fa}
+.label{color:#c3d7e6;font-size:16px}.doctor{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#bcd6e7;font-size:15px}
+button{font-family:BTitr,Tahoma,sans-serif;font-size:18px;border:0;border-radius:12px;cursor:pointer;min-height:48px;transition:filter .15s}
+button:focus-visible{outline:3px solid #f9cd72;outline-offset:2px}button:hover:not(:disabled){filter:brightness(1.14)}button:disabled{opacity:.46;cursor:not-allowed}
+.call{background:linear-gradient(115deg,#078a69,#0dae76);color:white;min-height:58px;font-size:21px;width:100%}
+.secondary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.repeat{background:#194c75;color:#e6f5fd}.finish{background:#253a4e;color:#f0f7fb}
+.status{font-size:15px;line-height:1.65;min-height:32px;color:#b6d0de}.status.error{color:#ffc5bc}.status.ok{color:#80efc0}
+footer{color:#96b3c5;display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-top:auto;line-height:1.6}
+#openMain{color:#80dcff;text-decoration:underline;background:transparent;border:0;cursor:pointer;font:inherit;min-height:auto;padding:0}
+</style>
+<script>
+(function(){const p=new URLSearchParams(location.search);const a=p.get('aid')||'';if(/^[a-f0-9]{12}$/.test(a))document.title='BastiyanDoctorQuick-'+a;})();
+</script>
+</head>
+<body>
+<main>
+<header>
+<img class="logo" src="/image/LOGO-BU-256.png" alt="باستیان">
+<div><div class="name">دستیار پزشک</div><div class="hint">فراخوان سریع باستیان</div></div>
+<div class="health" id="health"><span class="dot"></span><span id="healthText">بررسی اتصال</span></div>
+</header>
+<div class="card">
+<div class="doctor" id="doctorName">در حال بررسی ورود پزشک…</div>
+<div class="statLine"><span class="label">نوبت در حال فراخوان</span><strong class="number" id="currentNumber">—</strong></div>
+<div class="statLine"><span class="label">افراد در انتظار</span><strong class="waiting" id="waitingNumber">—</strong></div>
+</div>
+<button class="call" id="next" disabled>فراخوان نفر بعد</button>
+<div class="secondary">
+<button class="repeat" id="repeat" disabled>تکرار فراخوان</button>
+<button class="finish" id="finish" disabled>پایان ویزیت</button>
+</div>
+<div class="status" id="status" role="status" aria-live="polite">برای ورود ابتدا پنل اصلی پزشک را باز کنید.</div>
+<footer><span>F8 یا Ctrl+F8 برای نمایش / مخفی‌کردن</span><button id="openMain">پنل کامل</button></footer>
+</main>
+<script src="/assets/doctor-assistant-3.3.20.js?v=3.3.20" defer></script>
+</body>
+</html>

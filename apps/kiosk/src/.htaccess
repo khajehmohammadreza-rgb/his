@@ -1,0 +1,115 @@
+# Bastian Clinic - Secure Apache / Chabokan configuration
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^api\.php$ - [L]
+    # Never expose application data, bootstrap profiles, deployment helpers or dot-files over HTTP.
+    RewriteRule ^data(?:/|$) - [F,L,NC]
+    RewriteRule ^bootstrap(?:/|$) - [F,L,NC]
+    RewriteRule ^(?:gen_hashes|make_structure)\.php$ - [F,L,NC]
+    RewriteRule ^(?:README[^/]*|DEPLOY[^/]*)\.txt$ - [F,L,NC]
+    RewriteRule \.(?:bak|sql|log|ps1|bat|cmd|txt)$ - [F,L,NC]
+    RewriteRule ^\.chabokignore$ - [F,L,NC]
+    RewriteRule ^api/(.*)$ api.php?route=$1 [QSA,L]
+    RewriteRule ^download\.php$ - [L]
+    RewriteCond %{DOCUMENT_ROOT}/data/.install.lock -f
+    RewriteRule ^setup\.php$ - [F,L,NC]
+    RewriteCond %{THE_REQUEST} \s/+auth-gate\.html(?:[?\s]) [NC]
+    RewriteRule ^auth-gate\.html$ / [R=302,L]
+    # Canonicalize legacy query-tab URLs only when explicitly requested by the browser.
+    RewriteCond %{THE_REQUEST} \s/+\?tab=tv(?:[&\s]) [NC]
+    RewriteRule ^$ /tv [R=302,L]
+    RewriteCond %{THE_REQUEST} \s/+\?tab=doctor(?:[&\s]) [NC]
+    RewriteRule ^$ /doctor [R=302,L]
+    RewriteCond %{THE_REQUEST} \s/+\?tab=secretary(?:[&\s]) [NC]
+    RewriteRule ^$ /secretary [R=302,L]
+    RewriteCond %{THE_REQUEST} \s/+\?tab=admin(?:[&\s]) [NC]
+    RewriteRule ^$ /admin [R=302,L]
+    RewriteCond %{THE_REQUEST} \s/+\?tab=update(?:[&\s]) [NC]
+    RewriteRule ^$ /update [R=302,L]
+    RewriteRule ^admin-panel\.html$ /admin [R=302,L]
+    # Server-side authentication gate: protected panel HTML is never served directly.
+    RewriteRule ^(admin|center-settings|users|doctor|secretary|tv|update)/?$ guard.php?page=$1 [QSA,L]
+    RewriteRule ^(center-management|user-management)\.html$ / [R=302,L]
+    RewriteRule ^index\.html$ / [R=302,L]
+    RewriteRule ^tv\.html$ / [R=302,L]
+    RewriteRule ^admin/?$ center-management.html [L]
+    RewriteRule ^center-settings/?$ index.html [L]
+    RewriteRule ^users/?$ user-management.html [L]
+    RewriteRule ^doctor/?$ index.html [L]
+    RewriteRule ^secretary/?$ index.html [L]
+    RewriteRule ^tv/?$ tv.html [L]
+    RewriteRule ^update/?$ index.html [L]
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteRule ^$ auth-gate.html [L]
+    # Block only direct browser access to guard.php; allow internal rewrites from protected routes.
+    RewriteCond %{THE_REQUEST} \s/+guard\.php(?:[?\s]) [NC]
+    RewriteRule ^guard\.php$ - [F,L]
+    RewriteRule ^(center-management|user-management|admin-panel)\.html$ - [F,L]
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    RewriteRule ^ index.html [L]
+</IfModule>
+AddDefaultCharset UTF-8
+<IfModule mod_headers.c>
+    <FilesMatch "^(index\.html|auth-gate\.html|admin-panel\.html|center-management\.html|user-management\.html|tv\.html)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+    </FilesMatch>
+</IfModule>
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType audio/mpeg "access plus 30 days"
+</IfModule>
+# فایل‌های حساس هرگز از وب سرو نشوند
+<IfModule mod_authz_core.c>
+    <FilesMatch "^(config\.php|\.env(?:\..*)?|users_store\.json|sessions_store\.json|clinic_store\.json|update_state\.json|index\.json|\.install\.lock|.*\.lock)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+<IfModule mod_access_compat.c>
+    <FilesMatch "^(config\.php|\.env(?:\..*)?|users_store\.json|sessions_store\.json|clinic_store\.json|update_state\.json|index\.json|\.install\.lock|.*\.lock)$">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>
+# جلوگیری از اجرای فایل PHP داخل data
+<IfModule mod_rewrite.c>
+    RewriteRule ^data/.*\.php$ - [F,L,NC]
+</IfModule>
+
+# --- BastianMed performance layer ---
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/manifest+json image/svg+xml
+</IfModule>
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType audio/mpeg "access plus 30 days"
+  ExpiresByType image/x-icon "access plus 30 days"
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|png|jpe?g|webp|svg|ico|mp3|woff2?)$">
+    Header set Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
+  </FilesMatch>
+  <FilesMatch "^(index|tv|admin-panel|center-management|user-management|auth-gate)\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# Local application fonts only
+<FilesMatch "\.(ttf|otf|woff2?)$">
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>

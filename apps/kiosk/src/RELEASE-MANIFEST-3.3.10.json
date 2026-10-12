@@ -1,0 +1,35 @@
+{
+  "product": "Bastiyan Kiosk",
+  "version": "3.3.10",
+  "releaseType": "safe-code-deploy",
+  "releasedAt": "2026-10-07",
+  "windowsClientCompatibility": {
+    "minimumKnownCompatible": "3.3.9",
+    "reinstallRequired": false,
+    "conditions": [
+      "Preserve the production data directory",
+      "Preserve data/.client_package_secret",
+      "Keep the installed clients' server base URL reachable"
+    ]
+  },
+  "persistentPaths": [
+    "data/.client_package_secret",
+    "data/clinic_store.json",
+    "data/users_store.json",
+    "data/sessions_store.json",
+    "data/center-logo-*",
+    "data/center-qr-*",
+    "data/center-media-*",
+    "data/backups/"
+  ],
+  "uiChanges": [
+    "Doctor current-visit card: call next patient",
+    "Doctor current-visit card: finish visit",
+    "Legacy desktop-launcher UI removed from visible UI",
+    "Legacy ticker editor removed from visible UI"
+  ],
+  "apiChanges": [
+    "POST /api/queues/finish-and-next"
+  ],
+  "notes": "This release intentionally contains no live data files or client signing secret."
+}
