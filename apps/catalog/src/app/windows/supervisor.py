@@ -1,5 +1,5 @@
 """Watchdog and entrypoint for both source and self-contained PyInstaller Windows builds."""
-import os,sys,subprocess,time,threading,sqlite3,shutil,socket,webbrowser
+import os,sys,subprocess,time,threading,sqlite3,shutil,socket,webbrowser,json,ssl,urllib.request,ctypes
 from pathlib import Path
 from connection_agent import start
 HERE=Path(sys._MEIPASS) if getattr(sys,'frozen',False) else Path(__file__).resolve().parent.parent
@@ -8,6 +8,45 @@ import server as server_app
 ROOT=Path(os.environ.get('LOCALAPPDATA') or (Path.home()/'.bastiyan'))/'Bastiyan Catalog'
 DATA=ROOT/'data';DATA.mkdir(parents=True,exist_ok=True)
 LOG=ROOT/'server.log'
+if sys.stdout is not None and hasattr(sys.stdout,'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8',errors='replace')
+if sys.stderr is not None and hasattr(sys.stderr,'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8',errors='replace')
+
+def local_status():
+    """Verify actual live HTTPS service, not merely a successful self-check."""
+    ca=DATA/'bastiyan-local-CA.crt'
+    if not ca.is_file():
+        return None
+    try:
+        ctx=ssl.create_default_context(cafile=str(ca))
+        with urllib.request.urlopen('https://127.0.0.1:8765/api/status',timeout=1.5,context=ctx) as response:
+            result=json.loads(response.read(4096))
+        if result.get('ok') and result.get('https') and result.get('database')=='ready':
+            return result
+    except (OSError,ValueError,ssl.SSLError):
+        pass
+    return None
+
+def explain_failure(reason):
+    try:
+        tail=LOG.read_text(encoding='utf-8',errors='replace')[-5000:] if LOG.is_file() else ''
+    except OSError:
+        tail=''
+    text=reason+'\n\nLog: '+str(LOG)+'\n'+tail[-1200:]
+    print(text,flush=True)
+    try:
+        ctypes.windll.user32.MessageBoxW(None,text,'Bastiyan Catalog - Server Startup Failed',0x10)
+    except (AttributeError,OSError):
+        pass
+
+def local_proxy_already_running():
+    try:
+        with urllib.request.urlopen('http://127.0.0.1:8775/__agent/status',timeout=1.5) as response:
+            return isinstance(json.load(response),dict)
+    except (OSError,ValueError):
+        return False
+
 
 def import_legacy_data():
     # Never discard an existing server-side v2 catalog when switching launchers.
@@ -64,15 +103,37 @@ def guard_server():
         time.sleep(retry);retry=min(retry*2,30)
 
 def main():
-    import_legacy_data()
-    # A startup failure (damaged DB / TLS) must not trigger an unsafe reset.
-    check=subprocess.run(python_cmd('--https','--data',str(DATA),'--self-check'),
-                         capture_output=True,text=True,timeout=35)
-    if check.returncode:
-        print('Startup check failed; database untouched:',check.stderr,flush=True)
-        raise SystemExit(1)
-    threading.Thread(target=guard_server,daemon=True).start()
-    start()
+    try:
+        import_legacy_data()
+        if not local_status():
+            # Do not hide the real server error behind the generic client searching page.
+            with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as sock:
+                sock.settimeout(.5)
+                if sock.connect_ex(('127.0.0.1',8765))==0:
+                    explain_failure('Port 8765 is occupied by another process or by a server with a different certificate. Existing data was not modified.')
+                    raise SystemExit(2)
+            check=subprocess.run(python_cmd('--https','--data',str(DATA),'--self-check'),
+                                 capture_output=True,text=True,encoding='utf-8',errors='replace',timeout=45)
+            if check.returncode:
+                explain_failure('Preflight failed: '+(check.stderr or check.stdout or 'unknown error')[-1000:])
+                raise SystemExit(1)
+            threading.Thread(target=guard_server,daemon=True).start()
+            for _ in range(60):
+                if local_status():
+                    break
+                time.sleep(.5)
+            else:
+                explain_failure('The HTTPS server did not start within 30 seconds. It is not safe to continue with a searching screen.')
+                raise SystemExit(1)
+        print('Bastiyan Catalog SERVER READY: https://127.0.0.1:8765  |  data: '+str(DATA),flush=True)
+        if local_proxy_already_running():
+            webbrowser.open('http://127.0.0.1:8775/')
+            while True:
+                time.sleep(10)
+        # The local client will discover this already-verified server directly without UDP.
+        start()
+    except KeyboardInterrupt:
+        return
 
 if __name__=='__main__':
     if getattr(sys,'frozen',False) and '--bastiyan-server' in sys.argv:
