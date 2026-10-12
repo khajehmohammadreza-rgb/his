@@ -532,14 +532,14 @@ def backup_loop(path,stop):
                 backup_db(path,path.parent/'backups');day=curr
             except Exception:traceback.print_exc()
 
-def main():
+def main(argv=None):
     p=argparse.ArgumentParser(description='Bastiyan Catalog LAN Server')
     p.add_argument('--port',type=int,default=PORT)
     p.add_argument('--bind',default='0.0.0.0')
     p.add_argument('--data',default=str(BASE/'data'))
     p.add_argument('--https',action='store_true',help='Requires cryptography; see generate_tls.py')
     p.add_argument('--self-check', action='store_true', help='Validate database and TLS without starting server')
-    args=p.parse_args()
+    args=p.parse_args(argv)
     data=Path(args.data).resolve();data.mkdir(parents=True,exist_ok=True)
     try:os.chmod(data,0o700)
     except OSError:pass
