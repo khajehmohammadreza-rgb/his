@@ -56,14 +56,14 @@ class OneClickIntegration(unittest.TestCase):
     try:
         cookies=http.cookiejar.CookieJar()
         opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookies))
-        with opener.open('http://127.0.0.1:8775/') as r:
+        with opener.open('http://127.0.0.1:8776/') as r:
             self.assertIn('Bastiyan',r.read().decode('utf-8'))
         secret=(self.data/'FIRST_RUN_PASSWORD.txt').read_text(encoding='utf-8').splitlines()[-1]
         form=json.dumps({'username':'admin','password':secret}).encode()
-        req=urllib.request.Request('http://127.0.0.1:8775/api/login',data=form,headers={'Content-Type':'application/json'},method='POST')
+        req=urllib.request.Request('http://127.0.0.1:8776/api/login',data=form,headers={'Content-Type':'application/json'},method='POST')
         with opener.open(req) as r:self.assertTrue(json.load(r)['ok'])
-        with opener.open('http://127.0.0.1:8775/api/me') as r:self.assertEqual(json.load(r)['user']['username'],'admin')
-        bad=urllib.request.Request('http://127.0.0.1:8775/api/logout',data=b'{}',headers={'Origin':'https://evil.example','Content-Type':'application/json'},method='POST')
+        with opener.open('http://127.0.0.1:8776/api/me') as r:self.assertEqual(json.load(r)['user']['username'],'admin')
+        bad=urllib.request.Request('http://127.0.0.1:8776/api/logout',data=b'{}',headers={'Origin':'https://evil.example','Content-Type':'application/json'},method='POST')
         with self.assertRaises(urllib.error.HTTPError) as e:opener.open(bad)
         self.assertEqual(e.exception.code,403)
     finally:httpd.shutdown();httpd.server_close();th.join(timeout=3)
