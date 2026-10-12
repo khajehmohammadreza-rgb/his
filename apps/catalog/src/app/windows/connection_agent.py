@@ -22,7 +22,8 @@ CONFIG=ROOT/'trusted-center.json'
 CA=ROOT/'trusted-center-ca.crt'
 LOCAL_DATA=ROOT/'data'
 PORT=8765
-LOCAL_PORT=8775
+LOCAL_PORT=8776
+CLIENT_VERSION='2.5.0'  # dedicated bridge port; never reuse the v2.2-v2.4 bridge
 
 
 def is_lan(addr):
@@ -295,7 +296,7 @@ class Proxy(BaseHTTPRequestHandler):
             return self.reply(403,b'Forbidden')
         if self.path=='/__agent/status':
             with LINK.lock:
-                info={'service':'bastiyan-catalog-client','connected':bool(LINK.host),'host':LINK.host or '', 'mode':LINK.last_mode,'reason':LINK.last_error_kind,'message':LINK.error}
+                info={'service':'bastiyan-catalog-client','bridge_version':CLIENT_VERSION,'connected':bool(LINK.host),'host':LINK.host or '', 'mode':LINK.last_mode,'reason':LINK.last_error_kind,'message':LINK.error}
             return self.reply(200,json.dumps(info).encode(),'application/json; charset=utf-8')
         if self.path=='/favicon.ico':return self.reply(404,b'')
         with LINK.lock:host=LINK.host;ctx=LINK.ctx
@@ -333,7 +334,7 @@ def existing_bridge():
     try:
         with urllib.request.urlopen(f'http://127.0.0.1:{LOCAL_PORT}/__agent/status',timeout=1.5) as response:
             result=json.load(response)
-        return result if isinstance(result,dict) and result.get('service')=='bastiyan-catalog-client' else None
+        return result if isinstance(result,dict) and result.get('service')=='bastiyan-catalog-client' and result.get('bridge_version')==CLIENT_VERSION else None
     except (OSError,ValueError):
         return None
 
