@@ -188,7 +188,7 @@ class Proxy(BaseHTTPRequestHandler):
             return self.reply(403,b'Forbidden')
         if self.path=='/__agent/status':
             with LINK.lock:
-                info={'connected':bool(LINK.host),'host':LINK.host or '', 'message':LINK.error}
+                info={'service':'bastiyan-catalog-client','connected':bool(LINK.host),'host':LINK.host or '', 'message':LINK.error}
             return self.reply(200,json.dumps(info).encode(),'application/json; charset=utf-8')
         if self.path=='/favicon.ico':return self.reply(404,b'')
         with LINK.lock:host=LINK.host;ctx=LINK.ctx
@@ -222,9 +222,30 @@ class Proxy(BaseHTTPRequestHandler):
     def do_POST(self):self.handle_request()
 
 
+def existing_bridge():
+    try:
+        with urllib.request.urlopen(f'http://127.0.0.1:{LOCAL_PORT}/__agent/status',timeout=1.5) as response:
+            result=json.load(response)
+        return result if isinstance(result,dict) and result.get('service')=='bastiyan-catalog-client' else None
+    except (OSError,ValueError):
+        return None
+
+
 def start(open_browser=True):
+    # A server setup also runs the local bridge. Second desktop clicks should reuse it.
+    if existing_bridge() is not None:
+        if open_browser:webbrowser.open(f'http://127.0.0.1:{LOCAL_PORT}/')
+        print('Bastiyan Catalog client is already running; reusing one connection.',flush=True)
+        return
+    try:
+        httpd=ThreadingHTTPServer(('127.0.0.1',LOCAL_PORT),Proxy)
+    except OSError:
+        if existing_bridge() is not None:
+            if open_browser:webbrowser.open(f'http://127.0.0.1:{LOCAL_PORT}/')
+            return
+        raise
+    httpd.daemon_threads=True
     threading.Thread(target=LINK.keepalive,daemon=True).start()
-    httpd=ThreadingHTTPServer(('127.0.0.1',LOCAL_PORT),Proxy);httpd.daemon_threads=True
     if open_browser:webbrowser.open(f'http://127.0.0.1:{LOCAL_PORT}/')
     print(f'Windows client ready: http://127.0.0.1:{LOCAL_PORT}/',flush=True)
     try:httpd.serve_forever(poll_interval=.2)
