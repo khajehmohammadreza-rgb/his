@@ -8,6 +8,11 @@ from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+# Windows default consoles often use cp1252 and cannot encode Persian messages.
+for _out in (sys.stdout,sys.stderr):
+    if _out is not None and hasattr(_out,'reconfigure'):
+        _out.reconfigure(encoding='utf-8',errors='replace')
+
 BASE = Path(__file__).resolve().parent
 WEB = BASE / 'web'
 PORT = 8765
