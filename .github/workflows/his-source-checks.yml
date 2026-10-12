@@ -1,0 +1,41 @@
+name: Bastiyan HIS source checks
+on:
+  push:
+    branches: [main, release-sync-20261012]
+    paths: ['apps/his/**', 'releases/**', '.github/workflows/his-source-checks.yml']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  his:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: sqlite3,pdo_sqlite
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify version and private-file exclusions
+        run: |
+          test -f apps/his/src/version.json
+          test -f apps/his/src/api/config.local.example.php
+          test ! -f apps/his/src/api/config.local.php
+          test ! -e apps/his/src/fonts/BNazanin.ttf
+          python3 -c "import json; j=json.load(open('apps/his/src/version.json')); assert j['version']=='5.1.4' and j['buildNumber']==514"
+      - name: PHP syntax
+        run: find apps/his/src -name '*.php' -type f -print0 | xargs -0 -n1 php -l
+      - name: JavaScript parse
+        shell: bash
+        run: |
+          set -euo pipefail
+          find apps/his/src -name '*.js' -type f -print0 | while IFS= read -r -d '' f; do
+            node --experimental-default-type=module --check "$f"
+          done
+      - name: R24 regression
+        working-directory: apps/his/src
+        run: node --experimental-default-type=module tests/r24-regression.mjs
