@@ -62,14 +62,10 @@ jobs:
         shell: pwsh
         run: |
           python -m unittest discover -s catalog/app/tests -p test_autoconnection.py -v
-      - name: Fix frozen executable paths
+      - name: Verify packaged Python sources without rewriting imports
         shell: pwsh
         run: |
-          $file = 'catalog/app/windows/supervisor.py'
-          $text = Get-Content -Raw -Encoding UTF8 $file
-          $text = $text.Replace('HERE=Path(__file__).resolve().parent.parent', "HERE=Path(sys._MEIPASS) if getattr(sys,'frozen',False) else Path(__file__).resolve().parent.parent")
-          $text = $text.Replace("from connection_agent import start", "from connection_agent import start`nif sys.stdout is not None and hasattr(sys.stdout, 'reconfigure'): sys.stdout.reconfigure(encoding='utf-8', errors='replace')`nif sys.stderr is not None and hasattr(sys.stderr, 'reconfigure'): sys.stderr.reconfigure(encoding='utf-8', errors='replace')")
-          [System.IO.File]::WriteAllText((Resolve-Path $file), $text, [System.Text.UTF8Encoding]::new($false))
+          python -m py_compile catalog/app/windows/supervisor.py catalog/app/windows/connection_agent.py catalog/app/server.py
       - name: Build server
         shell: pwsh
         run: >-
