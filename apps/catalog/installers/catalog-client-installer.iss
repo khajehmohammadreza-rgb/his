@@ -1,12 +1,12 @@
 [Setup]
 AppId={{513296C4-9638-4C68-B140-D25B2D6CBE66}
 AppName=Bastiyan Catalog Client
-AppVersion=2.3.0
+AppVersion=2.4.0
 AppPublisher=Bastiyan
 DefaultDirName={autopf}\Bastiyan Catalog Client
 DefaultGroupName=Bastiyan Catalog
 OutputDir=dist
-OutputBaseFilename=Bastiyan-Catalog-Client-Setup-v2.3
+OutputBaseFilename=Bastiyan-Catalog-Client-Setup-v2.4
 SetupIconFile=catalog\app\bastiyan.ico
 Compression=lzma2
 SolidCompression=yes
