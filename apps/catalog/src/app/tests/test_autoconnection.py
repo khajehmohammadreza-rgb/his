@@ -21,7 +21,12 @@ class OneClickIntegration(unittest.TestCase):
             with urllib.request.urlopen('https://127.0.0.1:8765/api/status',context=BASE_CTX,timeout=.7) as r:
                 if json.loads(r.read())['ok']:break
         except (OSError,ValueError):time.sleep(.15)
-    else:raise RuntimeError('Unable to start server for real TLS integration test')
+    else:
+        cls.server.terminate()
+        try:_,err=cls.server.communicate(timeout=4)
+        except subprocess.TimeoutExpired:
+            cls.server.kill();_,err=cls.server.communicate(timeout=4)
+        raise RuntimeError('Unable to start server for real TLS integration test; exit='+str(cls.server.returncode)+' stderr='+(err or b'').decode('utf-8',errors='replace')[-3000:])
 
  @classmethod
  def start_server(cls):
