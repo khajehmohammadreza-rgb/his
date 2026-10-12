@@ -79,4 +79,44 @@ class OneClickIntegration(unittest.TestCase):
     with urllib.request.urlopen('https://127.0.0.1:8765/api/ca-cert',context=BASE_CTX) as r:
         self.assertEqual(r.read(),pem)
 
+
+ def test_04_server_local_identity_repairs_outdated_saved_center(self):
+    """An old local client's saved trust cannot trap the server PC on Searching."""
+    a=self.agent
+    genuine_id=(self.data/'server-identity.txt').read_text(encoding='ascii').strip()
+    genuine_ca=(self.data/'bastiyan-local-CA.crt').read_bytes()
+    target=a.LOCAL_DATA
+    target.mkdir(parents=True,exist_ok=True)
+    (target/'server-identity.txt').write_text(genuine_id,encoding='ascii')
+    (target/'bastiyan-local-CA.crt').write_bytes(genuine_ca)
+    bad={'server_id':'00000000-0000-4000-8000-000000000000','ca_sha256':hashlib.sha256(genuine_ca).hexdigest(),'host':'192.168.9.199'}
+    a.CONFIG.write_text(json.dumps(bad),encoding='utf-8')
+    a.CA.write_bytes(genuine_ca)
+    with a.LINK.lock:
+        a.LINK.host=None
+        a.LINK.config=bad
+        a.LINK.ctx=ssl.create_default_context(cadata=genuine_ca.decode('ascii'))
+    try:
+        self.assertTrue(a.LINK.connect(), 'Stale saved config must recover from authentic same-PC local identity')
+        saved=json.loads(a.CONFIG.read_text(encoding='utf-8'))
+        self.assertEqual(saved['server_id'],genuine_id)
+        self.assertEqual(saved['host'],'127.0.0.1')
+        self.assertEqual(saved['ca_sha256'],hashlib.sha256(genuine_ca).hexdigest())
+        self.assertEqual(a.LINK.last_mode,'same-machine')
+    finally:
+        (target/'server-identity.txt').unlink(missing_ok=True)
+        (target/'bastiyan-local-CA.crt').unlink(missing_ok=True)
+
+ def test_05_invalid_untrusted_local_identity_is_not_auto_accepted(self):
+    a=self.agent
+    target=a.LOCAL_DATA
+    target.mkdir(parents=True,exist_ok=True)
+    (target/'server-identity.txt').write_text('00000000-0000-4000-8000-000000000000',encoding='ascii')
+    (target/'bastiyan-local-CA.crt').write_bytes((self.data/'bastiyan-local-CA.crt').read_bytes())
+    try:
+        self.assertFalse(a.LINK._local_trusted_center(), 'Unexpected identity must not be auto-pinned')
+    finally:
+        (target/'server-identity.txt').unlink(missing_ok=True)
+        (target/'bastiyan-local-CA.crt').unlink(missing_ok=True)
+
 if __name__=='__main__':unittest.main()
