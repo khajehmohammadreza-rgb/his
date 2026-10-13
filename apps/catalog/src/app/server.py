@@ -533,7 +533,7 @@ def provision_admin(dbpath,password):
     Preserve all inventory data and create a unique SQLite-consistent backup first.
     Run with the server stopped to avoid unintended maintenance race conditions.
     """
-    if not isinstance(password,str) or len(password)<12 or len(password)>256 or '\\x00' in password or '\\n' in password:
+    if not isinstance(password,str) or len(password)<12 or len(password)>256 or any(ord(c)<32 for c in password):
         raise ValueError('Administrator password must be 12-256 characters.')
     dbpath=Path(dbpath).resolve()
     dbpath.parent.mkdir(parents=True,exist_ok=True)
