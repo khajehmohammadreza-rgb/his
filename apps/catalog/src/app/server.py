@@ -538,7 +538,7 @@ def provision_admin(dbpath,password):
     dbpath=Path(dbpath).resolve()
     dbpath.parent.mkdir(parents=True,exist_ok=True)
     if dbpath.exists():
-        with sqlite3.connect(f'file:{dbpath.as_posix()}?mode=ro',uri=True) as source:
+        with contextlib.closing(sqlite3.connect(f'file:{dbpath.as_posix()}?mode=ro',uri=True)) as source:
             if source.execute('PRAGMA quick_check').fetchone()[0]!='ok':
                 raise RuntimeError('Existing database failed integrity check: no reset performed.')
     else:
