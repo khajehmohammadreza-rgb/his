@@ -528,6 +528,58 @@ def backup_db(path,output):
     for old in files[:-14]:old.unlink()
     return dest
 
+def provision_admin(dbpath,password):
+    """Local-only administrative recovery. Never reads secrets from arguments or Git.
+    Preserve all inventory data and create a unique SQLite-consistent backup first.
+    Run with the server stopped to avoid unintended maintenance race conditions.
+    """
+    if not isinstance(password,str) or len(password)<12 or len(password)>256 or '\\x00' in password or '\\n' in password:
+        raise ValueError('Administrator password must be 12-256 characters.')
+    dbpath=Path(dbpath).resolve()
+    dbpath.parent.mkdir(parents=True,exist_ok=True)
+    if dbpath.exists():
+        with sqlite3.connect(f'file:{dbpath.as_posix()}?mode=ro',uri=True) as source:
+            if source.execute('PRAGMA quick_check').fetchone()[0]!='ok':
+                raise RuntimeError('Existing database failed integrity check: no reset performed.')
+    else:
+        # Initialize an empty database without exposing its temporary random bootstrap password.
+        import contextlib as _contextlib
+        with _contextlib.redirect_stdout(io.StringIO()):
+            init_db(dbpath)
+    snapshots=dbpath.parent/'backups'
+    snapshots.mkdir(parents=True,exist_ok=True)
+    stamp=datetime.now().strftime('%Y%m%d-%H%M%S')
+    snapshot=snapshots/('before-admin-reset-'+stamp+'-'+secrets.token_hex(4)+'.sqlite3')
+    with DB_LOCK,sqlite3.connect(dbpath,timeout=30) as source,sqlite3.connect(snapshot) as dest:
+        if source.execute('PRAGMA quick_check').fetchone()[0]!='ok':
+            raise RuntimeError('Database integrity check failed; no change was made.')
+        source.backup(dest)
+        if dest.execute('PRAGMA quick_check').fetchone()[0]!='ok':
+            raise RuntimeError('Backup verification failed; no change was made.')
+    newhash=pass_hash(password)
+    with DB_LOCK,db_connect(dbpath) as con:
+        con.execute('BEGIN IMMEDIATE')
+        try:
+            row=con.execute("SELECT id FROM users WHERE username='admin'").fetchone()
+            if row:
+                con.execute("UPDATE users SET pw_hash=?,role='admin' WHERE id=?",(newhash,row['id']))
+                con.execute('DELETE FROM sessions WHERE user_id=?',(row['id'],))
+            else:
+                con.execute("INSERT INTO users(username,pw_hash,role,created_at) VALUES('admin',?,'admin',?)",(newhash,now()))
+            write_audit(con,'system','local_admin_provision',{'account':'admin','backup':snapshot.name})
+            con.execute('COMMIT')
+        except Exception:
+            con.execute('ROLLBACK')
+            raise
+    with db_connect(dbpath) as con:
+        test=con.execute("SELECT pw_hash,role FROM users WHERE username='admin'").fetchone()
+        if not test or test['role']!='admin' or not check_pw(password,test['pw_hash']):
+            raise RuntimeError('Administrator verification failed after recovery.')
+    with contextlib.suppress(OSError):
+        (dbpath.parent/'FIRST_RUN_PASSWORD.txt').unlink()
+    return snapshot
+
+
 def backup_loop(path,stop):
     day=''
     while not stop.wait(90):
