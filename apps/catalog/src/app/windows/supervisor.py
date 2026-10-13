@@ -157,6 +157,21 @@ if __name__=='__main__':
     if getattr(sys,'frozen',False) and '--bastiyan-server' in sys.argv:
         sys.argv=[sys.argv[0],'--https','--data',str(DATA)]
         server_app.main()
+    elif '--bastiyan-provision-admin' in sys.argv:
+        # This command is LOCAL ONLY, reads secret from stdin (not process arguments).
+        # The database backup is verified BEFORE credentials are modified.
+        try:
+            if not hasattr(sys.stdin,'buffer'):
+                raise RuntimeError('Secure stdin is required for administrator provisioning.')
+            raw=sys.stdin.buffer.read(1024)
+            if not raw or len(raw)>512:
+                raise RuntimeError('Missing/oversized administrator password from private setup.')
+            password=raw.decode('utf-8').rstrip('\\r\\n')
+            snapshot=server_app.provision_admin(DATA/'catalog.sqlite3',password)
+            print('ADMIN_PROVISION_OK | backup='+str(snapshot),flush=True)
+        except Exception as exc:
+            print('ADMIN_PROVISION_FAILED | '+type(exc).__name__+': '+str(exc),file=sys.stderr,flush=True)
+            raise SystemExit(1)
     elif getattr(sys,'frozen',False) and '--bastiyan-self-check' in sys.argv:
         sys.argv=[sys.argv[0],'--https','--data',str(DATA),'--self-check']
         server_app.main()
