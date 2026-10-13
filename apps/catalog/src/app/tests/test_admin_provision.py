@@ -1,5 +1,5 @@
 """Regression: reset the admin account without altering catalog or clinical data."""
-import sys,sqlite3, tempfile,unittest
+import sys,sqlite3, tempfile,unittest,contextlib
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import server
@@ -19,7 +19,7 @@ class AdminProvision(unittest.TestCase):
             private_test_secret='test-only-provisioning-secret-2026'
             snapshot=server.provision_admin(db,private_test_secret)
             self.assertTrue(snapshot.is_file())
-            with sqlite3.connect(snapshot) as old:
+            with contextlib.closing(sqlite3.connect(snapshot)) as old:
                 self.assertEqual(old.execute('PRAGMA quick_check').fetchone()[0],'ok')
                 self.assertEqual(old.execute('SELECT count(*) FROM products').fetchone()[0],original)
                 self.assertEqual(old.execute("SELECT role FROM users WHERE username='admin'").fetchone()[0],'operator')
