@@ -166,7 +166,7 @@ if __name__=='__main__':
             raw=sys.stdin.buffer.read(1024)
             if not raw or len(raw)>512:
                 raise RuntimeError('Missing/oversized administrator password from private setup.')
-            password=raw.decode('utf-8').rstrip('\\r\\n')
+            password=raw.decode('utf-8').rstrip(chr(13)+chr(10))
             snapshot=server_app.provision_admin(DATA/'catalog.sqlite3',password)
             print('ADMIN_PROVISION_OK | backup='+str(snapshot),flush=True)
         except Exception as exc:
