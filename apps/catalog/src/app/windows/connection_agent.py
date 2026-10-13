@@ -23,7 +23,7 @@ CA=ROOT/'trusted-center-ca.crt'
 LOCAL_DATA=ROOT/'data'
 PORT=8765
 LOCAL_PORT=8776
-CLIENT_VERSION='2.5.0'  # dedicated bridge port; never reuse the v2.2-v2.4 bridge
+CLIENT_VERSION='2.6.0'  # dedicated bridge port; never reuse the v2.2-v2.4 bridge
 
 
 def is_lan(addr):
