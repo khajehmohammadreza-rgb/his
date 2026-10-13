@@ -1,7 +1,7 @@
-name: Bastiyan Catalog v2.5 Stale-Bridge Isolation CI
+name: Bastiyan Catalog v2.6 Offline Admin Provision CI
 on:
   push:
-    branches: [main, 'fix/catalog-bridge-port-v25']
+    branches: [main, 'feat/catalog-private-admin-provision-v26']
     paths:
       - 'apps/catalog/**'
       - '.github/workflows/catalog-native-build.yml'
@@ -62,6 +62,10 @@ jobs:
         shell: pwsh
         run: |
           python -m unittest discover -s catalog/app/tests -p test_autoconnection.py -v
+      - name: Verify private reset retains products and backups
+        shell: pwsh
+        run: |
+          python -m unittest discover -s catalog/app/tests -p test_admin_provision.py -v
       - name: Verify packaged Python sources without rewriting imports
         shell: pwsh
         run: |
@@ -80,6 +84,29 @@ jobs:
         run: |
           & dist/Bastiyan-Catalog-Server.exe --bastiyan-self-check
           if ($LASTEXITCODE -ne 0) { throw "Windows server self-check failed" }
+      - name: Test genuine admin provision Server EXE using temporary local secret
+        shell: pwsh
+        run: |
+          @'
+          import os,sqlite3,subprocess,tempfile,pathlib,sys
+          sys.path.insert(0,str(pathlib.Path('catalog/app').resolve()))
+          import server
+          root=pathlib.Path(tempfile.mkdtemp(prefix='bastiyan-admin-'))
+          env=dict(os.environ,LOCALAPPDATA=str(root))
+          binary=str(pathlib.Path('dist/Bastiyan-Catalog-Server.exe').resolve())
+          secret='integration-test-secret-not-user-password-2026'
+          p=subprocess.run([binary,'--bastiyan-provision-admin'],input=secret+'\\n',env=env,
+                           stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=60)
+          if p.returncode or 'ADMIN_PROVISION_OK' not in p.stdout:
+              raise RuntimeError('Frozen admin recovery failed exit='+str(p.returncode)+' stdout='+p.stdout[-2000:]+' stderr='+p.stderr[-2000:])
+          db=root/'Bastiyan Catalog/data/catalog.sqlite3'
+          with sqlite3.connect(db) as con:
+              row=con.execute("SELECT pw_hash,role FROM users WHERE username='admin'").fetchone()
+              assert row and row[1]=='admin' and server.check_pw(secret,row[0])
+          assert list((db.parent/'backups').glob('before-admin-reset-*.sqlite3'))
+          assert not (db.parent/'FIRST_RUN_PASSWORD.txt').exists()
+          print('FROZEN EXE ADMIN RECOVERY VERIFIED WITH PRIVATE STDIN AND RESTORABLE BACKUP')
+          '@ | python -
       - name: Build client
         shell: pwsh
         run: >-
@@ -241,10 +268,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Server setup compile failed' }
           & $compiler 'catalog-client-installer.iss'
           if ($LASTEXITCODE -ne 0) { throw 'Client setup compile failed' }
-          if (!(Test-Path 'dist/Bastiyan-Catalog-Server-Setup-v2.5.exe')) { throw 'Server installer missing' }
-          if (!(Test-Path 'dist/Bastiyan-Catalog-Client-Setup-v2.5.exe')) { throw 'Client installer missing' }
+          if (!(Test-Path 'dist/Bastiyan-Catalog-Server-Setup-v2.6.exe')) { throw 'Server installer missing' }
+          if (!(Test-Path 'dist/Bastiyan-Catalog-Client-Setup-v2.6.exe')) { throw 'Client installer missing' }
       - uses: actions/upload-artifact@v4
         with:
-          name: Bastiyan-Catalog-v2.5-WINDOWS-INSTALLERS
+          name: Bastiyan-Catalog-v2.6-WINDOWS-INSTALLERS
           path: dist/*.exe
           if-no-files-found: error
