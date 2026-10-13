@@ -550,7 +550,7 @@ def provision_admin(dbpath,password):
     snapshots.mkdir(parents=True,exist_ok=True)
     stamp=datetime.now().strftime('%Y%m%d-%H%M%S')
     snapshot=snapshots/('before-admin-reset-'+stamp+'-'+secrets.token_hex(4)+'.sqlite3')
-    with DB_LOCK,sqlite3.connect(dbpath,timeout=30) as source,sqlite3.connect(snapshot) as dest:
+    with DB_LOCK,contextlib.closing(sqlite3.connect(dbpath,timeout=30)) as source,contextlib.closing(sqlite3.connect(snapshot)) as dest:
         if source.execute('PRAGMA quick_check').fetchone()[0]!='ok':
             raise RuntimeError('Database integrity check failed; no change was made.')
         source.backup(dest)
