@@ -19,7 +19,7 @@ PORT = 8765
 DB_LOCK = threading.RLock()
 LOGIN_ATTEMPTS = {}
 DISCOVERY_MAGIC = b'BASTIYAN_CATALOG_DISCOVER_V2'
-VERSION = '2.5.0'
+VERSION = '2.6.0'
 
 def now(): return datetime.now(timezone.utc).isoformat(timespec='seconds')
 def local_ips():
