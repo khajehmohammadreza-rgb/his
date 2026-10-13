@@ -95,7 +95,7 @@ jobs:
           env=dict(os.environ,LOCALAPPDATA=str(root))
           binary=str(pathlib.Path('dist/Bastiyan-Catalog-Server.exe').resolve())
           secret='integration-test-secret-not-user-password-2026'
-          p=subprocess.run([binary,'--bastiyan-provision-admin'],input=secret+'\\n',env=env,
+          p=subprocess.run([binary,'--bastiyan-provision-admin'],input=secret+chr(10),env=env,
                            stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=60)
           if p.returncode or 'ADMIN_PROVISION_OK' not in p.stdout:
               raise RuntimeError('Frozen admin recovery failed exit='+str(p.returncode)+' stdout='+p.stdout[-2000:]+' stderr='+p.stderr[-2000:])
