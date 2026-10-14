@@ -35,7 +35,8 @@ jobs:
               if (base in forbidden_names
                   or (base.startswith(".env.") and base != ".env.example")
                   or base.endswith(forbidden_suffixes)
-                  or bool(set(parts[:-1]) & forbidden_dirs)):
+                  or bool(set(parts[:-1]) & forbidden_dirs)
+                  or ("bootstrap" in parts[:-1] and base.endswith(".json"))):
                   bad.append(path)
           if bad:
               print("SECURITY ERROR: version-controlled runtime/clinical files detected:")
