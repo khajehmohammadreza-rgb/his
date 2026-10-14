@@ -1,0 +1,47 @@
+name: Repository hygiene (no private runtime files)
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tracked-file-safety:
+    name: Block tracked runtime secrets and clinical data
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check version-controlled paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib
+          import subprocess
+          import sys
+          files = subprocess.check_output(["git", "ls-files", "-z"]).decode("utf-8", "surrogateescape").split("\0")
+          forbidden_dirs = {"patients", "backups", "runtime-data", "sessions", "journal"}
+          forbidden_names = {".env", "config.local.php", "provisioning.json", "admin-seed.json"}
+          forbidden_suffixes = (".sqlite", ".sqlite3", ".db", ".db-wal", ".db-shm",
+                                ".p12", ".pfx", ".pem", ".key", ".jks", ".keystore")
+          bad = []
+          for path in filter(None, files):
+              normalized = path.replace("\\", "/")
+              parts = normalized.lower().split("/")
+              base = parts[-1]
+              if (base in forbidden_names
+                  or (base.startswith(".env.") and base != ".env.example")
+                  or base.endswith(forbidden_suffixes)
+                  or bool(set(parts[:-1]) & forbidden_dirs)
+                  or ("bootstrap" in parts[:-1] and base.endswith(".json"))):
+                  bad.append(path)
+          if bad:
+              print("SECURITY ERROR: version-controlled runtime/clinical files detected:")
+              for path in bad:
+                  print(" -", path)
+              sys.exit(1)
+          print("OK: no known runtime-secret or clinical-data file paths are tracked.")
+          PY
