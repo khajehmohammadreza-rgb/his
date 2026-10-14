@@ -1,16 +1,24 @@
 name: Bastiyan HIS source checks
 on:
   push:
-    branches: [main, release-sync-20261012]
-    paths: ['apps/his/**', 'releases/**', '.github/workflows/his-source-checks.yml']
+    branches: [main]
+    paths:
+      - 'apps/his/**'
+      - 'releases/**'
+      - '.github/workflows/his-source-checks.yml'
   pull_request:
     branches: [main]
+    paths:
+      - 'apps/his/**'
+      - 'releases/**'
+      - '.github/workflows/his-source-checks.yml'
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   his:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
@@ -20,22 +28,39 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify version and private-file exclusions
+      - name: Validate source metadata without pinning a historical release
+        shell: bash
         run: |
-          test -f apps/his/src/version.json
-          test -f apps/his/src/api/config.local.example.php
-          test ! -f apps/his/src/api/config.local.php
-          test ! -e apps/his/src/fonts/BNazanin.ttf
-          python3 -c "import json; j=json.load(open('apps/his/src/version.json')); assert j['version']=='5.1.4' and j['buildNumber']==514"
+          set -euo pipefail
+          python3 - <<'PY'
+          import datetime
+          import json
+          import pathlib
+          import re
+          src = pathlib.Path("apps/his/src")
+          assert (src / "api/config.local.example.php").is_file(), "Missing safe config example"
+          assert not (src / "api/config.local.php").exists(), "Do not commit runtime config"
+          assert not (src / "fonts/BNazanin.ttf").exists(), "Do not commit proprietary font binary"
+          data = json.loads((src / "version.json").read_text(encoding="utf-8"))
+          version = data.get("version")
+          assert isinstance(version, str) and re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?", version), "Invalid semantic version"
+          assert type(data.get("buildNumber")) is int and data["buildNumber"] > 0, "Invalid buildNumber"
+          assert isinstance(data.get("release"), str) and data["release"].strip(), "Missing release identifier"
+          datetime.date.fromisoformat(data["releaseDate"])
+          print(f"Validated HIS source version {version}; build {data['buildNumber']}")
+          PY
       - name: PHP syntax
-        run: find apps/his/src -name '*.php' -type f -print0 | xargs -0 -n1 php -l
-      - name: JavaScript parse
+        shell: bash
+        run: |
+          set -euo pipefail
+          find apps/his/src -name '*.php' -type f -print0 | xargs -0 -r -n1 php -l
+      - name: JavaScript syntax
         shell: bash
         run: |
           set -euo pipefail
           find apps/his/src -name '*.js' -type f -print0 | while IFS= read -r -d '' f; do
             node --experimental-default-type=module --check "$f"
           done
-      - name: R24 regression
+      - name: Existing R24 regression suite
         working-directory: apps/his/src
         run: node --experimental-default-type=module tests/r24-regression.mjs
