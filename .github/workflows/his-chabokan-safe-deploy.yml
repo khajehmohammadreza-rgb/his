@@ -1,0 +1,113 @@
+name: Bastiyan HIS — Safe Manual Chabokan Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      expected_version:
+        description: "Expected HIS version (e.g. 5.1.16)"
+        required: true
+        default: "5.1.16"
+        type: string
+      data_safety_confirmation:
+        description: "Type exactly: BACKUP_AND_PERSISTENCE_VERIFIED"
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: bastiyan-his-production-deploy
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: chabokan-production
+    env:
+      CHABOKAN_API_BASE: https://hub.chabokan.net/api/v1
+      CHABOKAN_SERVICE_NAME: ${{ vars.CHABOKAN_SERVICE_NAME }}
+      CHABOKAN_API_TOKEN: ${{ secrets.CHABOKAN_API_TOKEN }}
+      PERSISTENCE_VERIFIED: ${{ vars.HIS_PERSISTENCE_VERIFIED }}
+      PACKAGE_VERSION: ${{ inputs.expected_version }}
+      SAFETY_CONFIRMATION: ${{ inputs.data_safety_confirmation }}
+    steps:
+      - name: Validate explicit backup and persistent-storage gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$SAFETY_CONFIRMATION" = "BACKUP_AND_PERSISTENCE_VERIFIED" || { echo 'Fresh off-site backup confirmation required'; exit 1; }
+          test "$PERSISTENCE_VERIFIED" = "true" || { echo 'First verify /app/api/data, /app/uploads, /app/api/config.local.php persistence on Chabokan'; exit 1; }
+          test -n "$CHABOKAN_SERVICE_NAME" && test -n "$CHABOKAN_API_TOKEN" || { echo 'Set CHABOKAN_SERVICE_NAME (variable) and CHABOKAN_API_TOKEN (secret)'; exit 1; }
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite,sqlite3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Refuse old source or private-data files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib
+          src = pathlib.Path('apps/his/src')
+          v = json.loads((src/'version.json').read_text(encoding='utf-8'))['version']
+          assert v == os.environ['PACKAGE_VERSION'], f'Source {v} != requested {os.environ["PACKAGE_VERSION"]}'
+          assert (src/'api/config.local.example.php').is_file()
+          for p in src.rglob('*'):
+              if not p.is_file(): continue
+              rel = p.relative_to(src).as_posix().lower()
+              assert not (rel.startswith(('api/data/','uploads/','fonts/')) or
+                  rel.endswith(('.sqlite','.sqlite3','.db','.ttf','.woff','.woff2','.pem','.key')) or
+                  rel == 'api/config.local.php' or
+                  rel.startswith('.env')), f'Unsafe file: {rel}'
+          print('Safe code-only source:', v)
+          PY
+      - name: PHP and JS syntax checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          find apps/his/src -type f -name '*.php' -print0 | xargs -0 -r -n1 php -l > /dev/null
+          while IFS= read -r -d '' file; do
+            node --experimental-default-type=module --check "$file" >/dev/null
+          done < <(find apps/his/src -type f -name '*.js' -print0)
+          node --experimental-default-type=module apps/his/src/tests/r24-regression.mjs
+      - name: Build code-only deployment archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar --exclude='*.sqlite*' --exclude='config.local.php' --exclude='.env*' \
+            -czf "${RUNNER_TEMP}/his-code-only.tar.gz" -C apps/his/src .
+          echo "Archive SHA256:"
+          sha256sum "${RUNNER_TEMP}/his-code-only.tar.gz"
+      - name: Submit deployment to Chabokan (manual only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail-with-body \
+            --connect-timeout 20 --max-time 300 \
+            -H "Authorization: Token ${CHABOKAN_API_TOKEN}" \
+            -F "file=@${RUNNER_TEMP}/his-code-only.tar.gz" \
+            "${CHABOKAN_API_BASE}/services/${CHABOKAN_SERVICE_NAME}/deploy/" \
+            > "${RUNNER_TEMP}/deploy-response.json"
+          python3 - <<'PY'
+          import json,os
+          p=os.path.join(os.environ['RUNNER_TEMP'],'deploy-response.json')
+          d=json.load(open(p,encoding='utf-8'))
+          assert d.get('success') is True, 'Chabokan did not accept the deploy request'
+          print('Chabokan accepted deployment. Verify final status in deploy logs; acceptance is not completion.')
+          PY
+      - name: Inspect deploy logs without publishing secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail-with-body --max-time 45 \
+            -H "Authorization: Token ${CHABOKAN_API_TOKEN}" \
+            "${CHABOKAN_API_BASE}/services/${CHABOKAN_SERVICE_NAME}/deploy-logs/" \
+            > "${RUNNER_TEMP}/deploy-logs.json"
+          python3 - <<'PY'
+          import json,os
+          d=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'deploy-logs.json'),encoding='utf-8'))
+          print('Deploy reported status:', d.get('status','unknown'))
+          print('Final completion must be verified separately in Chabokan and HIS health check.')
+          PY
