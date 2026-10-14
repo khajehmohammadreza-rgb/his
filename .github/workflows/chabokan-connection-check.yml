@@ -1,5 +1,11 @@
 name: Chabokan API connection check (read-only)
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/chabokan_bridge.py'
+      - 'tools/tests/test_chabokan_bridge.py'
+      - '.github/workflows/chabokan-connection-check.yml'
   workflow_dispatch:
     inputs:
       service:
@@ -15,13 +21,19 @@ on:
 permissions:
   contents: read
 jobs:
-  verify:
+  unit-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Offline unit tests
+      - name: Run offline tests
         run: python3 -m unittest discover -s tools/tests -p 'test_chabokan_bridge.py' -v
+  verify:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
       - name: Test authenticated read-only API
         env:
           CHABOKAN_API_TOKEN: ${{ secrets.CHABOKAN_API_TOKEN }}
