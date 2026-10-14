@@ -30,3 +30,6 @@
 *.pem
 *.pfx
 *.crt
+# Legacy provisioning profiles must be supplied privately at deployment
+**/bootstrap/admin-seed.json
+**/bootstrap/clinic-profile-*.json
