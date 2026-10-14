@@ -1,0 +1,35 @@
+name: Chabokan API connection check (read-only)
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: "Existing Chabokan service to verify"
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - his
+          - website
+          - kiosk
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Offline unit tests
+        run: python3 -m unittest discover -s tools/tests -p 'test_chabokan_bridge.py' -v
+      - name: Test authenticated read-only API
+        env:
+          CHABOKAN_API_TOKEN: ${{ secrets.CHABOKAN_API_TOKEN }}
+          TARGET_SERVICE: ${{ inputs.service }}
+        run: |
+          set -euo pipefail
+          if [ -z "$CHABOKAN_API_TOKEN" ]; then
+            echo "::error::Add CHABOKAN_API_TOKEN to GitHub Actions Secrets. Do not paste it into code."
+            exit 1
+          fi
+          python3 tools/chabokan_bridge.py --service "$TARGET_SERVICE" --quiet
