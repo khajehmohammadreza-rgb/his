@@ -1,0 +1,86 @@
+name: Bastiyan HIS R37 — Import verified source archive
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'incoming/his/Bastiyan-HIS-R37-GITHUB-SOURCE-CODE-ONLY.zip'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: bastiyan-his-source-import
+  cancel-in-progress: false
+jobs:
+  import:
+    if: github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout entire source repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite,sqlite3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify approved R37 code-only package
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/import_his_release.py \
+            --package incoming/his/Bastiyan-HIS-R37-GITHUB-SOURCE-CODE-ONLY.zip \
+            --target apps/his/src
+          # Restored release archives omit developer tests: keep prior tests outside
+          # runtime in a versioned archival folder and do not claim their validity for R37.
+          test "$(python3 -c 'import json;print(json.load(open("apps/his/src/version.json"))["version"])')" = '5.1.16'
+          test ! -e apps/his/src/api/config.local.php
+          test ! -d apps/his/src/api/data
+          test ! -d apps/his/src/uploads
+          test ! -d apps/his/src/fonts
+      - name: Syntax and package smoke checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          find apps/his/src -type f -name '*.php' -print0 | xargs -0 -r -n1 php -l > /dev/null
+          find apps/his/src -type f -name '*.js' -print0 | while IFS= read -r -d '' f; do
+            node --experimental-default-type=module --check "$f" >/dev/null
+          done
+          python3 - <<'PY'
+          import json, pathlib
+          root=pathlib.Path('apps/his/src')
+          d=json.loads((root/'version.json').read_text())
+          assert d['version']=='5.1.16'
+          assert (root/'api/router.php').is_file()
+          assert (root/'api/pos_lan_bridge.php').is_file()
+          assert (root/'app/App457-final.js').is_file()
+          print('R37 source packaging and syntax OK. Live deployment still NOT verified.')
+          PY
+      - name: Stage safely on a dedicated branch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BRANCH="release/his-r37-import"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH" || { echo 'Staging branch already exists; stop to prevent overwrite'; exit 1; }
+          git add -A -- apps/his/src
+          git diff --cached --quiet && { echo 'No code changes'; exit 0; }
+          git commit -m "release(his): stage R37 5.1.16 code-only source"
+          git push --set-upstream origin "$BRANCH"
+          gh pr create --base main --head "$BRANCH" \
+            --title "HIS R37 5.1.16 — verified code-only source" \
+            --body "Source-only import. No clinical data, settings or fonts. Syntax validated. NOT deployed to Chabokan. Review update strategy and persistent storage before merging." \
+            || echo 'Branch pushed; PR creation may need approval in GitHub Actions settings.'
+  skipped-when-public:
+    if: github.event.repository.private != true
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "::warning::HIS source import intentionally blocked while repository is public."
+          echo "Change visibility to Private before uploading the source-only archive."
