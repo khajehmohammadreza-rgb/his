@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  pull-requests: write
 concurrency:
   group: bastiyan-his-source-import
   cancel-in-progress: false
@@ -37,7 +38,8 @@ jobs:
           fi
           python3 tools/import_his_release.py \
             --package incoming/his/Bastiyan-HIS-R37-GITHUB-SOURCE-CODE-ONLY.zip \
-            --target apps/his/src
+            --target apps/his/src \
+            --sha256 79cc6df9b81c25daad9a75211d9e1b230df2991688b744e99648f382339fcb78
           # Restored release archives omit developer tests: keep prior tests outside
           # runtime in a versioned archival folder and do not claim their validity for R37.
           test "$(python3 -c 'import json;print(json.load(open("apps/his/src/version.json"))["version"])')" = '5.1.16'
