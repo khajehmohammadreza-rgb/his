@@ -31,6 +31,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          if [ -d apps/his/src/tests ]; then
+            mkdir -p apps/his/tests-legacy-r25
+            cp -a apps/his/src/tests/. apps/his/tests-legacy-r25/
+          fi
           python3 tools/import_his_release.py \
             --package incoming/his/Bastiyan-HIS-R37-GITHUB-SOURCE-CODE-ONLY.zip \
             --target apps/his/src
@@ -69,7 +73,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH" || { echo 'Staging branch already exists; stop to prevent overwrite'; exit 1; }
-          git add -A -- apps/his/src
+          git add -A -- apps/his/src apps/his/tests-legacy-r25
           git diff --cached --quiet && { echo 'No code changes'; exit 0; }
           git commit -m "release(his): stage R37 5.1.16 code-only source"
           git push --set-upstream origin "$BRANCH"
