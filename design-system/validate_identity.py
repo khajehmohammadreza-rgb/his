@@ -15,13 +15,15 @@ pages=[
  "apps/kiosk/src/user-management.html",
  "apps/kiosk/src/doctor-assistant.html",
  "apps/catalog/src/app/web/index.html",
- "apps/clinicsite/design-preview/index.html"
+ "apps/clinicsite/design-preview/index.html",
+ "apps/holding-site/design-preview/index.html"
 ]
 styles=[
  "apps/his/src/assets/bastiyan-visual-2026.css",
  "apps/kiosk/src/assets/bastiyan-visual-2026.css",
  "apps/catalog/src/app/web/bastiyan-visual-2026.css",
- "apps/clinicsite/design-preview/bastiyan-visual-2026.css"
+ "apps/clinicsite/design-preview/bastiyan-visual-2026.css",
+ "apps/holding-site/design-preview/bastiyan-visual-2026.css"
 ]
 class Html(HTMLParser):
  def __init__(self):super().__init__();self.styles=[]
@@ -46,13 +48,14 @@ for p in styles:
  invalid=[n for n in parsed if n.type=="error"]
  if invalid:raise AssertionError(f"{p}: CSS errors: {invalid}")
  if "bastiyan-architecture.svg" in content:
-  assert (ROOT/p).parent.joinpath("bastiyan-architecture.svg").is_file() if not p.startswith("apps/clinicsite") else (ROOT/"apps/clinicsite/design-preview/assets/bastiyan-architecture.svg").is_file()
+  assert (ROOT/p).parent.joinpath("bastiyan-architecture.svg").is_file() if not p.startswith(("apps/clinicsite","apps/holding-site")) else (ROOT/p).parent.joinpath("assets/bastiyan-architecture.svg").is_file()
  print("CSS parse OK:",p)
 # Refuse altering live business logic, manifests, databases or any installer as part of a visual patch.
 changed=subprocess.check_output(["git","diff","--name-only","origin/main...HEAD"],cwd=ROOT,text=True).splitlines()
 approved=lambda p: (
  p.startswith("design-system/") or
  p.startswith("apps/clinicsite/design-preview/") or
+ p.startswith("apps/holding-site/design-preview/") or
  p in pages or
  p in styles or
  p.endswith("/bastiyan-architecture.svg") or
