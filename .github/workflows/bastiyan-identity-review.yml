@@ -1,0 +1,43 @@
+name: Bastiyan identity visual review
+on:
+  push:
+    branches: ['design/bastiyan-light-identity-20261018']
+    paths:
+      - 'apps/his/src/index.html'
+      - 'apps/his/src/assets/bastiyan-visual-2026.css'
+      - 'apps/kiosk/src/**'
+      - 'apps/catalog/src/app/web/**'
+      - 'apps/clinicsite/design-preview/**'
+      - 'design-system/**'
+      - '.github/workflows/bastiyan-identity-review.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify CSS parsing, references and functional-code isolation
+        run: |
+          python3 -m pip install --disable-pip-version-check tinycss2==1.5.1
+          python3 design-system/validate_identity.py
+      - name: Render actual ClinicStudio HTML preview
+        run: |
+          mkdir -p design-artifacts
+          python3 -m http.server 8123 --bind 127.0.0.1 --directory apps/clinicsite/design-preview > /tmp/bastiyan-preview.log 2>&1 &
+          sleep 2
+          CHROME=$(command -v google-chrome || command -v chromium || true)
+          if [ -z "$CHROME" ]; then echo "No chromium installed" >&2; exit 1; fi
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,950 --screenshot=design-artifacts/ClinicStudio-desktop.png http://127.0.0.1:8123/
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=430,930 --screenshot=design-artifacts/ClinicStudio-mobile.png http://127.0.0.1:8123/
+          file design-artifacts/*.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Bastiyan-2026-design-preview
+          path: |
+            apps/clinicsite/design-preview/
+            design-artifacts/
+          retention-days: 30
