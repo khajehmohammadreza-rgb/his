@@ -1,0 +1,38 @@
+/* ClinicStudio design preview — Bastiyan Visual Identity 2026
+  Presentation-only. Real booking/payment/OTP require original PHP application.
+*/
+:root{--brand:#12509a;--accent:#08aaa7;--ink:#153b60;--muted:#647f98;--line:#dbeaf5}
+html{scroll-behavior:smooth}body{background:#f8fbff;color:var(--ink)}
+h1,h2,h3,h4{font-family:"B Titr","BTitr",Tahoma,sans-serif;text-align:right;color:#104277}
+p,li,small,a{font-family:"B Nazanin","BNazanin",Tahoma,sans-serif}
+.site-header{height:86px;position:sticky;top:0;background:rgba(255,255,255,.9);border-bottom:1px solid #dcebf6;box-shadow:0 8px 24px rgba(29,76,119,.06);backdrop-filter:blur(16px)}
+.identity-symbol{background:linear-gradient(145deg,#11c2b5,#1467b7);box-shadow:0 7px 18px rgba(17,132,160,.2)}
+.identity-name strong{color:#0e447b}
+.site-nav a{color:#456b8d}.site-nav a:hover,.site-nav a.active{color:#1155a1}
+.header-contact{background:#edf5ff;color:#15549b}
+.top-ribbon{background:#104785;color:white}
+.sec-hero{position:relative;overflow:hidden;padding:clamp(64px,6.5vw,98px) 0;background:linear-gradient(105deg,#f6fbff 0%,#e8f4fd 63%,#f8fcff 100%)}
+.sec-hero:before{content:"";position:absolute;inset:0 0 0 0;pointer-events:none;background:linear-gradient(90deg,rgba(246,251,255,.9),rgba(246,251,255,.42)),url("./assets/bastiyan-architecture.svg") left center / 820px auto no-repeat;opacity:.7}
+.hero-grid{position:relative;z-index:1;gap:clamp(24px,4vw,64px)}
+.hero-copy h1{color:#0e3c75;line-height:1.52;text-align:right}
+.hero-lead{color:#4d7190}
+.eyebrow{color:#0c7797}.eyebrow .dot{background:#0db5b0}
+.btn-primary{background:linear-gradient(115deg,#0d4c93,#1a68bd);color:#fff;box-shadow:0 12px 25px rgba(18,88,169,.2)}
+.btn-outline{border:1px solid #b4d2e8;background:#fff;color:#11518d}
+.hero-illustration{background:linear-gradient(135deg,rgba(227,244,255,.38),rgba(239,250,255,.7)),url("./assets/bastiyan-architecture.svg") 50% 51%/cover no-repeat;border-radius:42px;box-shadow:0 26px 68px rgba(26,79,125,.18)}
+.hero-illustration .graphic-cross,.hero-illustration .graphic-ring,.hero-illustration .big-plus{opacity:.08}
+.float-badge{border:1px solid #dce8f3;box-shadow:0 12px 34px rgba(19,74,115,.12)}
+.sec-features,.sec-services,.sec-doctors,.sec-contact{background:#f7fbff}
+.sec h2{color:#104477;text-align:right}
+.tile,.doctor-card,.contact-box{background:rgba(255,255,255,.98);border:1px solid #dceaf5;box-shadow:0 14px 32px rgba(31,81,122,.065);border-radius:21px;transition:transform .18s ease,box-shadow .18s ease}
+.tile:hover,.doctor-card:hover{transform:translateY(-3px);box-shadow:0 22px 46px rgba(31,81,122,.13)}
+.tile-icon{background:#e9f6fa;color:#0f638c}
+.sec-cta .cta-panel{background:linear-gradient(130deg,#124785,#0e639e);border-radius:27px;box-shadow:0 20px 50px rgba(20,80,139,.18)}
+.site-footer{background:#0c335d;color:#e5f4ff}
+.site-footer h3,.site-footer h4{color:#fff}
+.mobile-bottom-actions{background:#fff;border-top:1px solid #e1ecf5;box-shadow:0 -9px 25px rgba(30,82,122,.07)}
+.mobile-bottom-actions .mobile-book{background:#1456a0;color:white}
+a:focus-visible,button:focus-visible{outline:3px solid #68b6e8;outline-offset:3px}
+@media(max-width:850px){.site-header{height:76px}.sec-hero:before{opacity:.35;background-size:650px auto}.hero-illustration{border-radius:30px}.hero-copy h1{font-size:clamp(30px,6vw,45px)}}
+@media(max-width:580px){.sec-hero{padding:54px 0}.hero-illustration{min-height:300px;height:300px}.sec-hero:before{opacity:.2}.tile,.doctor-card{border-radius:17px}}
+@media(prefers-reduced-motion:reduce){.tile,.doctor-card,.btn{transition:none}.tile:hover,.doctor-card:hover,.btn:hover{transform:none}}
