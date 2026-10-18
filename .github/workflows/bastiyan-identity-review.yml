@@ -33,6 +33,14 @@ jobs:
           if [ -z "$CHROME" ]; then echo "No chromium installed" >&2; exit 1; fi
           "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,950 --screenshot=design-artifacts/ClinicStudio-desktop.png http://127.0.0.1:8123/
           "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=430,930 --screenshot=design-artifacts/ClinicStudio-mobile.png http://127.0.0.1:8123/
+          # Render the actual login entrypoints without touching live services.
+          python3 -m http.server 8124 --bind 127.0.0.1 --directory apps/his/src > /tmp/his-preview.log 2>&1 &
+          python3 -m http.server 8125 --bind 127.0.0.1 --directory apps/kiosk/src > /tmp/kiosk-preview.log 2>&1 &
+          python3 -m http.server 8126 --bind 127.0.0.1 --directory apps/catalog/src/app/web > /tmp/catalog-preview.log 2>&1 &
+          sleep 2
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,920 --virtual-time-budget=7000 --screenshot=design-artifacts/HIS-login-desktop.png http://127.0.0.1:8124/
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1200,900 --virtual-time-budget=2500 --screenshot=design-artifacts/Kiosk-login-desktop.png http://127.0.0.1:8125/auth-gate.html
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1200,900 --virtual-time-budget=2500 --screenshot=design-artifacts/Catalog-login-desktop.png http://127.0.0.1:8126/
           file design-artifacts/*.png
       - uses: actions/upload-artifact@v4
         with:
