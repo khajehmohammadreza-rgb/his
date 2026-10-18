@@ -1,0 +1,44 @@
+/* Bastiyan Visual Identity 2026 — presentation-only layer.
+   Safe boundary: authentication/landing/central administration only.
+   The clinical SPA (#root), financial printouts, queue and database behavior are untouched. */
+:root{--bvi-navy:#103c76;--bvi-blue:#1457a4;--bvi-teal:#0db3ab;--bvi-text:#102f50;--bvi-muted:#617a94;--bvi-line:#dce9f5;--bvi-surface:#f4f9fe;--bvi-shadow:0 22px 58px rgba(32,77,118,.14)}
+.bp-shell{position:relative;isolation:isolate;background:linear-gradient(125deg,#f9fcff 6%,#e7f3fc 53%,#f8fbff 100%);color:var(--bvi-text)}
+.bp-shell:before{content:"";position:absolute;z-index:-1;inset:74px 0 0 0;pointer-events:none;background:linear-gradient(90deg,rgba(248,252,255,.98) 2%,rgba(248,252,255,.82) 43%,rgba(248,252,255,.2) 100%),url("./bastiyan-architecture.svg") left center / min(920px,78vw) auto no-repeat;opacity:.95}
+.bp-nav{background:rgba(255,255,255,.87);border-bottom:1px solid #e1edf7;color:var(--bvi-text);box-shadow:0 8px 22px rgba(35,84,135,.06);height:76px}
+.bp-brand b{color:#0b376d;font:700 18px "B Titr","BTitr",Tahoma,sans-serif}
+.bp-brand small{color:#477397;letter-spacing:.015em}
+.bp-logo{background:linear-gradient(135deg,#d9f8f5,#e8f4ff);border:1px solid #c9e6ef;box-shadow:0 8px 22px rgba(13,137,153,.12)}
+.bp-main{max-width:1370px;padding:clamp(28px,5vw,76px) clamp(18px,4vw,54px)}
+.bp-hero{grid-template-columns:minmax(0,1.18fr) minmax(290px,.72fr);gap:clamp(28px,5vw,82px);min-height:clamp(560px,72vh,750px)}
+.bp-kicker{background:#e8f8fb;border:1px solid #c7e8ef;color:#086a82;font-weight:700}
+.bp-title{color:#0b376d;font-size:clamp(32px,4.2vw,57px);font-family:"B Titr","BTitr",Tahoma,sans-serif;text-align:right;line-height:1.45}
+.bp-sub{color:#56748e;line-height:2.05;font-size:clamp(14px,1.13vw,16px)}
+.bp-grid2{gap:14px}
+.bp-card,.bp-panel{background:rgba(255,255,255,.92);border:1px solid rgba(191,217,237,.75);border-radius:23px;box-shadow:var(--bvi-shadow);backdrop-filter:blur(14px);color:var(--bvi-text)}
+.bp-card{transition:transform .2s ease,box-shadow .2s ease}
+.bp-card:hover{transform:translateY(-3px);box-shadow:0 25px 65px rgba(32,77,118,.18)}
+.bp-card h3,.bp-panel h3{color:#103d73;text-align:right}
+.bp-card p,.bp-panel p{color:#5d7790}
+.bp-btn{background:linear-gradient(115deg,#0e468c,#1664bc);border:1px solid #175ba6;border-radius:12px;color:#fff;box-shadow:0 6px 14px rgba(21,84,160,.14)}
+.bp-btn.secondary{background:#eef5fe;border-color:#cadff3;color:#10477b}
+.bp-btn:hover{filter:brightness(1.05)}
+.bp-download,.bp-note{background:#f2f8fe;border-color:#d7e8f6;color:#315b80}
+.bp-modal{background:rgba(14,43,75,.35)}
+.bp-modal-box{background:#fff;border-color:#d8e8f5;color:var(--bvi-text);box-shadow:0 36px 90px rgba(12,57,105,.23)}
+.bp-modal-head h2{color:#0e3f76;text-align:right}
+.bp-x{color:#5d7690}
+.bp-field label{color:#365977;text-align:right}
+.bp-field input,.bp-field select,.bp-field textarea{background:#f7fbff;color:#143752;border-color:#bdd4e8;min-height:44px}
+.bp-field input:focus,.bp-field select:focus,.bp-field textarea:focus{outline:2px solid #77bfeb;outline-offset:1px}
+.bp-error{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+.bp-success{background:#ebfaf4;border-color:#a7e6c9;color:#065f46}
+.bp-note{line-height:1.9}
+.admin-shell{background:linear-gradient(135deg,#edf5fc,#f8fbfe);color:#143654}
+.admin-nav{background:#fff;color:#0b3c78;border-bottom:1px solid #dce9f5;box-shadow:0 8px 25px rgba(30,70,105,.07)}
+.admin-nav *{text-align:right}
+.center-card,.admin-stats .stat{border-color:#dbeaf5;box-shadow:0 12px 28px rgba(35,83,123,.07);border-radius:20px}
+.center-head .center-name{color:#124b87}
+@media(max-width:950px){.bp-shell:before{opacity:.38;background-position:left bottom;background-size:900px auto}.bp-hero{grid-template-columns:1fr;gap:26px}.bp-main{padding:28px 20px}.bp-panel{max-width:760px}.bp-title{font-size:clamp(29px,5vw,44px)}}
+@media(max-width:570px){.bp-nav{padding:0 16px;height:70px}.bp-brand b{font-size:15px}.bp-brand small{font-size:10px}.bp-grid2{grid-template-columns:1fr}.bp-card,.bp-panel{padding:20px}.bp-modal-box{padding:18px}.bp-shell:before{background-size:680px auto;opacity:.23}}
+@media(prefers-reduced-motion:reduce){.bp-card,.bp-btn{transition:none}.bp-card:hover{transform:none}}
+@media print{.bp-shell:before{display:none!important}}

@@ -1,0 +1,28 @@
+/* Bastiyan Visual Identity 2026. Do not style TV, ticket/thermal print layouts. */
+:root{--bvi-navy:#0b3973;--bvi-blue:#1353a0;--bvi-teal:#00a9a8;--bvi-line:#d9e8f5;--bvi-ink:#173b5d}
+html:not(.tv-route){color-scheme:light}
+html:not(.tv-route) body:has(.box){background:linear-gradient(118deg,rgba(249,252,255,.95),rgba(236,247,254,.82)),url("/assets/bastiyan-architecture.svg") left bottom / min(1000px,90vw) auto no-repeat fixed;color:var(--bvi-ink)}
+body .box{background:rgba(255,255,255,.95);color:var(--bvi-ink);border:1px solid #d4e5f1;box-shadow:0 25px 75px rgba(27,76,117,.16);border-radius:24px;backdrop-filter:blur(12px)}
+body .box h1{color:var(--bvi-navy);font-family:"BTitr","B Titr",Tahoma,sans-serif;text-align:center}
+body .box .muted,body .box .hint,body .box .security{color:#617a94}
+body .box .tabs{background:#e9f3fc}
+body .box .tab{color:#3f6587}
+body .box .tab.active{background:white;color:#0c448b;box-shadow:0 4px 14px rgba(23,85,145,.12)}
+body .box .field label{color:#315775;text-align:right}
+body .box input,body .box select{background:#f8fcff;color:#133b5c;border:1px solid #c4dbea;min-height:46px}
+body .box .btn{background:linear-gradient(110deg,#0f488f,#1765ba);color:white;border-color:#10529d}
+body .box .btn.green{background:linear-gradient(110deg,#0b8d90,#10b3a9);border-color:#0aa5a0}
+html:not(.tv-route) body:has(.wrap){background:linear-gradient(150deg,#edf6fd,#f8fbff 70%);color:var(--bvi-ink)}
+html:not(.tv-route) body .top,html:not(.tv-route) body .card{background:rgba(255,255,255,.96);color:var(--bvi-ink);border-color:var(--bvi-line);box-shadow:0 12px 35px rgba(23,77,122,.09);border-radius:21px}
+html:not(.tv-route) body .brand h1,html:not(.tv-route) body .head h2,html:not(.tv-route) body .card h2{color:#0d3e77;text-align:right}
+html:not(.tv-route) body .brand p,html:not(.tv-route) body .muted,html:not(.tv-route) body .head p{color:#557794}
+html:not(.tv-route) body .btn.primary{background:linear-gradient(110deg,#124b93,#1a68be);border-color:#205ca5;color:#fff}
+html:not(.tv-route) body .field input,html:not(.tv-route) body .field select,html:not(.tv-route) body .field textarea{background:#f8fcff;color:#153c5c;border-color:#c9deee}
+html:not(.tv-route) body .field label{color:#355878}
+html:not(.tv-route) body .table th{background:#eaf4fd;color:#154574}
+html:not(.tv-route) body .table td{color:#244563}
+html:not(.tv-route) #root{font-family:"BNazanin","B Nazanin",Tahoma,sans-serif}
+html:not(.tv-route) #root button:focus-visible,body .box button:focus-visible{outline:3px solid #5da9e0;outline-offset:2px}
+html:not(.tv-route) #root .bg-slate-50{background-color:#f2f8ff}
+@media(max-width:720px){body .box{padding:21px}html:not(.tv-route) body .top{border-radius:15px;padding:13px}}
+@media print{html:not(.tv-route) body{background:white!important}body .box,html:not(.tv-route) body .card{box-shadow:none!important}}

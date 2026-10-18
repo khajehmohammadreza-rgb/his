@@ -1,0 +1,29 @@
+/* Bastiyan Visual Identity 2026 — Catalog UI only; camera frames and printed labels stay untouched. */
+:root{--bvi-navy:#113f78;--bvi-blue:#0c54a4;--bvi-teal:#03aaa6;--bvi-line:#d9e8f4;--bvi-ink:#133b5c;--bvi-shadow:0 15px 44px rgba(28,80,123,.09);background:#f2f8fd;color:var(--bvi-ink)}
+body{background:linear-gradient(165deg,#eaf4fc,#f9fcff 58%,#f1f8fe);min-height:100vh}
+.login-bg{position:relative;justify-content:flex-end;display:flex;align-items:center;min-height:100vh;background:linear-gradient(105deg,rgba(243,250,254,.94) 0%,rgba(242,250,255,.65) 56%,rgba(207,232,249,.19) 100%),url("./bastiyan-architecture.svg") left bottom / min(1120px,95vw) auto no-repeat,#eaf4fc;padding:clamp(16px,4vw,64px);direction:rtl}
+.login-card{max-width:430px;background:rgba(255,255,255,.94);border:1px solid #d8e9f5;box-shadow:0 26px 70px rgba(18,68,117,.18);backdrop-filter:blur(14px);border-radius:25px;padding:clamp(24px,3vw,42px);margin-inline-start:auto;margin-inline-end:0}
+.login-card h1{color:#103d75;font:700 29px/1.65 "B Titr","BTitr",Tahoma,sans-serif;text-align:right}
+.login-card p{color:#5a7895}
+.brand-mark{background:linear-gradient(145deg,#16c4b6,#086eac);color:#fff;box-shadow:0 8px 20px rgba(13,145,163,.21)}
+.login-card .primary,button.primary{background:linear-gradient(105deg,#0f428b,#1869b9);border:1px solid #175aa5;color:#fff;box-shadow:0 7px 15px rgba(15,85,159,.13)}
+button.primary:hover{background:linear-gradient(105deg,#123f82,#195eaf);border-color:#0c4a97}
+header{background:rgba(255,255,255,.96);color:#123d71;border-bottom:1px solid #dbe8f4;box-shadow:0 5px 18px rgba(27,70,116,.07)}
+.header-main h1{color:#0e3d78;text-align:right}
+.header-main span{color:#547795}
+.ghost{color:#0f4a81;border-color:#c5deee}
+nav{padding-top:13px}
+nav button{border-radius:12px;color:#345b7c}
+nav button.active{background:#104f9c;color:#fff;box-shadow:0 6px 14px rgba(22,79,154,.15)}
+main{max-width:1460px}
+.section-head h2,.panel h3{color:#113f74;text-align:right}
+.panel,.stat{border:1px solid var(--bvi-line);border-radius:21px;box-shadow:var(--bvi-shadow);background:rgba(255,255,255,.97)}
+.stat b{color:#0d559d}
+input,select,textarea{border-color:#c9dceb;background:#fafdff;color:#173c5b;border-radius:11px}
+input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #6bb8e6;outline-offset:1px}
+.catalog-item{background:#f4f9fe;border-color:#d5e5f3;border-radius:15px}
+.variant-row{border-right-color:#08a7a7}
+.result-good{background:#edfaf5}
+.camera{box-shadow:0 0 0 1px #abcadd;background:#091c2d}
+@media(max-width:760px){.login-bg{justify-content:center;background-position:left bottom;background-size:780px auto}.login-card{margin:auto}.section-head{align-items:start}.panel{border-radius:16px}}
+@media print{body{background:#fff!important}.login-bg{background:#fff!important}.panel,.stat{box-shadow:none!important}#labelPrint{display:block!important}}
