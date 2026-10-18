@@ -40,7 +40,15 @@ jobs:
           python3 -m http.server 8126 --bind 127.0.0.1 --directory apps/catalog/src/app/web > /tmp/catalog-preview.log 2>&1 &
           sleep 2
           "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1440,920 --virtual-time-budget=7000 --screenshot=design-artifacts/HIS-login-desktop.png http://127.0.0.1:8124/
-          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --blink-settings=scriptEnabled=false --window-size=1200,900 --virtual-time-budget=2500 --screenshot=design-artifacts/Kiosk-login-desktop.png http://127.0.0.1:8125/auth-gate.html
+          # Static visual capture of real auth-gate markup: suppress live redirect/API script only in CI.
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          src=Path("apps/kiosk/src/auth-gate.html")
+          dst=src.with_name("auth-gate-visual-check.html")
+          dst.write_text(re.sub(r"<script\\b[^>]*>.*?</script>", "", src.read_text(encoding="utf-8"), flags=re.I|re.S), encoding="utf-8")
+          PY
+          "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1200,900 --virtual-time-budget=2500 --screenshot=design-artifacts/Kiosk-login-desktop.png http://127.0.0.1:8125/auth-gate-visual-check.html
           "$CHROME" --headless=new --no-sandbox --disable-gpu --hide-scrollbars --window-size=1200,900 --virtual-time-budget=2500 --screenshot=design-artifacts/Catalog-login-desktop.png http://127.0.0.1:8126/
           python3 -m http.server 8127 --bind 127.0.0.1 --directory apps/holding-site/design-preview > /tmp/holding-preview.log 2>&1 &
           sleep 2
