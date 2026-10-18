@@ -26,3 +26,6 @@ html:not(.tv-route) #root button:focus-visible,body .box button:focus-visible{ou
 html:not(.tv-route) #root .bg-slate-50{background-color:#f2f8ff}
 @media(max-width:720px){body .box{padding:21px}html:not(.tv-route) body .top{border-radius:15px;padding:13px}}
 @media print{html:not(.tv-route) body{background:white!important}body .box,html:not(.tv-route) body .card{box-shadow:none!important}}
+
+/* The repository currently lacks some binary kiosk artwork: display a harmless mark when absent. */
+body .box .logo.logo-fallback:before{content:"B";display:grid;place-items:center;width:62px;height:62px;margin:0 auto 8px;border-radius:17px;background:linear-gradient(130deg,#13c2b4,#105aa5);color:#fff;font:bold 35px Georgia,serif;box-shadow:0 10px 25px rgba(12,113,165,.2)}
