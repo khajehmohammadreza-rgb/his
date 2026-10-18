@@ -42,3 +42,23 @@
 @media(max-width:570px){.bp-nav{padding:0 16px;height:70px}.bp-brand b{font-size:15px}.bp-brand small{font-size:10px}.bp-grid2{grid-template-columns:1fr}.bp-card,.bp-panel{padding:20px}.bp-modal-box{padding:18px}.bp-shell:before{background-size:680px auto;opacity:.23}}
 @media(prefers-reduced-motion:reduce){.bp-card,.bp-btn{transition:none}.bp-card:hover{transform:none}}
 @media print{.bp-shell:before{display:none!important}}
+
+/* Existing operational dashboard: brighten only its own wrapper.
+   Buttons, call handlers, HR punches and other behavior stay unchanged. */
+.bhis-r21-dashboard{padding:clamp(14px,2vw,24px);background:linear-gradient(140deg,#f5faff,#ecf6fd);border:1px solid #e1edf6;border-radius:24px;color:#193d5b}
+.bhis-r21-hero{position:relative;overflow:hidden;background:linear-gradient(110deg,rgba(15,69,126,.97),rgba(19,97,158,.78)),url("./bastiyan-architecture.svg") center 48% / cover no-repeat;border:1px solid #a8c9e4;box-shadow:0 18px 38px rgba(31,91,146,.16);border-radius:22px}
+.bhis-r21-hero h1{color:#fff;text-align:right}
+.bhis-r21-hero p{color:#e0f2fc}
+.bhis-r21-eyebrow{background:rgba(242,251,255,.16);border-color:rgba(240,249,255,.27);color:#effdff}
+.bhis-r21-kpi,.bhis-r21-panel{background:#fff;border-color:#d7e8f4;box-shadow:0 8px 26px rgba(29,85,129,.075);border-radius:20px}
+.bhis-r21-kpi{transition:transform .16s ease,box-shadow .16s ease}
+.bhis-r21-kpi:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 13px 32px rgba(32,96,150,.13)}
+.bhis-r21-panel-head{border-color:#e6f0f8}
+.bhis-r21-panel-head h2{color:#104377;text-align:right}
+.bhis-r21-actions button{background:#f2f8fe;border-color:#d9e9f6;color:#1a507e}
+.bhis-r21-actions button:hover{background:#eaf7fa;border-color:#a4dad9;color:#0c6570}
+.bhis-r21-flow>div{background:#f5f9fe;border-color:#dceaf4}
+.bhis-r21-create-head{background:linear-gradient(105deg,#0d417c,#1765b3)}
+@media(max-width:720px){.bhis-r21-dashboard{padding:12px;border-radius:16px}}
+@media(prefers-reduced-motion:reduce){.bhis-r21-kpi{transition:none}.bhis-r21-kpi:not(:disabled):hover{transform:none}}
+@media print{.bhis-r21-dashboard{background:#fff!important;box-shadow:none!important}}
